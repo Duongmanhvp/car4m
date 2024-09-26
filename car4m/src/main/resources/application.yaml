@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATABASE_URL:}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  security:
+    user:
+      name: ${SPRING_SECURITY_NAME:}
+      password: ${SPRING_SECURITY_PASSWORD:}
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+jwt:
+  signerKey : ${JWT_SIGNER_KEY:}
