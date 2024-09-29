@@ -21,3 +21,5 @@
 - Quản lý người dùng: Xem, chỉnh sửa, hoặc xóa thông tin tài khoản người dùng, xác thực thông tin và trạng thái tài khoản.
 - Quản lý xe: Thêm, chỉnh sửa, xóa thông tin xe có trong hệ thống, bao gồm cả hình ảnh, thông số kỹ thuật, giá cả, và tình trạng sẵn có.
 - Thống kê và báo cáo: Xem báo cáo tổng hợp về doanh thu, số lượng đặt xe, đánh giá, và hiệu suất xe.
+
+[Figma](https://www.figma.com/design/WjlgAo6jHbAWfdPo4R42Hp/car4m?node-id=0-1&node-type=canvas&t=RwrUsqDJTdLdsnCe-0)
