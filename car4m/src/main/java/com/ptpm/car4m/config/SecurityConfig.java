@@ -1,5 +1,7 @@
 package com.ptpm.car4m.config;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,32 +13,30 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SecurityConfig {
 	
-	private final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**"};
-	private final String[] PUBLIC_POST_ENDPOINTS = {"v1/users/"};
-	private final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**",
+	CustomJwtDecoder customJwtDecoder;
+	
+	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**"};
+	final String[] PUBLIC_POST_ENDPOINTS = {"v1/users/", "v1/auths/", "v1/auths/refresh","v1/auths/validate"};
+	final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**",
 			"/swagger-resources/*",
 			"/v3/api-docs/**"};
 	
 	
 	@Value("${jwt.signerKey}")
-	private String signerKey;
+	String signerKey;
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity, OAuth2ResourceServerProperties oAuth2ResourceServerProperties) throws Exception {
@@ -48,6 +48,12 @@ public class SecurityConfig {
 						.requestMatchers(SWAGGER_ENDPOINTS).permitAll()
 						.anyRequest()
 						.authenticated());
+		
+		httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
+						.decoder(customJwtDecoder)
+//						.jwtAuthenticationConverter(jwtAuthenticationConverter())
+				)
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 		
 		httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable);
@@ -81,16 +87,16 @@ public class SecurityConfig {
 //		return new CorsFilter(urlBasedCorsConfigurationSource);
 //	}
 	
-	@Bean
-	JwtDecoder jwtDecoder() {
-		SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-		
-		return NimbusJwtDecoder
-				.withSecretKey(secretKeySpec)
-				.macAlgorithm(MacAlgorithm.HS512)
-				.build();
-	}
-	
+//	@Bean
+//	JwtDecoder jwtDecoder() {
+//		SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+//
+//		return NimbusJwtDecoder
+//				.withSecretKey(secretKeySpec)
+//				.macAlgorithm(MacAlgorithm.HS512)
+//				.build();
+//	}
+//
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(10);

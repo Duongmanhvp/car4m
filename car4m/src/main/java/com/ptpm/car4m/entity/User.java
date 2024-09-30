@@ -1,5 +1,7 @@
 package com.ptpm.car4m.entity;
 
+import com.ptpm.car4m.enums.Role;
+import com.ptpm.car4m.enums.Transmission;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +38,10 @@ public class User {
 	
 	@Column(name = "image")
 	String image;
+	
+	@Column(name = "role")
+	@Enumerated(EnumType.STRING)
+	Role role;
 	
 	@OneToOne
 	@JoinColumn(name = "driving_license_id")
