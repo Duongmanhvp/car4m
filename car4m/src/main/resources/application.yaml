@@ -21,3 +21,5 @@ server:
     context-path: /api
 jwt:
   signerKey : ${JWT_SIGNER_KEY:}
+  valid-duration: ${JWT_VALID_DURATION:}
+  refreshable-duration: ${JWT_REFRESH:}
