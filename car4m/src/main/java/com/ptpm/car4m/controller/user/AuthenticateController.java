@@ -3,6 +3,7 @@ package com.ptpm.car4m.controller.user;
 import com.nimbusds.jose.JOSEException;
 import com.ptpm.car4m.dto.request.auth.IntrospectRequest;
 import com.ptpm.car4m.dto.request.auth.UserLoginRequest;
+import com.ptpm.car4m.dto.request.auth.UserLogoutRequest;
 import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.auth.UserLoginResponse;
 import com.ptpm.car4m.service.AuthenticationService;
@@ -39,8 +40,13 @@ public class AuthenticateController {
     }
     
     @PostMapping("/validate")
-      public ApiResponse<Boolean> validate(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
-         return ApiResponse.success(authenticationService.isTokenValid(request));
-      }
+    public ApiResponse<Boolean> validate(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+       return ApiResponse.success(authenticationService.isTokenValid(request));
+    }
 
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody UserLogoutRequest request) throws ParseException, JOSEException {
+       authenticationService.logout(request);
+       return ApiResponse.ok("Đăng xuất thành công");
+    }
 }

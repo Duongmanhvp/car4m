@@ -8,10 +8,13 @@ import com.ptpm.car4m.component.AuthenticationComponent;
 import com.ptpm.car4m.component.JwtTokenProvider;
 import com.ptpm.car4m.dto.request.auth.IntrospectRequest;
 import com.ptpm.car4m.dto.request.auth.UserLoginRequest;
+import com.ptpm.car4m.dto.request.auth.UserLogoutRequest;
 import com.ptpm.car4m.dto.response.auth.UserLoginResponse;
+import com.ptpm.car4m.entity.InvalidToken;
 import com.ptpm.car4m.entity.User;
 import com.ptpm.car4m.exception.AuthenticatedException;
 import com.ptpm.car4m.exception.NotFoundException;
+import com.ptpm.car4m.repository.InvalidTokenRepository;
 import com.ptpm.car4m.repository.UserRepository;
 import com.ptpm.car4m.service.AuthenticationService;
 import lombok.AccessLevel;
@@ -19,11 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.Console;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -40,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	final UserRepository userRepository;
 	final PasswordEncoder passwordEncoder;
 	final JwtTokenProvider jwtTokenProvider;
+	final InvalidTokenRepository invalidTokenRepository;
 	
 	@Override
 	public UserLoginResponse authenticate(UserLoginRequest request)  {
@@ -79,6 +86,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public Boolean isTokenValid(IntrospectRequest request) throws ParseException, JOSEException {
 		return authenticationComponent.introspect(request);
+	}
+	
+	@Override
+	public Void logout(UserLogoutRequest request) throws ParseException, JOSEException {
+		
+		var signToken = authenticationComponent.verifyToken(request.getToken());
+		
+		LocalDateTime expiryTime = (signToken.getJWTClaimsSet().getExpirationTime())
+				.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
+		
+		InvalidToken invalidToken = InvalidToken.builder()
+				.token(request.getToken())
+				.createdAt(LocalDateTime.now())
+				.expiryTime(expiryTime)
+				.build();
+		
+		invalidTokenRepository.save(invalidToken);
+		return null;
 	}
 	
 }

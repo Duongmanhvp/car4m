@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -55,8 +56,9 @@ public class JwtTokenProvider {
 				.issuer("com.car4m")
 				.issueTime(new Date())
 				.claim("id", user.getId())
-				.expirationTime(new Date(Instant.now().plus(validity, ChronoUnit.SECONDS).toEpochMilli()
-				)).build();
+				.expirationTime(new Date(Instant.now().plus(validity, ChronoUnit.SECONDS).toEpochMilli()))
+				.jwtID(String.valueOf(UUID.randomUUID()))
+				.build();
 		if (!isRefreshToken) {
 			jwtClaimsSet = new JWTClaimsSet.Builder(jwtClaimsSet)
 					.claim("scope", "ROLE_" + user.getRole())
