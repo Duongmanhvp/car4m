@@ -30,5 +30,11 @@ public class GlobalExceptionHandler {
         log.error("NotAuthenticateException: ", ex);
         return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
+    
+    @ExceptionHandler(UploadException.class)
+    public ResponseEntity<ApiResponse<Void>> uploadImageException(UploadException ex) {
+        log.error("uploadImageException: ", ex);
+        return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
    
 }
