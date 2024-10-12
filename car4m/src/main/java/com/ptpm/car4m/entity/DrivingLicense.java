@@ -1,5 +1,6 @@
 package com.ptpm.car4m.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ptpm.car4m.enums.LicenseClass;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,6 +30,7 @@ public class DrivingLicense {
     @Column(name = "image_url")
     String imageUrl;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "drivingLicense")
     User user;
 }

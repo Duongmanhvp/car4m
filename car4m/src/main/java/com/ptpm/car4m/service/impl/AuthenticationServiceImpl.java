@@ -1,12 +1,12 @@
 package com.ptpm.car4m.service.impl;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import com.ptpm.car4m.component.AuthenticationComponent;
+import com.ptpm.car4m.component.JavaMail;
 import com.ptpm.car4m.component.JwtTokenProvider;
 import com.ptpm.car4m.dto.request.auth.IntrospectRequest;
+import com.ptpm.car4m.dto.request.auth.ResetPasswordRequest;
 import com.ptpm.car4m.dto.request.auth.UserLoginRequest;
 import com.ptpm.car4m.dto.request.auth.UserLogoutRequest;
 import com.ptpm.car4m.dto.response.auth.UserLoginResponse;
@@ -21,17 +21,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -47,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	final PasswordEncoder passwordEncoder;
 	final JwtTokenProvider jwtTokenProvider;
 	final InvalidTokenRepository invalidTokenRepository;
+	final JavaMail javaMail;
 	
 	@Override
 	public UserLoginResponse authenticate(UserLoginRequest request)  {
@@ -89,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 	
 	@Override
-	public Void logout(UserLogoutRequest request) throws ParseException, JOSEException {
+	public void logout(UserLogoutRequest request) throws ParseException, JOSEException {
 		
 		var signToken = authenticationComponent.verifyToken(request.getToken());
 		
@@ -105,7 +104,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.build();
 		
 		invalidTokenRepository.save(invalidToken);
-		return null;
+	}
+	
+	@Override
+	public void resetPassword(ResetPasswordRequest request) {
+		User user = userRepository.findByUsernameAndEmail(request.getUsername(), request.getEmail())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
+		
+		String newPassword = generateRandomPassword();
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		
+		// send email
+		javaMail.sendDefaultPassword(user.getEmail(), newPassword);
+		
+	}
+	
+	private String generateRandomPassword() {
+		return RandomStringUtils.randomAlphanumeric(8);
 	}
 	
 }

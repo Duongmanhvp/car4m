@@ -15,6 +15,12 @@ spring:
     user:
       name: ${SPRING_SECURITY_NAME:}
       password: ${SPRING_SECURITY_PASSWORD:}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+
 server:
   port: 8080
   servlet:
@@ -28,3 +34,6 @@ cloudinary:
   name: ${CLOUDINARY_NAME:}
   api-key: ${CLOUDINARY_API_KEY:}
   api-secret: ${CLOUDINARY_API_SECRET:}
+
+open_cage:
+  api-key: ${OPEN_CAGE_API_KEY:}

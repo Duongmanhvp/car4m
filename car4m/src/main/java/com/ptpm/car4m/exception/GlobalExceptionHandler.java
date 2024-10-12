@@ -36,5 +36,19 @@ public class GlobalExceptionHandler {
         log.error("uploadImageException: ", ex);
         return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
-   
+    
+    @ExceptionHandler(InvalidOldPasswordException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidOldPasswordException(InvalidOldPasswordException ex) {
+        return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
+        return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEmailException(EmailException ex) {
+        return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -44,11 +44,11 @@ public class User {
 	Role role;
 	
 	@OneToOne
-	@JoinColumn(name = "driving_license_id")
+	@JoinColumn(name = "driving_license_id", referencedColumnName = "id")
 	DrivingLicense drivingLicense;
 	
 	@OneToOne
-	@JoinColumn(name = "identity_card_id")
+	@JoinColumn(name = "identity_card_id", referencedColumnName = "id")
 	IdentityCard identityCard;
 	
 	

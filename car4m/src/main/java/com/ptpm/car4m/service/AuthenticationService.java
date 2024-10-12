@@ -2,6 +2,7 @@ package com.ptpm.car4m.service;
 
 import com.nimbusds.jose.JOSEException;
 import com.ptpm.car4m.dto.request.auth.IntrospectRequest;
+import com.ptpm.car4m.dto.request.auth.ResetPasswordRequest;
 import com.ptpm.car4m.dto.request.auth.UserLoginRequest;
 import com.ptpm.car4m.dto.request.auth.UserLogoutRequest;
 import com.ptpm.car4m.dto.response.auth.UserLoginResponse;
@@ -16,5 +17,7 @@ public interface AuthenticationService {
 
 	Boolean isTokenValid(IntrospectRequest request) throws ParseException, JOSEException;
 	
-	Void logout(UserLogoutRequest request) throws ParseException, JOSEException;
+	void logout(UserLogoutRequest request) throws ParseException, JOSEException;
+	
+	void resetPassword(ResetPasswordRequest request);
 }

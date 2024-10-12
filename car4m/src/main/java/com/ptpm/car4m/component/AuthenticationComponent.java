@@ -78,5 +78,4 @@ public class AuthenticationComponent {
         invalidTokenRepository.deleteByExpiryTimeBefore(LocalDateTime.now());
     }
     
-
 }

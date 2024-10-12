@@ -2,6 +2,7 @@ package com.ptpm.car4m.controller.user;
 
 import com.nimbusds.jose.JOSEException;
 import com.ptpm.car4m.dto.request.auth.IntrospectRequest;
+import com.ptpm.car4m.dto.request.auth.ResetPasswordRequest;
 import com.ptpm.car4m.dto.request.auth.UserLoginRequest;
 import com.ptpm.car4m.dto.request.auth.UserLogoutRequest;
 import com.ptpm.car4m.dto.response.ApiResponse;
@@ -49,4 +50,10 @@ public class AuthenticateController {
        authenticationService.logout(request);
        return ApiResponse.ok("Đăng xuất thành công");
     }
+    
+    @PostMapping("/reset-password")
+      public ApiResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+         authenticationService.resetPassword(request);
+         return ApiResponse.ok("Mật khẩu đã được thay đổi. Vui lòng kiểm tra email");
+      }
 }

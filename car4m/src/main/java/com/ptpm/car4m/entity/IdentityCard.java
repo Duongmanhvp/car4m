@@ -1,5 +1,6 @@
 package com.ptpm.car4m.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ptpm.car4m.enums.Sex;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,6 +42,7 @@ public class IdentityCard {
     @Column(name = "image_url")
     String imageUrl;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "identityCard")
     User user;
 }
