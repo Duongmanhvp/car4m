@@ -18,6 +18,9 @@ const Frame: NextPage = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+
 
     const toggleVisibility = () => {
         setIsVisible(!isVisible);
@@ -35,9 +38,44 @@ const Frame: NextPage = () => {
         setPassword(event.target.value);
     };
 
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPhone(event.target.value);
+    };
+
     const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(event.target.value);
     };
+
+    const handleSignUp = async (event: React.FormEvent) => {
+        event.preventDefault(); // Ngăn chặn reload trang
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/users/', { // Thay đổi URL nếu cần
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email, phone: phone, username: name, password: password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data); // Xử lý dữ liệu nếu cần
+                router.push('/home'); 
+            } else {
+                // Nếu có lỗi trong đăng nhập
+                const errorData = await response.json();
+                alert(errorData.message || 'Đăng ky thất bại');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Đã xảy ra lỗi khi đăng ky');
+        }
+    }
+
 
     return (
         <div className="w-full relative h-[1024px] overflow-hidden text-left text-base text-dimgray-100 font-baloo-2">
@@ -51,6 +89,8 @@ const Frame: NextPage = () => {
                     </div>
                     <input
                         type='email'
+                        onChange={handleEmailChange}
+                        value={email}
                         className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                         placeholder='Email'
                     />
@@ -61,6 +101,8 @@ const Frame: NextPage = () => {
                     </div>
                     <input
                         type='text'
+                        onChange={handlePhoneChange}
+                        value={phone}
                         className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                         placeholder='Số điện thoại'
                     />
@@ -111,7 +153,7 @@ const Frame: NextPage = () => {
                     </div>
                 </div>
                 <div className="flex flex-col items-start justify-center gap-2 text-center text-white font-baloo-2">
-                    <button className="w-[220px] rounded-lg bg-primary flex flex-row items-center justify-center py-4 px-8 box-border">
+                    <button onClick={handleSignUp} className="w-[220px] rounded-lg bg-primary flex flex-row items-center justify-center py-4 px-8 box-border">
                         Đăng ký
                     </button>
                     <div className="flex flex-row items-start justify-start p-0.5 text-left text-gray font-poppins">

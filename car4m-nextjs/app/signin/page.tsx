@@ -7,9 +7,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg"
 import eyeslash from "../assets/imgs/eye-slash.svg"
+import axios from 'axios';
 
-
-const Frame: NextPage = () => {
+const  Frame: NextPage = () => {
 
     const [isVisible, setIsVisible] = useState(true);
     const [name, setUsername] = useState("");
@@ -31,29 +31,29 @@ const Frame: NextPage = () => {
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault(); // Ngăn chặn reload trang
         try {
-            const response = await fetch('http://localhost:8080/api/login', { // Thay đổi URL nếu cần
+            const response = await fetch('http://localhost:8080/api/v1/auths/', { // Thay đổi URL nếu cần
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: name, password }),
+                body: JSON.stringify({ username: name, password: password }),
             });
 
             if (response.ok) {
-                // Nếu đăng nhập thành công
                 const data = await response.json();
                 console.log(data); // Xử lý dữ liệu nếu cần
-                router.push('/home'); 
+                let src = `/home?user=${data.data.id}`
+                window.location.href = src
             } else {
                 // Nếu có lỗi trong đăng nhập
                 const errorData = await response.json();
-                alert(errorData.message || 'Đăng nhập thất bại');
+                alert(errorData.message || 'Đăng nhap thất bại');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Đã xảy ra lỗi khi đăng nhập');
+            alert('Đã xảy ra lỗi khi đăng nhap');
         }
-    };
+    };   
 
     return (
         <div className="w-full flex bg-white h-[1024px] overflow-hidden text-center text-[56px] text-white font-baloo-2">
@@ -75,8 +75,8 @@ const Frame: NextPage = () => {
                                     type="text"
                                     className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                                     placeholder="Nhập tên đăng nhập hoặc email"
-                                    value={name}
-                                    onChange={handleUsernameChange}
+                                    
+                                    onChange={handleUsernameChange}value={name}
                                 />
                             </div>
                             <div className="flex flex-col items-end justify-start gap-2">
@@ -89,11 +89,11 @@ const Frame: NextPage = () => {
                                         </div>
                                     </div>
                                     <input
-                                        type={isVisible ? 'password' : 'text'}
+                                        type={isVisible ? "password" : 'text'}
                                         className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                                         placeholder='Nhập mật khẩu'
-                                        value={password}
-                                        onChange={handlePasswordChange}
+                                        
+                                        onChange={handlePasswordChange}value={password}
                                     />
                                 </div>
                                 <div className="relative [text-decoration:underline] text-gray text-right">Quên mật khẩu</div>
