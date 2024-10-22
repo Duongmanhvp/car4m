@@ -29,9 +29,9 @@ const  Frame: NextPage = () => {
     };
 
     const handleLogin = async (event: React.FormEvent) => {
-        event.preventDefault(); // Ngăn chặn reload trang
+        event.preventDefault(); 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auths/', { // Thay đổi URL nếu cần
+            const response = await fetch('http://localhost:8080/api/v1/auths/', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,11 +41,12 @@ const  Frame: NextPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data); // Xử lý dữ liệu nếu cần
+                console.log(data); 
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('refreshToken', data.refreshToken);
                 let src = `/home?user=${data.data.id}`
                 window.location.href = src
             } else {
-                // Nếu có lỗi trong đăng nhập
                 const errorData = await response.json();
                 alert(errorData.message || 'Đăng nhap thất bại');
             }
@@ -73,7 +74,7 @@ const  Frame: NextPage = () => {
                                 </div>
                                 <input
                                     type="text"
-                                    className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
+                                    className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                                     placeholder="Nhập tên đăng nhập hoặc email"
                                     
                                     onChange={handleUsernameChange}value={name}
@@ -90,7 +91,7 @@ const  Frame: NextPage = () => {
                                     </div>
                                     <input
                                         type={isVisible ? "password" : 'text'}
-                                        className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
+                                        className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                                         placeholder='Nhập mật khẩu'
                                         
                                         onChange={handlePasswordChange}value={password}

@@ -51,9 +51,9 @@ const Frame: NextPage = () => {
     };
 
     const handleSignUp = async (event: React.FormEvent) => {
-        event.preventDefault(); // Ngăn chặn reload trang
+        event.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/api/v1/users/', { // Thay đổi URL nếu cần
+            const response = await fetch('http://localhost:8080/api/v1/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,10 +63,11 @@ const Frame: NextPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data); // Xử lý dữ liệu nếu cần
-                router.push('/home'); 
+                
+                let src = `/home?user=${data.data.id}`
+                // window.location.href = src
+                console.log(data);
             } else {
-                // Nếu có lỗi trong đăng nhập
                 const errorData = await response.json();
                 alert(errorData.message || 'Đăng ky thất bại');
             }
@@ -79,7 +80,7 @@ const Frame: NextPage = () => {
 
     return (
         <div className="w-full relative h-[1024px] overflow-hidden text-left text-base text-dimgray-100 font-baloo-2">
-            <div className="absolute top-[88px] left-[150px] h-[854px] flex flex-col items-start justify-end gap-8">
+            <div className="absolute left-[150px] h-[854px] flex flex-col items-start justify-end gap-8">
                 <div className="flex flex-col items-start justify-start text-[32px] text-darkslategray">
                     <div className="relative font-medium">Chào mừng đến với Car4m</div>
                 </div>
@@ -91,7 +92,7 @@ const Frame: NextPage = () => {
                         type='email'
                         onChange={handleEmailChange}
                         value={email}
-                        className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
+                        className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                         placeholder='Email'
                     />
                 </div>
@@ -103,7 +104,7 @@ const Frame: NextPage = () => {
                         type='text'
                         onChange={handlePhoneChange}
                         value={phone}
-                        className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
+                        className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                         placeholder='Số điện thoại'
                     />
                 </div>
@@ -116,7 +117,7 @@ const Frame: NextPage = () => {
                         placeholder='Nhập tên đăng nhập'
                         value={name}
                         onChange={handleUsernameChange}
-                        className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
+                        className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
                 </div>
                 <div className="flex flex-col items-start justify-start">
                     <div className="w-[665px] flex flex-col items-start justify-start gap-1">
@@ -124,7 +125,7 @@ const Frame: NextPage = () => {
                             <div className="absolute top-[0px] left-[0px]">Mật khẩu</div>
                             <div onClick={toggleVisibility} className="absolute top-[0px] right-[8.86px] w-[73px] h-[27px] text-right text-lg text-dimgray-200">
                                 <Image className="absolute top-[3px] right-[49px] w-6 h-6 overflow-hidden" alt="" src={isVisible ? eyeslash : eye} />
-                                <div className="absolute top-[0px] right-[0px]"> {isVisible ? 'Hiện' : 'Ẩn' } </div>
+                                <div className="absolute top-[0px] right-[0px]"> {isVisible ? 'Hiện' : 'Ẩn'} </div>
                             </div>
                         </div>
                         <input
@@ -132,7 +133,7 @@ const Frame: NextPage = () => {
                             placeholder='Nhập mật khẩu'
                             value={password}
                             onChange={handlePasswordChange}
-                            className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
+                            className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
                     </div>
                 </div>
                 <div className="flex flex-col items-start justify-start">
@@ -141,15 +142,15 @@ const Frame: NextPage = () => {
                             <div className="absolute top-[0px] left-[0px]">Nhập lại mật khẩu</div>
                             <div onClick={toggleVisibility1} className="absolute top-[0px] right-[8.86px] w-[73px] h-[27px] text-right text-lg text-dimgray-200">
                                 <Image className="absolute top-[3px] right-[49px] w-6 h-6 overflow-hidden" alt="" src={isVisible1 ? eyeslash : eye} />
-                                <div className="absolute top-[0px] right-[0px]">{isVisible1 ? 'Hiện' : 'Ẩn' }</div>
+                                <div className="absolute top-[0px] right-[0px]">{isVisible1 ? 'Hiện' : 'Ẩn'}</div>
                             </div>
                         </div>
                         <input
                             type={isVisible1 ? 'password' : 'text'}
                             placeholder='Nhập lại mật khẩu'
                             value={confirmPassword}
-                            
-                            className="p-2.5 self-stretch relative rounded-xl border-dimgray-300 border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
+                            onChange={handleConfirmPasswordChange}
+                            className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0" />
                     </div>
                 </div>
                 <div className="flex flex-col items-start justify-center gap-2 text-center text-white font-baloo-2">
