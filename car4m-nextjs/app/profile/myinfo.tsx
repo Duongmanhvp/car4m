@@ -1,27 +1,43 @@
 'use client';
 
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Image from 'next/image';
 import edit from '../assets/imgs/edit-2.svg'
-
+import axios from '../services/api';
+import { fetchUserInfo } from '../services/UserServices';
 
 const FrameInfo: NextPage = () => {
 
+    const getUser = async () => {
+        let res = await fetchUserInfo()
+        if (res && res.data){
+            setUserInfo(res.data)
+        }
+    }
+
+    useEffect(() => {
+        getUser()
+    }, [])
+
     const [isEditingAccount, setIsEditingAccount] = useState(false);
     const [userInfo, setUserInfo] = useState({
-        birthDate: '29/07/2003',
-        gender: 'Nam',
-        phone: '0368432906',
-        email: 'trantoan29072003@gmail.com',
+        username: '',
+        birthDate: '',
+        gender: '',
+        phone: '',
+        email: '',
+        image: ''
     });
 
     const [isEditingCCCD, setIsEditingCCCD] = useState(false);
     const [cccdInfo, setCCCDInfo] = useState({
+        nationality: 'Viet Nam',
         cccd: '020334045023434',
         fullName: 'Trần Bá Toản',
         gender: 'Nam',
         birthDate: '29/07/2003',
+        image: '...'
     });
 
     // State cho thông tin giấy phép lái xe
@@ -31,6 +47,7 @@ const FrameInfo: NextPage = () => {
         fullName: 'Trần Bá Toản',
         birthDate: '29/07/2003',
         licenseClass: 'A1',
+        image: '...'
     });
 
     const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,21 +65,67 @@ const FrameInfo: NextPage = () => {
 
     const handleAccountSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isEditingAccount) return
+        
+        axios.post('/api/v1/users/update-my-info', {
+            email: userInfo.email,
+            phone: userInfo.phone
+        })
+            .then((response) => {
+                console.log("123456780")
+                if (response != null){
+                    alert('Cap nhat user thanh cong')
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         setIsEditingAccount(false);
     };
 
     const handleCCCDSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Thực hiện việc lưu thông tin CCCD ở đây
+        if (!isEditingCCCD) return
+
+        axios.post('/api/v1/users/update-identity-card', {
+            no: cccdInfo.cccd,
+            fullName: cccdInfo.fullName,
+            sex: cccdInfo.gender,
+            nationality: cccdInfo.nationality,
+            dateOfBirth: cccdInfo.birthDate,
+            imageUrl: cccdInfo.image
+        })
+            .then((response) => {
+                if (response != null){
+                    alert('Cap nhat cccd thanh cong')
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         setIsEditingCCCD(false);
     };
 
     // Hàm xử lý lưu thông tin giấy phép lái xe
     const handleLicenseSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Thực hiện việc lưu thông tin GPLX ở đây
+        if (!isEditingLicense) return;
+        
+        axios.post('/api/v1/users/update-driving-license', {
+            no: licenseInfo.licenseNumber,
+            licenseClass: licenseInfo.licenseClass
+        })
+            .then((response) => {
+                if (response != null){
+                    alert('Cap nhat GPLX thanh cong')
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         setIsEditingLicense(false);
     };
+
 
     return (
         <div className="w-full relative h-[1060px] text-left text-xl text-darkslategray font-baloo-2">
@@ -74,9 +137,9 @@ const FrameInfo: NextPage = () => {
                                 <div className="w-[264px] relative font-medium flex items-center h-10 shrink-0">Thông tin tài khoản</div>
                             </div>
                             <button onClick={() => setIsEditingAccount(!isEditingAccount)} className="self-stretch w-[119px] rounded-lg bg-primary flex flex-row items-center justify-center gap-0.5 text-center text-base text-white">
-                                <div className="w-[72px] h-[37px] flex flex-col items-center justify-center">
-                                    <button onClick={handleAccountSubmit} className="w-[89px] relative leading-[150%] flex items-center justify-center h-[35px] shrink-0">{isEditingAccount ? 'Lưu' : 'Chỉnh sửa'}</button>
-                                </div>
+
+                                <a onClick={handleAccountSubmit} className="w-[89px] relative leading-[150%] flex items-center justify-center h-[35px] shrink-0">{isEditingAccount ? 'Lưu' : 'Chỉnh sửa'}</a>
+
                                 <Image className="w-4 relative h-4" alt="" src={edit} />
                             </button>
                         </div>
@@ -84,7 +147,7 @@ const FrameInfo: NextPage = () => {
                     <div className="w-[140px] absolute !m-[0] top-[70px] left-[60px] h-[218px] z-[1] text-center text-[25px]">
                         <img className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src="Image.png" />
                         <div className="absolute top-[154px] left-[0px] w-[140px] h-[30px] flex flex-row items-center justify-center">
-                            <div className="w-[140px] relative font-medium flex items-center justify-center h-[30px] shrink-0">Trần Toản</div>
+                            <div className="w-[140px] relative font-medium flex items-center justify-center h-[30px] shrink-0"> {userInfo.username} </div>
                         </div>
                         <div className="absolute top-[198px] left-[0px] w-[140px] h-5 flex flex-row items-center justify-between text-[15px] text-dimgray">
                             <div className="relative">Tham gia:</div>
@@ -158,8 +221,8 @@ const FrameInfo: NextPage = () => {
                     </div>
                     <img className="self-stretch relative max-w-full overflow-hidden h-[181px] shrink-0 object-cover" alt="" src="Frame 18693.png" />
                 </div>
-                <div className="absolute top-[67px] left-[373px] w-[347px] h-[214px] text-center text-base text-dimgray">
-                    <div className="absolute top-[30px] left-[0px] rounded-lg bg-whitesmoke w-[353px] h-[184px] flex flex-col items-start justify-between p-[15px] box-border">
+                <div className="absolute top-[67px] left-[373px] w-[347px] h-[244px] text-center text-base text-dimgray">
+                    <div className="absolute top-[30px] left-[0px] rounded-lg bg-whitesmoke w-[353px] h-[214px] flex flex-col items-start justify-between p-[15px] box-border">
                         <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
                             <div className="relative">Số CCCD</div>
                             {isEditingCCCD ? (
@@ -216,6 +279,20 @@ const FrameInfo: NextPage = () => {
                                 <div className="relative text-xl text-black">{cccdInfo.birthDate}</div>
                             )}
                         </div>
+                        <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
+                            <div className="relative">Quốc tịch</div>
+                            {isEditingCCCD ? (
+                                <input
+                                    type="text"
+                                    name="nationality"
+                                    value={cccdInfo.nationality}
+                                    onChange={handleCCCDChange}
+                                    className="relative text-xl text-black"
+                                />
+                            ) : (
+                                <div className="relative text-xl text-black">{cccdInfo.nationality}</div>
+                            )}
+                        </div>
                     </div>
                     <div className="absolute top-[0px] left-[1px] w-[170px] h-[30px] flex flex-row items-center justify-center text-left text-xl text-darkslategray">
                         <div className="w-[170px] relative font-medium flex items-center h-[30px] shrink-0">Thông tin chung</div>
@@ -228,9 +305,7 @@ const FrameInfo: NextPage = () => {
                                 <div className="w-[230px] relative font-medium flex items-center text-[27px] h-10 shrink-0">Căn cước công dân</div>
                             </div>
                             <button onClick={() => setIsEditingCCCD(!isEditingCCCD)} className="self-stretch w-[119px] rounded-lg bg-primary flex flex-row items-center justify-center gap-0.5 text-center text-base text-white">
-                                <div className="w-[72px] h-[37px] flex flex-col items-center justify-center">
-                                    <button onClick={handleCCCDSubmit} className="w-[89px] relative leading-[150%] flex items-center justify-center h-[35px] shrink-0">{isEditingCCCD ? 'Lưu' : 'Chỉnh sửa'}</button>
-                                </div>
+                                <a onClick={handleCCCDSubmit} className="w-[89px] relative leading-[150%] flex items-center justify-center h-[35px] shrink-0">{isEditingCCCD ? 'Lưu' : 'Chỉnh sửa'}</a>
                                 <Image className="w-4 relative h-4" alt="" src={edit} />
                             </button>
                         </div>
@@ -245,7 +320,7 @@ const FrameInfo: NextPage = () => {
                     <img className="self-stretch relative max-w-full overflow-hidden h-[181px] shrink-0 object-cover" alt="" src="Frame 18693.png" />
                 </div>
                 <div className="absolute top-[67px] left-[373px] w-[347px] h-[214px] text-center text-base text-dimgray">
-                    <div className="absolute top-[30px] left-[0px] rounded-lg bg-whitesmoke w-[353px] h-[184px] flex flex-col items-start justify-between p-[15px] box-border">
+                    <div className="absolute top-[30px] left-[0px] rounded-lg bg-whitesmoke w-[353px] h-[94px] flex flex-col items-start justify-between p-[15px] box-border">
                         <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
                             <div className="relative">Số GPLX</div>
                             {isEditingLicense ? (
@@ -258,34 +333,6 @@ const FrameInfo: NextPage = () => {
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{licenseInfo.licenseNumber}</div>
-                            )}
-                        </div>
-                        <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
-                            <div className="relative">Họ và tên</div>
-                            {isEditingLicense ? (
-                                <input
-                                    type="text"
-                                    name="fullName"
-                                    value={licenseInfo.fullName}
-                                    onChange={handleLicenseChange}
-                                    className="relative text-xl text-black"
-                                />
-                            ) : (
-                                <div className="relative text-xl text-black">{licenseInfo.fullName}</div>
-                            )}
-                        </div>
-                        <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
-                            <div className="relative">Ngày sinh</div>
-                            {isEditingLicense ? (
-                                <input
-                                    type="date"
-                                    name="birthDate"
-                                    value={licenseInfo.birthDate}
-                                    onChange={handleLicenseChange}
-                                    className="relative text-xl text-black"
-                                />
-                            ) : (
-                                <div className="relative text-xl text-black">{licenseInfo.birthDate}</div>
                             )}
                         </div>
                         <div className="self-stretch h-[26px] flex flex-row items-center justify-between">

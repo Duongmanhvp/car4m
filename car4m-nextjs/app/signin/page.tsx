@@ -7,14 +7,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg"
 import eyeslash from "../assets/imgs/eye-slash.svg"
-import axios from 'axios';
+import axios from "axios"
+
 
 const  Frame: NextPage = () => {
-
     const [isVisible, setIsVisible] = useState(true);
     const [name, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
 
     const toggleVisibility = () => {
         setIsVisible(!isVisible);
@@ -30,30 +29,30 @@ const  Frame: NextPage = () => {
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault(); 
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/auths/', { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: name, password: password }),
-            });
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data); 
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('refreshToken', data.refreshToken);
-                let src = `/home?user=${data.data.id}`
-                window.location.href = src
-            } else {
-                const errorData = await response.json();
-                alert(errorData.message || 'Đăng nhap thất bại');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Đã xảy ra lỗi khi đăng nhap');
-        }
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auths/`, {
+            username: name,
+            password: password
+        })
+            .then((response) => {
+                if (response != null) {
+                    const data = response.data;
+                    
+                    localStorage.setItem('access_token', data.data.access_token);
+                    localStorage.setItem('refresh_token', data.data.refresh_token);
+    
+                    
+                    console.log(data.data.access_token)
+
+                    let src = `/home?user=${data.id}`
+                    window.location.href = src
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                alert('Đã xảy ra lỗi khi đăng nhap');
+              });
     };   
 
     return (

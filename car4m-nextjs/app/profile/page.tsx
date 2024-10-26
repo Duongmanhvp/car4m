@@ -15,10 +15,10 @@ import { access } from 'fs';
 import UserInfo from './myinfo';
 import Footer from '../home/footer';
 
+
 const Profile: NextPage = () => {
   const [activeSection, setActiveSection] = useState('myinfo'); // Quản lý trạng thái phần hiện tại
-  const accessToken = localStorage.getItem('accessToken')
-  console.log(accessToken)
+  const accessToken = localStorage.getItem('access_token')
   // Nội dung các frame khác nhau
   const renderSectionContent = () => {
     switch (activeSection) {
@@ -47,9 +47,9 @@ const Profile: NextPage = () => {
         body: JSON.stringify({ token: accessToken }),
       });
 
+
       if (response.ok) {
-        console.log('dang xuat')
-        localStorage.clear();
+        localStorage.clear()
         window.location.href = '/home'
       } else {
         const errorData = await response.json();

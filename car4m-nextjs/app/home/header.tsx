@@ -11,24 +11,20 @@ const Header: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
     
-    //localStorage.clear()
-    const token = localStorage.getItem('accessToken');
+    const accesstoken = localStorage.getItem('access_token');
     const validateToken = async () => {
 
         
-        if (!token) return false;
-        console.log("co token")
-
+        if (!accesstoken) return false;
         try {
             const response = await fetch('http://localhost:8080/api/v1/auth/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ token }),
+                body: JSON.stringify({ token: accesstoken }),
             });
 
-            console.log(response.ok, ": ok")
 
             if (response) {
                 setIsLoggedIn(true);
@@ -43,7 +39,7 @@ const Header: NextPage = () => {
 
 
     const refreshToken = async () => {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem('refresh_token');
         if (!refreshToken) return;
 
         try {
@@ -57,13 +53,11 @@ const Header: NextPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data.data)
                 localStorage.setItem('accessToken', data.data);
                 validateToken();
             } else {
                 setIsLoggedIn(false);
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
+                localStorage.clear;
             }
         } catch (error) {
             console.error('Refresh error:', error);
@@ -74,7 +68,6 @@ const Header: NextPage = () => {
         validateToken();
     }, []);
 
-    console.log(isLoggedIn, '123')
 
     return (
         <div className="w-full flex justify-center relative bg-primary-0 border-lightsteelblue h-[123px] overflow-hidden text-left text-base text-darkslategray font-baloo-2">

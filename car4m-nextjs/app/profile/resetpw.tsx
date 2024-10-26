@@ -6,6 +6,8 @@ import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg";
 import eyeslash from "../assets/imgs/eye-slash.svg";
 
+import axios from '../services/api';
+
 const Resetpw: NextPage = () => {
     const [isVisible, setIsVisible] = useState(true);
     const [isVisible1, setIsVisible1] = useState(true);
@@ -52,25 +54,39 @@ const Resetpw: NextPage = () => {
             return; 
         }
 
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/users/change-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization' : 'Bearer'
-                },
-                body: JSON.stringify({ oldPassword: currentPassword, newPassword: newPassword }),
-            });
+        axios.post('/api/v1/users/change-password', {
+            old_password: currentPassword,
+            new_password: newPassword
+        })
+            .then((response) => {
+                if (response != null){
+                    alert('Đổi mật khẩu thanh cong');
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert('Đã xảy ra lỗi khi đổi mật khẩu');
+            })
 
-            if (response.ok) {
-                alert('Mật khẩu đã được thay đổi thành công!');
-            } else {
-                alert('Đổi mật khẩu thất bại');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Đã xảy ra lỗi khi đổi mật khẩu');
-        }
+        // try {                       
+        //     const response = await fetch('http://localhost:8080/api/v1/users/change-password', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Authorization' : 'Bearer'
+        //         },
+        //         body: JSON.stringify({ oldPassword: currentPassword, newPassword: newPassword }),
+        //     });
+
+        //     if (response.ok) {
+        //         alert('Mật khẩu đã được thay đổi thành công!');
+        //     } else {
+        //         alert('Đổi mật khẩu thất bại');
+        //     }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        //     alert('Đã xảy ra lỗi khi đổi mật khẩu');
+        // }
     };
 
     return (
