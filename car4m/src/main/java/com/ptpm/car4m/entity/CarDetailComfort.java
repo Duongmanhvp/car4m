@@ -1,5 +1,6 @@
 package com.ptpm.car4m.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,11 +14,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "car_detail_comfort")
 public class CarDetailComfort {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
+    
     @ManyToOne
     @JoinColumn(name = "car_detail_id")
     CarDetail carDetail;

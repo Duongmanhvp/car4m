@@ -28,11 +28,16 @@ public class SecurityConfig {
 	
 	CustomJwtDecoder customJwtDecoder;
 	
-	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**"};
+	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**",
+			"v1/cars/get-all",
+			"v1/cars/get-by-type","v1/cars/get-by-fuel", "v1/cars/get-by-seats",
+			"v1/cars/get-by-transmission", "v1/cars/get-by-price", "v1/cars/get-by-location", "v1/cars/search"
+	};
 	final String[] PUBLIC_POST_ENDPOINTS = {
 			"v1/users/", "v1/auths/**",
 //			"v1/auths/refresh","v1/auths/validate", "v1/auths/logout",
-			"v1/images/"};
+			"v1/images/",
+			"v1/cars/"};
 	final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**",
 			"/swagger-resources/*",
 			"/v3/api-docs/**"};

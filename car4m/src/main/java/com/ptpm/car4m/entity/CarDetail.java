@@ -1,10 +1,13 @@
 package com.ptpm.car4m.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,8 +39,15 @@ public class CarDetail {
 
     @Column(name = "description")
     String description;
-
-  
-
+    
+    @Column(name = "images")
+    String images;
+    
+    @JsonIgnore
+    @OneToOne(mappedBy = "carDetail")
+    Car car;
+    
+    @OneToMany(mappedBy = "carDetail")
+    Set<CarDetailComfort> carDetailComforts;
     
 }

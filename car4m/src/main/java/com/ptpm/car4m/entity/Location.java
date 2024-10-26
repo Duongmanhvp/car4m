@@ -1,5 +1,6 @@
 package com.ptpm.car4m.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,4 +24,8 @@ public class Location {
 
     @Column(name = "latitude")
     Double latitude;
+    
+    @JsonIgnore
+    @OneToOne(mappedBy = "location")
+    Car car;
 }

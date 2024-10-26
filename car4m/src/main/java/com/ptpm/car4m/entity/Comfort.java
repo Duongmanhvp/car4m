@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -20,4 +22,7 @@ public class Comfort {
 
     @Column(name = "name", nullable = false)
     String name;
+    
+    @OneToMany(mappedBy = "comfort")
+    Set<CarDetailComfort> carDetailComforts;
 }

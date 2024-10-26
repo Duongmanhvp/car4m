@@ -22,7 +22,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		
 		ApiResponse<?> apiResponse = ApiResponse.builder()
 				.success(false)
-				.message("Không có quyền truy cập")
+				.message(" Không có quyền truy cập")
 				.build();
 		
 		ObjectMapper objectMapper = new ObjectMapper();

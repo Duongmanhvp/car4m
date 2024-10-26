@@ -33,11 +33,15 @@ public class Car {
 
     @Column(name = "type", nullable = false)
     String type;
-
-    @Column(name = "location_id", nullable = false)
-    Long locationId;
+    
+    @OneToOne
+    @JoinColumn(name = "location_id")
+    Location location;
 
     @OneToOne
     @JoinColumn(name = "car_detail_id")
     CarDetail carDetail;
+    
+    @Column(name = "is_accepted", nullable = false)
+    Boolean isAccepted;
 }
