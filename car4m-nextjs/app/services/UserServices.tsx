@@ -8,6 +8,5 @@ const fetchCCCD = () => {
     return axios.get('/api/v1')
 }
 
-const updateUserInfo = () => {}
 
 export { fetchUserInfo }

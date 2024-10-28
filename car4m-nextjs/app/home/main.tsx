@@ -5,9 +5,9 @@ import type { NextPage } from 'next';
 const Page:NextPage = () => {
   	return (
     		<div className="w-full flex justify-center bg-whitesmoke h-[840px] overflow-hidden text-center text-[60px] text-darkslategray font-baloo-2">
-      			<div className="absolute  flex flex-col items-center justify-start gap-16">
-        				<div className="flex flex-col items-center justify-start font-baloo-2 p-2.5">
-          					<div className="w-[448px] relative leading-[130%] font-medium flex items-center justify-center h-[47px] shrink-0">Xe dành cho bạn</div>
+      			<div className="flex flex-col items-center justify-start gap-16">
+        				<div className="flex flex-col  items-center justify-start font-baloo-2 p-2.5">
+          					<div className="w-[448px] top-[30px] relative leading-[130%] font-medium flex items-center justify-center h-[47px] shrink-0">Xe dành cho bạn</div>
         				</div>
         				<div className="flex flex-row items-start justify-start gap-8 text-left text-base text-gray-300">
           					<div className="w-64 relative shadow-[0px_12px_24px_rgba(16,_76,_139,_0.16)] h-[405px]">

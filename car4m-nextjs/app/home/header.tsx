@@ -6,18 +6,25 @@ import { useEffect, useState } from 'react';
 import frame from '../assets/imgs/Frame.svg';
 import logo from '../assets/imgs/logo.png';
 import userIcon from '../assets/imgs/user-icon.svg';
+import { fetchUserInfo } from '../services/UserServices';
 
 const Header: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
+    const [userInfo, setUserInfo] = useState({
+        username: '',
+        dateOfBirth: '',
+        sex: '',
+        phone: '',
+        email: '',
+        imageURL: ''
+    })
     
     const accesstoken = localStorage.getItem('access_token');
     const validateToken = async () => {
-
-        
         if (!accesstoken) return false;
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auth/validate', {
+            const response = await fetch('http://localhost:8080/api/v1/auths/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +50,7 @@ const Header: NextPage = () => {
         if (!refreshToken) return;
 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auth/refresh', {
+            const response = await fetch('http://localhost:8080/api/v1/auths/refresh', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,16 +69,24 @@ const Header: NextPage = () => {
         } catch (error) {
             console.error('Refresh error:', error);
         }
-    };
+    }
+
+    const getUser = async () => {
+        let res = await fetchUserInfo()
+        if (res && res.data) {
+            setUser(res.data)
+            setUserInfo(res.data)
+        }
+    }
 
     useEffect(() => {
         validateToken();
-    }, []);
-
+        getUser()
+    }, [])
 
     return (
-        <div className="w-full flex justify-center relative bg-primary-0 border-lightsteelblue h-[123px] overflow-hidden text-left text-base text-darkslategray font-baloo-2">
-            <div className="absolute top-[40px] w-[1120px] flex flex-row items-center justify-between">
+        <div className="w-full flex justify-center relative bg-primary-0 border-lightsteelblue h-[100px] overflow-hidden text-left text-base text-darkslategray font-baloo-2">
+            <div className="relative w-[1120px] flex flex-row items-center justify-between">
                 <div className="flex flex-row items-center justify-start gap-2 text-center text-primary font-baloo">
                     <a href="/home" className="flex flex-row items-center justify-start gap-2 text-center text-primary font-baloo">
                         <Image className="w-12 relative h-[50] overflow-hidden shrink-0" alt="Logo" src={frame} />
@@ -85,13 +100,13 @@ const Header: NextPage = () => {
                 </div>
                 <div className="flex flex-row items-center justify-start gap-6">
                     {isLoggedIn ? (
-                        <a href='/profile' className="relative flex items-center gap-2 font-baloo-2">
+                        <a href='/profile' className="relative flex items-center gap-2 font-baloo-2 font-medium">
                             
-                                <Image className="w-8 h-8 object-cover" alt="User Icon" src={userIcon} />
-                                <span>{user?.name || 'Người dùng'}</span>
+                                <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={userIcon} />
+                                <span>{user?.username || 'Người dùng'}</span>
                             
                         </a>
-                    ) : (
+                    ):(
                         <>
                             <div className="relative leading-[150%] font-medium">
                                 <Link legacyBehavior href="/signin">
