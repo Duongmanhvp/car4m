@@ -3,6 +3,7 @@ package com.ptpm.car4m.service;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.PageResponse;
+import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.entity.Car;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,16 @@ public interface CarService {
 	
 	// OWNER API
 	CarResponse addCar(Jwt principal, CarCreationRequest request);
+	
+	PageResponse<CarResponse> getMyCars(int pageNo, int pageSize, Jwt principal);
+	
+	PageResponse<CarResponse> getMyLiked(int pageNo, int pageSize, Jwt principal);
+	
+	PageResponse<CarRentalResponse> getMyTrip(int pageNo, int pageSize, Jwt principal);
+	
+	void like(Jwt principal, long carId);
+	
+	CarResponse deleteCar(Jwt principal, long carId);
 	
 	// PUBLIC API
 	PageResponse<CarResponse> getAllCars(int pageNo, int pageSize);
@@ -32,4 +43,9 @@ public interface CarService {
 	
 	PageResponse<CarResponse> searchFilteredCar(int pageNo, int pageSize, CarSearchFilterRequest request);
 	
+	// ADMIN API
+	
+	void acceptCar(long carId);
+	
+	void rejectCar(long carId);
 }

@@ -5,6 +5,7 @@ import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.PageResponse;
+import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.entity.Car;
 import com.ptpm.car4m.service.CarService;
@@ -12,11 +13,10 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/cars")
@@ -32,6 +32,44 @@ public class CarController {
 		return ApiResponse.success(carService.addCar(principal,request));
 	}
 	
+	@GetMapping("/get-my-cars")
+	public ApiResponse<PageResponse<CarResponse>> getMyCars(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize,
+			@AuthenticationPrincipal Jwt principal) {
+		return ApiResponse.success(carService.getMyCars(pageNo, pageSize, principal));
+	}
+	
+	@GetMapping("/get-my-liked")
+	public ApiResponse<PageResponse<CarResponse>> getMyLiked(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize,
+			@AuthenticationPrincipal Jwt principal) {
+		return ApiResponse.success(carService.getMyLiked(pageNo, pageSize, principal));
+	}
+	
+	@GetMapping("/get-my-trip")
+	public ApiResponse<PageResponse<CarRentalResponse>> getMyTrip(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize,
+			@AuthenticationPrincipal Jwt principal) {
+		return ApiResponse.success(carService.getMyTrip(pageNo, pageSize, principal));
+	}
+	
+	@PostMapping("/like")
+	public ApiResponse<String> like(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		carService.like(principal, carId);
+		return ApiResponse.ok("Liked");
+	}
+	
+	@PostMapping("/delete")
+	public ApiResponse<CarResponse> deleteCar(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		return ApiResponse.success(carService.deleteCar(principal, carId));
+	}
 	
 	@GetMapping("/get-all")
 	public ApiResponse<PageResponse<CarResponse>> getAllCars(@RequestParam int pageNo, @RequestParam int pageSize) {
@@ -94,5 +132,19 @@ public class CarController {
 			@RequestParam int pageSize,
 			@Valid @RequestBody CarSearchFilterRequest request) {
 		return ApiResponse.success(carService.searchFilteredCar(pageNo, pageSize,request));
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/accept")
+	public ApiResponse<String> acceptCar(@RequestParam long carId) {
+		carService.acceptCar(carId);
+		return ApiResponse.ok("Accepted");
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/reject")
+	public ApiResponse<String> rejectCar(@RequestParam long carId) {
+		carService.rejectCar(carId);
+		return ApiResponse.ok("Rejected");
 	}
 }

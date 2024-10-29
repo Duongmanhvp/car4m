@@ -1,11 +1,12 @@
 package com.ptpm.car4m.dto.response.car;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ptpm.car4m.entity.Location;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -13,8 +14,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class CarResponse {
+public class CarRentalResponse {
 	
 	Long id;
 	
@@ -32,6 +32,10 @@ public class CarResponse {
 	
 	CarDetailResponse carDetail;
 	
-	Boolean isAccepted;
+	LocalDateTime rentalDate;
+	
+	LocalDateTime receiveDate;
+	
+	LocalDateTime returnDate;
 	
 }

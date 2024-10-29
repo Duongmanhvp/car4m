@@ -1,6 +1,7 @@
 package com.ptpm.car4m.repository;
 
 import com.ptpm.car4m.entity.Car;
+import com.ptpm.car4m.entity.User;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
 import com.ptpm.car4m.repository.query.CarRepoQuery;
@@ -31,4 +32,6 @@ public interface CarRepository extends JpaRepository<Car, Long> , CarRepoQuery {
 	Page<Car> findByIsAcceptedAndCarDetail_Transmission(boolean isAccepted, Transmission transmission, Pageable pageable);
 	
 	Page<Car> findByIsAcceptedAndTypeAndCarDetail_TransmissionAndCarDetail_Fuel(boolean isAccepted, String type, Transmission transmission, Fuel fuel, Pageable pageable);
+	
+	Page<Car> findByOwner(User owner, Pageable pageable);
 }

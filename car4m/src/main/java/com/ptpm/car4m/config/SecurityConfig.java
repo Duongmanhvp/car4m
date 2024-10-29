@@ -80,31 +80,7 @@ public class SecurityConfig {
 		return source;
 	}
 	
-	
-//	@Bean
-//	public CorsFilter corsFilter() {
-//		CorsConfiguration corsConfiguration = new CorsConfiguration();
-//
-//		corsConfiguration.addAllowedOrigin("*");
-//		corsConfiguration.addAllowedMethod("*");
-//		corsConfiguration.addAllowedHeader("*");
-//
-//		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-//		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-//
-//		return new CorsFilter(urlBasedCorsConfigurationSource);
-//	}
-	
-//	@Bean
-//	JwtDecoder jwtDecoder() {
-//		SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-//
-//		return NimbusJwtDecoder
-//				.withSecretKey(secretKeySpec)
-//				.macAlgorithm(MacAlgorithm.HS512)
-//				.build();
-//	}
-//
+	// Password encoder
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(10);

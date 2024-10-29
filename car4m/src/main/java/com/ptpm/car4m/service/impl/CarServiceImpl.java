@@ -5,11 +5,13 @@ import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarDetailResponse;
+import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
 import com.ptpm.car4m.entity.*;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
+import com.ptpm.car4m.exception.AlreadyExistsException;
 import com.ptpm.car4m.exception.NotFoundException;
 import com.ptpm.car4m.repository.*;
 import com.ptpm.car4m.service.CarService;
@@ -17,16 +19,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,8 @@ public class CarServiceImpl implements CarService {
 	final CarDetailRepository carDetailRepository;
 	final CarDetailComfortRepository carDetailComfortRepository;
 	final ComfortRepository comfortRepository;
+	final CarUserRepository carUserRepository;
+	final RentalRepository rentalRepository;
 	
 	final CacheManager cacheManager;
 	final OpenCageGeocoding openCageGeocoding;
@@ -209,6 +212,159 @@ public class CarServiceImpl implements CarService {
 				.build();
 	}
 	
+	@Override
+	public PageResponse<CarResponse> getMyCars(int pageNo, int pageSize, Jwt principal) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Page<Car> carPage = carRepository.findByOwner(user, pageable);
+		
+		return getCarResponsePageResponse(pageNo, pageSize, carPage.getTotalElements(), carPage.getContent());
+		
+	}
+	
+	@Override
+	public PageResponse<CarResponse> getMyLiked(int pageNo, int pageSize, Jwt principal) {
+		
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Page<CarUser> carPage = carUserRepository.findByUserId(userId, pageable);
+		
+		return PageResponse.<CarResponse>builder()
+				.pageNo(pageNo)
+				.pageSize(pageSize)
+				.totalElements(carPage.getTotalElements())
+				.totalPages(carPage.getTotalPages())
+				.last(carPage.isLast())
+				.content(carPage.getContent().stream().map(
+						carUser -> CarResponse.builder()
+								.id(carUser.getCar().getId())
+								.userId(carUser.getCar().getOwner().getId())
+								.name(carUser.getCar().getName())
+								.rentalFee(carUser.getCar().getRentalFee())
+								.status(carUser.getCar().getStatus())
+								.type(carUser.getCar().getType())
+								.location(carUser.getCar().getLocation())
+								.isAccepted(carUser.getCar().getIsAccepted())
+								.carDetail(CarDetailResponse.builder()
+										.transmission(carUser.getCar().getCarDetail().getTransmission())
+										.fuel(carUser.getCar().getCarDetail().getFuel())
+										.seats(carUser.getCar().getCarDetail().getSeats())
+										.fuelConsumption(carUser.getCar().getCarDetail().getFuelConsumption())
+										.description(carUser.getCar().getCarDetail().getDescription())
+										.comforts(carUser.getCar().getCarDetail().getCarDetailComforts().stream()
+												.map(carDetailComfort -> carDetailComfort.getComfort().getName())
+												.collect(Collectors.toSet()))
+										.build())
+								.build()
+				).toList())
+				.build();
+	}
+	
+	@Override
+	public PageResponse<CarRentalResponse> getMyTrip(int pageNo, int pageSize, Jwt principal) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Long userId = principal.getClaim("id");
+		
+		Page<Rental> rentalPage = rentalRepository.findByUserId(userId, pageable);
+		
+		return PageResponse.<CarRentalResponse>builder()
+				.pageNo(pageNo)
+				.pageSize(pageSize)
+				.totalElements(rentalPage.getTotalElements())
+				.totalPages(rentalPage.getTotalPages())
+				.last(rentalPage.isLast())
+				.content(rentalPage.getContent().stream().map(
+						rental -> CarRentalResponse.builder()
+								.id(rental.getId())
+								.userId(rental.getUser().getId())
+								.name(rental.getCar().getName())
+								.rentalFee(rental.getCar().getRentalFee())
+								.status(rental.getCar().getStatus())
+								.type(rental.getCar().getType())
+								.location(rental.getCar().getLocation())
+								.carDetail(CarDetailResponse.builder()
+										.transmission(rental.getCar().getCarDetail().getTransmission())
+										.fuel(rental.getCar().getCarDetail().getFuel())
+										.seats(rental.getCar().getCarDetail().getSeats())
+										.fuelConsumption(rental.getCar().getCarDetail().getFuelConsumption())
+										.description(rental.getCar().getCarDetail().getDescription())
+										.comforts(rental.getCar().getCarDetail().getCarDetailComforts().stream()
+												.map(carDetailComfort -> carDetailComfort.getComfort().getName())
+												.collect(Collectors.toSet()))
+										.build()
+								)
+								.rentalDate(rental.getRentalDate())
+								.receiveDate(rental.getReceiveDate())
+								.returnDate(rental.getReturnDate())
+								.build()
+				).toList())
+				.build();
+		
+	}
+	
+	@Override
+	public void like(Jwt principal, long carId) {
+		
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId).orElseThrow(
+				() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		if (carUserRepository.existsByCarAndUser(car, user)) {
+			throw new AlreadyExistsException("Bạn đã thích xe này rồi");
+		}
+		
+		carUserRepository.save(CarUser.builder()
+				.car(car)
+				.user(user)
+				.build());
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public CarResponse deleteCar(Jwt principal, long carId) {
+		
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		carRepository.delete(car);
+		
+		return CarResponse.builder()
+				.id(car.getId())
+				.userId(user.getId())
+				.name(car.getName())
+				.rentalFee(car.getRentalFee())
+				.status(car.getStatus())
+				.type(car.getType())
+				.location(car.getLocation())
+				.carDetail(CarDetailResponse.builder().
+						transmission(car.getCarDetail().getTransmission())
+						.fuel(car.getCarDetail().getFuel())
+						.seats(car.getCarDetail().getSeats())
+						.fuelConsumption(car.getCarDetail().getFuelConsumption())
+						.description(car.getCarDetail().getDescription())
+						.comforts(car.getCarDetail().getCarDetailComforts().stream()
+								.map(carDetailComfort -> carDetailComfort.getComfort().getName())
+								.collect(Collectors.toSet()))
+						.build())
+				.build();
+	}
 	
 	@Override
 	public PageResponse<CarResponse> getAllCars(int pageNo, int pageSize) {
@@ -314,6 +470,29 @@ public class CarServiceImpl implements CarService {
 		return getCarResponsePageResponse(pageNo, pageSize, carPage.size(), carPage);
 	}
 	
+	@Override
+	public void acceptCar(long carId) {
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		car.setIsAccepted(true);
+		
+		carRepository.save(car);
+	}
+	
+	@Override
+	public void rejectCar(long carId) {
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		car.setIsAccepted(false);
+		
+		carRepository.delete(car);
+		
+		
+	}
 	
 	private PageResponse<CarResponse> getCarResponsePageResponse(int pageNo, int pageSize, long total, List<Car> cars) {
 		int totalPages = (int) Math.ceil((double) total / pageSize);

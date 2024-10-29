@@ -17,12 +17,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 			HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
 			throws IOException, ServletException {
 		
-		response.setStatus(401);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		ApiResponse<?> apiResponse = ApiResponse.builder()
 				.success(false)
-				.message(" Không có quyền truy cập")
+				.message("Unauthorized")
 				.build();
 		
 		ObjectMapper objectMapper = new ObjectMapper();
