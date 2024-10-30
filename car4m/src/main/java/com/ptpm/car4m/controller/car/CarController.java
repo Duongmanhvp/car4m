@@ -7,7 +7,6 @@ import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
-import com.ptpm.car4m.entity.Car;
 import com.ptpm.car4m.service.CarService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -136,15 +135,14 @@ public class CarController {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/accept")
-	public ApiResponse<String> acceptCar(@RequestParam long carId) {
-		carService.acceptCar(carId);
-		return ApiResponse.ok("Accepted");
+	public ApiResponse<CarResponse> acceptCar(@RequestParam long carId) {
+		
+		return ApiResponse.success(carService.acceptCar(carId));
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/reject")
-	public ApiResponse<String> rejectCar(@RequestParam long carId) {
-		carService.rejectCar(carId);
-		return ApiResponse.ok("Rejected");
+	public ApiResponse<CarResponse> rejectCar(@RequestParam long carId) {
+		return ApiResponse.success(carService.rejectCar(carId));
 	}
 }

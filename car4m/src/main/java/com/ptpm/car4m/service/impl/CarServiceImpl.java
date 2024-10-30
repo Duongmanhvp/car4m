@@ -471,18 +471,24 @@ public class CarServiceImpl implements CarService {
 	}
 	
 	@Override
-	public void acceptCar(long carId) {
+	public CarResponse acceptCar(long carId) {
 		
 		Car car = carRepository.findById(carId)
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
 		
+		if (car.getIsAccepted()) {
+			throw new AlreadyExistsException("Xe đã được chấp nhận");
+		}
+		
 		car.setIsAccepted(true);
 		
 		carRepository.save(car);
+		
+		return getCarResponse(car);
 	}
 	
 	@Override
-	public void rejectCar(long carId) {
+	public CarResponse rejectCar(long carId) {
 		
 		Car car = carRepository.findById(carId)
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
@@ -491,7 +497,30 @@ public class CarServiceImpl implements CarService {
 		
 		carRepository.delete(car);
 		
-		
+		return getCarResponse(car);
+	}
+	
+	private CarResponse getCarResponse(Car car) {
+		return CarResponse.builder()
+				.id(car.getId())
+				.userId(car.getOwner().getId())
+				.name(car.getName())
+				.rentalFee(car.getRentalFee())
+				.status(car.getStatus())
+				.type(car.getType())
+				.location(car.getLocation())
+				.isAccepted(car.getIsAccepted())
+				.carDetail(CarDetailResponse.builder()
+						.transmission(car.getCarDetail().getTransmission())
+						.fuel(car.getCarDetail().getFuel())
+						.seats(car.getCarDetail().getSeats())
+						.fuelConsumption(car.getCarDetail().getFuelConsumption())
+						.description(car.getCarDetail().getDescription())
+						.comforts(car.getCarDetail().getCarDetailComforts().stream()
+								.map(carDetailComfort -> carDetailComfort.getComfort().getName())
+								.collect(Collectors.toSet()))
+						.build())
+				.build();
 	}
 	
 	private PageResponse<CarResponse> getCarResponsePageResponse(int pageNo, int pageSize, long total, List<Car> cars) {

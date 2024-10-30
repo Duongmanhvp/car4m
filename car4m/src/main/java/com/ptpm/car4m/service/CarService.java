@@ -45,7 +45,7 @@ public interface CarService {
 	
 	// ADMIN API
 	
-	void acceptCar(long carId);
+	CarResponse acceptCar(long carId);
 	
-	void rejectCar(long carId);
+	CarResponse rejectCar(long carId);
 }
