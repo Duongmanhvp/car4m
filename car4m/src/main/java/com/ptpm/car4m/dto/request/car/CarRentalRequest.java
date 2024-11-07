@@ -1,13 +1,16 @@
-package com.ptpm.car4m.dto.response.car;
+package com.ptpm.car4m.dto.request.car;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.ptpm.car4m.entity.Location;
-import com.ptpm.car4m.enums.CarStatus;
+import com.ptpm.car4m.enums.Fuel;
+import com.ptpm.car4m.enums.Transmission;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -15,32 +18,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CarRentalResponse {
-	
-	Long id;
-	
-	Long userId;
-	
-	String name;
-	
-	Long rentalFee;
-	
-	CarStatus status;
-	
-	String type;
-	
-	Location location;
-	
-	CarDetailResponse carDetail;
-	
-	LocalDateTime rentalDate;
+public class CarRentalRequest {
+
+	Long carId;
 	
 	LocalDateTime receiveDate;
 	
 	LocalDateTime returnDate;
-	
-	Integer totalHours;
-	
-	Long totalFee;
 	
 }

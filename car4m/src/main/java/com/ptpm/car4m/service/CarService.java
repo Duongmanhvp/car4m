@@ -1,6 +1,7 @@
 package com.ptpm.car4m.service;
 
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
+import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
@@ -25,6 +26,8 @@ public interface CarService {
 	void like(Jwt principal, long carId);
 	
 	CarResponse deleteCar(Jwt principal, long carId);
+	
+	CarRentalResponse rentCar(Jwt principal, CarRentalRequest request);
 	
 	// PUBLIC API
 	PageResponse<CarResponse> getAllCars(int pageNo, int pageSize);

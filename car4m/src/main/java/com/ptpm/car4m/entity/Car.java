@@ -1,5 +1,6 @@
 package com.ptpm.car4m.entity;
 
+import com.ptpm.car4m.enums.CarStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,7 +30,8 @@ public class Car {
     Long rentalFee;
 
     @Column(name = "status", nullable = false)
-    String status;
+    @Enumerated(EnumType.STRING)
+    CarStatus status;
 
     @Column(name = "type", nullable = false)
     String type;

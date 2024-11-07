@@ -2,6 +2,7 @@ package com.ptpm.car4m.controller.car;
 
 
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
+import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.PageResponse;
@@ -68,6 +69,13 @@ public class CarController {
 			@AuthenticationPrincipal Jwt principal,
 			@RequestParam long carId) {
 		return ApiResponse.success(carService.deleteCar(principal, carId));
+	}
+	
+	@PostMapping("/rent")
+	public ApiResponse<CarRentalResponse> rentCar(
+			@AuthenticationPrincipal Jwt principal,
+			@Valid @RequestBody CarRentalRequest request) {
+		return ApiResponse.success(carService.rentCar(principal, request));
 	}
 	
 	@GetMapping("/get-all")

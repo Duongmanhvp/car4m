@@ -2,6 +2,7 @@ package com.ptpm.car4m.service.impl;
 
 import com.ptpm.car4m.component.OpenCageGeocoding;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
+import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarDetailResponse;
@@ -9,6 +10,7 @@ import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
 import com.ptpm.car4m.entity.*;
+import com.ptpm.car4m.enums.CarStatus;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
 import com.ptpm.car4m.exception.AlreadyExistsException;
@@ -19,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,85 +49,7 @@ public class CarServiceImpl implements CarService {
 	final CarUserRepository carUserRepository;
 	final RentalRepository rentalRepository;
 	
-	final CacheManager cacheManager;
 	final OpenCageGeocoding openCageGeocoding;
-
-//	@Override
-//	public CarResponse addCar(Jwt principal, CarCreationRequest request) {
-//
-//		String username = principal.getSubject();
-//
-//		User user = userRepository.findByUsername(username)
-//				.orElseThrow(() -> new NotFoundException("User not found"));
-//
-//		Car car = new Car();
-//
-//		GeoLocationResponse geoLocationResponse = openCageGeocoding.getGeoLocation(request.getLocation());
-//
-//		Location location = new Location();
-//		location.setLatitude(geoLocationResponse.getLatitude());
-//		location.setLongitude(geoLocationResponse.getLongitude());
-//		locationRepository.save(location);
-//
-//		car.setOwner(user);
-//		car.setName(request.getName());
-//		car.setRentalFee(request.getRentalFee());
-//		car.setStatus("AVAILABLE");
-//		car.setType(request.getType());
-//		car.setLocation(location);
-//		car.setIsAccepted(false);
-//
-//		CarDetail carDetail = new CarDetail();
-//		carDetail.setTransmission(request.getTransmission());
-//		carDetail.setFuel(request.getFuel());
-//		carDetail.setSeats(request.getSeats());
-//		carDetail.setFuelConsumption(request.getFuelConsumption());
-//		carDetail.setDescription(request.getDescription());
-//		carDetail.setImages(String.join(",", request.getImages()));
-//		carDetailRepository.save(carDetail);
-//
-//		Set<CarDetailComfort> carDetailComforts = new HashSet<>();
-//		for (Integer comfortId : request.getComfortIds()) {
-//			Comfort comfort = comfortRepository.findById(comfortId)
-//					.orElseThrow(() -> new NotFoundException("Comfort not found with id: " + comfortId));
-//			CarDetailComfort carDetailComfort = new CarDetailComfort();
-//			carDetailComfort.setCarDetail(carDetail);
-//			carDetailComfort.setComfort(comfort);
-//			carDetailComfortRepository.save(carDetailComfort);
-//			carDetailComforts.add(carDetailComfort);
-//		}
-//		carDetail.setCarDetailComforts(carDetailComforts);
-//
-//		carDetailRepository.save(carDetail);
-//
-//		car.setCarDetail(carDetail);
-//
-//		carRepository.save(car);
-//
-//		CarDetailResponse carDetailResponse = CarDetailResponse.builder()
-//				.transmission(carDetail.getTransmission())
-//				.fuel(carDetail.getFuel())
-//				.seats(carDetail.getSeats())
-//				.fuelConsumption(carDetail.getFuelConsumption())
-//				.description(carDetail.getDescription())
-//				.comforts(carDetail.getCarDetailComforts().stream()
-//						.map(carDetailComfort -> carDetailComfort.getComfort().getName())
-//						.collect(Collectors.toSet()))
-//				.images(carDetail.getImages())
-//				.build();
-//
-//		return CarResponse.builder()
-//				.id(car.getId())
-//				.userId(user.getId())
-//				.name(car.getName())
-//				.rentalFee(car.getRentalFee())
-//				.status(car.getStatus())
-//				.type(car.getType())
-//				.location(location)
-//				.carDetail(carDetailResponse)
-//				.isAccepted(car.getIsAccepted())
-//				.build();
-//	}
 	
 	@Override
 	public CarResponse addCar(Jwt principal, CarCreationRequest request) {
@@ -148,7 +73,7 @@ public class CarServiceImpl implements CarService {
 		car.setOwner(user);
 		car.setName(request.getName());
 		car.setRentalFee(request.getRentalFee());
-		car.setStatus("AVAILABLE");
+		car.setStatus(CarStatus.AVAILABLE);
 		car.setType(request.getType());
 		car.setLocation(location);
 		car.setIsAccepted(false);
@@ -367,15 +292,72 @@ public class CarServiceImpl implements CarService {
 	}
 	
 	@Override
+	public CarRentalResponse rentCar(Jwt principal, CarRentalRequest request) {
+		
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(request.getCarId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + request.getCarId()));
+		
+		if (!car.getIsAccepted()) {
+			throw new NotFoundException("Xe chưa được chấp nhận");
+		}
+		
+		if (car.getStatus().equals(CarStatus.BUSY)) {
+			throw new NotFoundException("Xe không còn trống");
+		}
+		
+		int totalHours = (int) ((Duration.between(request.getReceiveDate(), request.getReturnDate()).toMinutes()) / 60.0);
+		
+		long totalFee = totalHours * car.getRentalFee();
+		
+		Rental rental = Rental.builder()
+				.user(user)
+				.car(car)
+				.rentalDate(LocalDateTime.now())
+				.receiveDate(request.getReceiveDate())
+				.returnDate(request.getReturnDate())
+				.build();
+		
+		rentalRepository.save(rental);
+		
+		car.setStatus(CarStatus.BUSY);
+		
+		carRepository.save(car);
+		
+		return CarRentalResponse.builder()
+				.id(rental.getId())
+				.userId(rental.getUser().getId())
+				.name(rental.getCar().getName())
+				.rentalFee(rental.getCar().getRentalFee())
+				.status(rental.getCar().getStatus())
+				.type(rental.getCar().getType())
+				.location(rental.getCar().getLocation())
+				.carDetail(CarDetailResponse.builder()
+						.transmission(rental.getCar().getCarDetail().getTransmission())
+						.fuel(rental.getCar().getCarDetail().getFuel())
+						.seats(rental.getCar().getCarDetail().getSeats())
+						.fuelConsumption(rental.getCar().getCarDetail().getFuelConsumption())
+						.description(rental.getCar().getCarDetail().getDescription())
+						.comforts(rental.getCar().getCarDetail().getCarDetailComforts().stream()
+								.map(carDetailComfort -> carDetailComfort.getComfort().getName())
+								.collect(Collectors.toSet()))
+						.build())
+				.rentalDate(rental.getRentalDate())
+				.receiveDate(rental.getReceiveDate())
+				.returnDate(rental.getReturnDate())
+				.totalHours(totalHours)
+				.totalFee(totalFee)
+				.build();
+	}
+	
+	@Override
 	public PageResponse<CarResponse> getAllCars(int pageNo, int pageSize) {
 		
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
-//
-//		long total = carRepository.countByIsAccepted(true);
-//
-//		List<Car> cars = carRepository.getAllByIsAccepted(false, pageable);
-//
-//		return getCarResponsePageResponse(pageNo, pageSize, total, cars);
 		
 		Page<Car> carPage = carRepository.findByIsAccepted(true, pageable);
 		
@@ -399,12 +381,6 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public PageResponse<CarResponse> searchCarByType(int pageNo, int pageSize, String type) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
-
-//		long total = carRepository.countByIsAcceptedAndType(true, type);
-
-//		List<Car> cars = carRepository.getAllByIsAcceptedAndType(true, type, pageable);
-
-//		return getCarResponsePageResponse(pageNo, pageSize, total, cars);
 		
 		Page<Car> carPage = carRepository.findByIsAcceptedAndType(true, type, pageable);
 		
