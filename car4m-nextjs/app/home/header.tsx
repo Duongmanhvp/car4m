@@ -11,14 +11,6 @@ import { fetchUserInfo } from '../services/UserServices';
 const Header: NextPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
-    const [userInfo, setUserInfo] = useState({
-        username: '',
-        dateOfBirth: '',
-        sex: '',
-        phone: '',
-        email: '',
-        imageURL: ''
-    })
     
     const accesstoken = localStorage.getItem('access_token');
     const validateToken = async () => {
@@ -75,12 +67,11 @@ const Header: NextPage = () => {
         let res = await fetchUserInfo()
         if (res && res.data) {
             setUser(res.data)
-            setUserInfo(res.data)
         }
     }
 
     useEffect(() => {
-        validateToken();
+        validateToken()
         getUser()
     }, [])
 

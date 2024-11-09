@@ -6,53 +6,39 @@ import Image from 'next/image';
 import edit from '../assets/imgs/edit-2.svg'
 import axios from '../services/api';
 import { fetchUserInfo } from '../services/UserServices';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera } from 'react-icons/fa'
+import userIcon from "../assets/imgs/user-icon.svg"
 
 const FrameInfo: NextPage = () => {
-
-    const getUser = async () => {
-        let res = await fetchUserInfo()
-        if (res && res.data) {
-            setUserInfo(res.data)
-            setCCCDInfo(res.data.identity_card)
-            setLicenseInfo(res.data.driving_license)
-        }
-    }
-
-    useEffect(() => {
-        getUser()
-    }, [])
-
     const [isEditingAccount, setIsEditingAccount] = useState(false);
     const [userInfo, setUserInfo] = useState({
         username: '',
-        dateOfBirth: '',
+        date_of_birth: '',
         sex: '',
         phone: '',
         email: '',
-        imageURL: ''
+        image: ""
     })
-
+    //console.log(userInfo) 
     const [isEditingCCCD, setIsEditingCCCD] = useState(false);
     const [cccdInfo, setCCCDInfo] = useState({
-        nationality: 'Viet Nam',
-        no: '020334045023434',
-        fullName: 'Trần Bá Toản',
-        sex: 'Nam',
-        dateOfBirth: '29/07/2003',
-        imageURL: ''
+        nationality: '',
+        no: '',
+        fullName: '',
+        sex: '',
+        dateOfBirth: '',
+        imageUrl: ""
     })
 
     // State cho thông tin giấy phép lái xe
     const [isEditingLicense, setIsEditingLicense] = useState(false);
     const [licenseInfo, setLicenseInfo] = useState({
-        no: '020334045023434',
-        fullName: 'Trần Bá Toản',
-        birthDate: '29/07/2003',
-        licenseClass: 'A1',
-        imageURL: ''
+        no: '',
+        full_name: '',
+        date_of_birth: '',
+        licenseClass: '',
+        imageUrl: ""
     })
-
     const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
     }
@@ -87,11 +73,11 @@ const FrameInfo: NextPage = () => {
         if (!isEditingCCCD) return
         axios.post('/api/v1/users/update-identity-card', {
             no: cccdInfo.no,
-            fullName: cccdInfo.fullName,
+            full_name: cccdInfo.fullName,
             sex: cccdInfo.sex,
             nationality: cccdInfo.nationality,
-            dateOfBirth: cccdInfo.dateOfBirth,
-            imageUrl: cccdInfo.imageURL
+            date_of_birth: cccdInfo.dateOfBirth,
+            image_url: cccdInfo.imageUrl
         })
             .then((response) => {
                 if (response != null) {
@@ -109,7 +95,8 @@ const FrameInfo: NextPage = () => {
         if (!isEditingLicense) return;
         axios.post('/api/v1/users/update-driving-license', {
             no: licenseInfo.no,
-            licenseClass: licenseInfo.licenseClass
+            license_class: licenseInfo.licenseClass,
+            image_url: licenseInfo.imageUrl
         })
             .then((response) => {
                 if (response != null) {
@@ -148,7 +135,7 @@ const FrameInfo: NextPage = () => {
             body.append('file', file);
             try {
                 const response = await axios.post('/api/v1/images/', body);
-                setUserInfo({ ...userInfo, imageURL: response.data });
+                setUserInfo({ ...userInfo, image: response.data });
             } catch (error) {
                 console.error('Lỗi khi tải ảnh:', error);
             }
@@ -163,7 +150,7 @@ const FrameInfo: NextPage = () => {
             body.append('file', file);
             try {
                 const response = await axios.post('/api/v1/images/', body);
-                setCCCDInfo({ ...cccdInfo, imageURL: response.data });
+                setCCCDInfo({ ...cccdInfo, imageUrl: response.data });
             } catch (error) {
                 console.error('Lỗi khi tải ảnh:', error);
             }
@@ -178,12 +165,29 @@ const FrameInfo: NextPage = () => {
             body.append('file', file);
             try {
                 const response = await axios.post('/api/v1/images/', body);
-                setLicenseInfo({ ...licenseInfo, imageURL: response.data });
+                setLicenseInfo({ ...licenseInfo, imageUrl: response.data });
             } catch (error) {
                 console.error('Lỗi khi tải ảnh:', error);
             }
         }
     };
+
+    const getUser = async () => {
+        let res = await fetchUserInfo()
+        if (res && res.data) {
+            //console.log(res)
+            setUserInfo(res.data)
+            if (res.data.identity_card)  
+                setCCCDInfo(res.data.identity_card)
+            if (res.data.driving_license)
+                setLicenseInfo(res.data.driving_license)
+        }
+    }
+
+    useEffect(() => {
+        getUser()
+    }, [])
+    
 
     return (
         <div className="w-full relative h-[1060px] text-left text-xl text-darkslategray font-baloo-2">
@@ -205,7 +209,7 @@ const FrameInfo: NextPage = () => {
                     <div className="w-[140px] absolute !m-[0] top-[70px] left-[60px] h-[218px] z-[1] text-center text-[25px]">
                         {isEditingAccount
                             ? (
-                                <div onClick={handleClick} className='cursor-pointer absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover
+                                <div onClick={handleClick} className='cursor-pointer absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover 
                                                                         hover:bg-smoke transition-all duration-300'>
                                     <input
                                         type="file"
@@ -231,7 +235,7 @@ const FrameInfo: NextPage = () => {
 
                                 </div>)
                             : (
-                            (userInfo.imageURL == '') ? <Image className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.imageURL} /> : <></>
+                             <Image width={339} height={211} className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.image ? userInfo.image : userIcon} /> 
                             )
                         }
 
@@ -251,12 +255,12 @@ const FrameInfo: NextPage = () => {
                             <input
                                 type="date"
                                 name="birthDate"
-                                value={userInfo.dateOfBirth}
+                                value={userInfo.date_of_birth}
                                 onChange={handleAccountChange}
                                 className="relative text-xl text-black"
                             />
                         ) : (
-                            <div className="relative text-xl text-black">{userInfo.dateOfBirth}</div>
+                            <div className="relative text-xl text-black">{userInfo.date_of_birth}</div>
                         )}
                     </div>
                     <div className="self-stretch h-[26px] flex flex-row items-center justify-between">
@@ -322,8 +326,7 @@ const FrameInfo: NextPage = () => {
                                 {imageSrc1 && (
                                     <div>
                                         <Image
-                                            width={339}
-                                            height={211}
+                                            width={339} height={211}
                                             className="relative max-w-full overflow-hidden h-[181px] shrink-0 object-cover"
                                             src={imageSrc1}
                                             alt="Uploaded preview"
@@ -333,7 +336,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                          (cccdInfo.imageURL == '') ? <Image className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={cccdInfo.imageURL} /> : <></>
+                          !cccdInfo.imageUrl ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={cccdInfo.imageUrl} /> 
                         )
                     }
                 </div>
@@ -345,7 +348,7 @@ const FrameInfo: NextPage = () => {
                                 <input
                                     type="text"
                                     name="cccd"
-                                    value={cccdInfo.no}
+                                    // value={cccdInfo.no}
                                     onChange={handleCCCDChange}
                                     className="relative text-xl text-black"
                                 />
@@ -458,7 +461,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                         (licenseInfo.imageURL == '') ?  <Image className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={licenseInfo.imageURL} /> : <></> 
+                         (!licenseInfo.imageUrl) ? <></> :  <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={licenseInfo.imageUrl} />  
                         )
                     }
                 </div>

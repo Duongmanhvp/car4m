@@ -66,6 +66,7 @@ const Frame: NextPage = () => {
                 
                 let src = `/home?user=${data.data.id}`
                 // window.location.href = src
+                router.push('/signin')
                 console.log(data);
             } else {
                 const errorData = await response.json();

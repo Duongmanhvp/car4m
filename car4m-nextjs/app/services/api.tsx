@@ -1,7 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
+import qs from 'qs'
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  paramsSerializer: (params) => {
+    // Sử dụng `qs.stringify` với `encode: false` để giữ nguyên chuỗi mà không bị decode
+    return qs.stringify(params, { encode: false });
+  },
 })
 
 instance.interceptors.request.use(

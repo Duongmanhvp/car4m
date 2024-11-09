@@ -47,6 +47,8 @@ const  Frame: NextPage = () => {
 
                     let src = `/home?user=${data.id}`
                     window.location.href = src
+                    //router.push('/home')
+                    
                 }
             })
             .catch((error) => {
