@@ -10,6 +10,7 @@ import com.ptpm.car4m.entity.Car;
 import org.springframework.data.domain.Page;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CarService {
@@ -30,6 +31,8 @@ public interface CarService {
 	CarRentalResponse rentCar(Jwt principal, CarRentalRequest request);
 	
 	// PUBLIC API
+	List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate);
+	
 	PageResponse<CarResponse> getAllCars(int pageNo, int pageSize);
 	
 	PageResponse<CarResponse> searchCarByLocation(int pageNo, int pageSize, double radius, String location);

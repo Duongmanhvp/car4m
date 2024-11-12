@@ -208,7 +208,7 @@ public class CarServiceImpl implements CarService {
 				.last(rentalPage.isLast())
 				.content(rentalPage.getContent().stream().map(
 						rental -> CarRentalResponse.builder()
-								.id(rental.getId())
+								.rentalId(rental.getId())
 								.userId(rental.getUser().getId())
 								.name(rental.getCar().getName())
 								.rentalFee(rental.getCar().getRentalFee())
@@ -302,12 +302,21 @@ public class CarServiceImpl implements CarService {
 		Car car = carRepository.findById(request.getCarId())
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + request.getCarId()));
 		
+		
 		if (!car.getIsAccepted()) {
 			throw new NotFoundException("Xe chưa được chấp nhận");
 		}
 		
 		if (car.getStatus().equals(CarStatus.BUSY)) {
 			throw new NotFoundException("Xe không còn trống");
+		}
+		
+		// Check if there is an existing rental for the car within the specified time range
+		boolean hasConflict = rentalRepository.existsByCarIdAndReceiveDateBetweenOrReturnDateBetween(
+				request.getCarId(), request.getReceiveDate(), request.getReturnDate(), request.getReceiveDate(), request.getReturnDate());
+		
+		if (hasConflict) {
+			throw new AlreadyExistsException("Xe đã được đặt trong khoảng thời gian này");
 		}
 		
 		int totalHours = (int) ((Duration.between(request.getReceiveDate(), request.getReturnDate()).toMinutes()) / 60.0);
@@ -324,12 +333,13 @@ public class CarServiceImpl implements CarService {
 		
 		rentalRepository.save(rental);
 		
-		car.setStatus(CarStatus.BUSY);
-		
-		carRepository.save(car);
+//		car.setStatus(CarStatus.BUSY);
+//
+//		carRepository.save(car);
 		
 		return CarRentalResponse.builder()
-				.id(rental.getId())
+				.rentalId(rental.getId())
+				.carId(rental.getCar().getId())
 				.userId(rental.getUser().getId())
 				.name(rental.getCar().getName())
 				.rentalFee(rental.getCar().getRentalFee())
@@ -353,6 +363,21 @@ public class CarServiceImpl implements CarService {
 				.totalFee(totalFee)
 				.build();
 	}
+	
+	@Override
+	public List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate) {
+		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateBetweenOrReturnDateBetween(
+				carId, startDate, endDate, startDate, endDate);
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.rentalId(rental.getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.build()
+		).toList();
+	}
+	
 	
 	@Override
 	public PageResponse<CarResponse> getAllCars(int pageNo, int pageSize) {

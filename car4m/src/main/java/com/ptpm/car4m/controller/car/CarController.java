@@ -8,6 +8,8 @@ import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
+import com.ptpm.car4m.enums.Fuel;
+import com.ptpm.car4m.enums.Transmission;
 import com.ptpm.car4m.service.CarService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -17,6 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/cars")
@@ -78,8 +83,18 @@ public class CarController {
 		return ApiResponse.success(carService.rentCar(principal, request));
 	}
 	
+	@GetMapping("/get-rental-between")
+	public ApiResponse<List<CarRentalResponse>> getRentalBetween(
+			@RequestParam long carId,
+			@RequestParam LocalDateTime startDate,
+			@RequestParam LocalDateTime endDate) {
+		return ApiResponse.success(carService.getRentalBetween(carId, startDate, endDate));
+	}
+	
 	@GetMapping("/get-all")
-	public ApiResponse<PageResponse<CarResponse>> getAllCars(@RequestParam int pageNo, @RequestParam int pageSize) {
+	public ApiResponse<PageResponse<CarResponse>> getAllCars(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize) {
 		return ApiResponse.success(carService.getAllCars(pageNo, pageSize));
 	}
 	
@@ -137,7 +152,24 @@ public class CarController {
 	public ApiResponse<PageResponse<CarResponse>> getAllCarsByFilter(
 			@RequestParam int pageNo,
 			@RequestParam int pageSize,
-			@Valid @RequestBody CarSearchFilterRequest request) {
+			@RequestParam String type,
+			@RequestParam String fuel,
+			@RequestParam long minPrice,
+			@RequestParam long maxPrice,
+			@RequestParam int seats,
+			@RequestParam String transmission,
+			@RequestParam String location,
+			@RequestParam double radius) {
+		CarSearchFilterRequest request = CarSearchFilterRequest.builder()
+				.type(type)
+				.fuel(Fuel.valueOf(fuel))
+				.minPrice(minPrice)
+				.maxPrice(maxPrice)
+				.seats(seats)
+				.transmission(Transmission.valueOf(transmission))
+				.location(location)
+				.radius(radius)
+				.build();
 		return ApiResponse.success(carService.searchFilteredCar(pageNo, pageSize,request));
 	}
 	

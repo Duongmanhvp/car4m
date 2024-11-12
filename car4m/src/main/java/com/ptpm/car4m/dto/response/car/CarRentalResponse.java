@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CarRentalResponse {
 	
-	Long id;
+	Long carId;
+	
+	Long rentalId;
 	
 	Long userId;
 	
