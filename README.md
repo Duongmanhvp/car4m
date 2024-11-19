@@ -23,3 +23,5 @@
 - Thống kê và báo cáo: Xem báo cáo tổng hợp về doanh thu, số lượng đặt xe, đánh giá, và hiệu suất xe.
 
 [Figma](https://www.figma.com/design/WjlgAo6jHbAWfdPo4R42Hp/car4m?node-id=0-1&node-type=canvas&t=RwrUsqDJTdLdsnCe-0)
+
+[Docs] (https://docs.google.com/document/d/1-kXIOYoVBnvDRh2vJkiANCDOlNc3AISp8YHAJ44q5vY/edit?usp=sharing)
