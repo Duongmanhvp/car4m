@@ -173,6 +173,11 @@ public class CarController {
 		return ApiResponse.success(carService.searchFilteredCar(pageNo, pageSize,request));
 	}
 	
+	@GetMapping("/get")
+	public ApiResponse<CarResponse> getCarById(@RequestParam long id) {
+		return ApiResponse.success(carService.getCarById(id));
+	}
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/accept")
 	public ApiResponse<CarResponse> acceptCar(@RequestParam long carId) {

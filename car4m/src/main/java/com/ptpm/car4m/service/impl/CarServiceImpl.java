@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -472,6 +473,19 @@ public class CarServiceImpl implements CarService {
 	}
 	
 	@Override
+	public CarResponse getCarById(long carId) {
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		if (!car.getIsAccepted()) {
+			throw new AccessDeniedException("Xe chưa được chấp nhận. Bạn không có quyền xem");
+		}
+		
+		return getCarResponse(car);
+	}
+	
+	@Override
 	public CarResponse acceptCar(long carId) {
 		
 		Car car = carRepository.findById(carId)
@@ -520,6 +534,7 @@ public class CarServiceImpl implements CarService {
 						.comforts(car.getCarDetail().getCarDetailComforts().stream()
 								.map(carDetailComfort -> carDetailComfort.getComfort().getName())
 								.collect(Collectors.toSet()))
+						.images(car.getCarDetail().getImages())
 						.build())
 				.build();
 	}

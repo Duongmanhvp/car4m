@@ -49,6 +49,8 @@ public interface CarService {
 	
 	PageResponse<CarResponse> searchFilteredCar(int pageNo, int pageSize, CarSearchFilterRequest request);
 	
+	CarResponse getCarById(long carId);
+	
 	// ADMIN API
 	
 	CarResponse acceptCar(long carId);

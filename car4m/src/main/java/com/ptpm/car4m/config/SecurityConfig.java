@@ -33,7 +33,8 @@ public class SecurityConfig {
 	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**",
 			"v1/cars/get-all",
 			"v1/cars/get-by-type","v1/cars/get-by-fuel", "v1/cars/get-by-seats",
-			"v1/cars/get-by-transmission", "v1/cars/get-by-price", "v1/cars/get-by-location", "v1/cars/search"
+			"v1/cars/get-by-transmission", "v1/cars/get-by-price", "v1/cars/get-by-location",
+			"v1/cars/get", "v1/cars/search"
 	};
 	final String[] PUBLIC_POST_ENDPOINTS = {
 			"v1/users/", "v1/auths/**",
