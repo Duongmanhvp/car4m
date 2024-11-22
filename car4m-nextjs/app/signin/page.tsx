@@ -29,8 +29,6 @@ const  Frame: NextPage = () => {
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault(); 
-
-
         axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auths/`, {
             username: name,
             password: password
@@ -56,6 +54,12 @@ const  Frame: NextPage = () => {
                 alert('Đã xảy ra lỗi khi đăng nhap');
               });
     };   
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+          handleLogin
+        }
+      };
 
     return (
         <div className="w-full flex bg-white h-[1024px] overflow-hidden text-center text-[56px] text-white font-baloo-2">
@@ -94,7 +98,7 @@ const  Frame: NextPage = () => {
                                         type={isVisible ? "password" : 'text'}
                                         className="p-2.5 self-stretch relative rounded-xl border-dimgray border-[1px] border-solid box-border h-14 overflow-hidden shrink-0"
                                         placeholder='Nhập mật khẩu'
-                                        
+                                        onKeyDown={handleKeyDown}
                                         onChange={handlePasswordChange}value={password}
                                     />
                                 </div>

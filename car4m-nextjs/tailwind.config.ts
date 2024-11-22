@@ -18,10 +18,12 @@ const config: Config = {
         darkgray: "#acacac",
         silver: "#b6b6b6",
         darkslategray: "#3e3e3e",
-        red: "#EE1D52",
+        red: "#FF0000",
         smoke: "#EEEEEE",
         dimgray: "#666666",
-        iconcolor: "#747474"
+        iconcolor: "#747474",
+        lowblue: "#45A0FF",
+        whiteblue: "#C1E0FF"
       },
       "spacing": {},
       fontFamily: {
@@ -33,6 +35,7 @@ const config: Config = {
       base: "16px",
       sm: "14px",
       xxl: "36px",
+      xx: "24px",
       inherit: "inherit"
     }
   },

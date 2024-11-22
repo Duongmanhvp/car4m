@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { fetchCarByFilter, fetchCarByLocation } from "../services/CarServices";
 import { useSearchParams } from 'next/navigation';
 import iconLocation from "../assets/imgs/location.svg"
-
+import bg from "../assets/imgs/bg.jpeg"
 import {useRouter} from 'next/navigation'
 
 interface CardProps {
@@ -30,11 +30,15 @@ const Card: NextPage<CardProps> = ({
     const router = useRouter()
     const searchParams = useSearchParams();
     const [items, setItems] = useState<any[]>([]);
+    const [listImage, setListImage] = useState<string[]>([])
 
     useEffect(() => {
-        getCar()
+        if (!activeOverlay) 
+            getCar()
+    }, [])
+
+    useEffect(() => {
         if (activeOverlay) {
-           
             getCarFilter()
         }
     }, [activeOverlay, selectedBrand, selectedSeats, selectedFuel, selectedTransmission, priceRange]);
@@ -42,9 +46,10 @@ const Card: NextPage<CardProps> = ({
     const getCar = async () => {
         let res = await fetchCarByLocation(String(searchParams.get('location')), Number(searchParams.get('radius')));
         if (res && res.data) {
-            setItems(res.data.content);
-            console.log(res.data.content);
+            setItems(res.data.content)
+            console.log(res.data.content)
         }
+
     }
 
     const getCarFilter = async () => {
@@ -54,23 +59,24 @@ const Card: NextPage<CardProps> = ({
                                          String(priceRange?.[1]), 
                                          String(selectedSeats), 
                                          String(selectedTransmission),
+                                         String(searchParams.get('location')),
                                          String(searchParams.get('radius')))
         if (res && res.data) {
             setItems(res.data.content)
         }                                 
     }
 
-    const handleInfoCar = () => {
-        router.push('/car');
+    const handleInfoCar = (id: number) => {
+        router.push(`/car?carID=${id}`);
     }
 
     return (
         <div className="relative flex items-center justify-center top-[30px] w-[1120px] grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 bg-whitesmoke font-baloo-2">
-            {items.map((item) => (
-                <div className='min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
+            {items.map((item) => 
+            (<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
                     <div className=" rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
                         <div className="w-full p-2 relative rounded-xl bg-smoke h-[155px]">
-                            <Image src={item.imageUrl} alt="" layout="fill" objectFit="cover" />
+                            <Image src={item.car_detail.images ? item.car_detail.images : bg } alt="" layout="fill" objectFit="cover" className='rounded-xl'/>
                         </div>
 
                         <div className="flex flex-col items-start justify-start pt-3 gap-4 w-full">
@@ -97,8 +103,8 @@ const Card: NextPage<CardProps> = ({
                             </div>
                         </div>
                     </div>
-                </div>
-            ))}
+            </div>)
+            )}
         </div>
     );
 };

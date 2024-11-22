@@ -2,7 +2,7 @@
 
 import type { NextPage } from 'next';
 import React, { useState, useEffect } from 'react';
-import router, { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link';
 import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg"
@@ -11,7 +11,7 @@ import eyeslash from "../assets/imgs/eye-slash.svg"
 
 
 const Frame: NextPage = () => {
-
+    const router = useRouter()
     const [isVisible, setIsVisible] = useState(true);
     const [isVisible1, setIsVisible1] = useState(true);
     const [name, setUsername] = useState("");
@@ -64,8 +64,6 @@ const Frame: NextPage = () => {
             if (response.ok) {
                 const data = await response.json();
                 
-                let src = `/home?user=${data.data.id}`
-                // window.location.href = src
                 router.push('/signin')
                 console.log(data);
             } else {

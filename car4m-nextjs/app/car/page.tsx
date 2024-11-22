@@ -5,6 +5,7 @@ import Header from '../home/header';
 import { useEffect, useState } from 'react';
 import { fetchCarInfo } from '../services/CarServices';
 import { useSearchParams } from 'next/navigation';
+import DatePickerFrame from './datepicker';
 
 
 const Car: NextPage = () => {
@@ -192,19 +193,78 @@ const Car: NextPage = () => {
                     </div>
 
                     <div className="relative flex flex-col pt-4">
-                        <div className="flex flex-row items-start justify-start gap-[158px]">
-                            <div className="w-[111px] relative flex items-center h-11 shrink-0">
-                                <span className="w-full">
-                                    <span>Tổng </span>
-                                    <span className="text-xs">(3 ngày)</span>
-                                </span>
+                        <div className="w-[400px] bg-white shadow-lg rounded-lg p-5">
+                            {/* Giá thuê */}
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="text-3xl font-bold text-blue-500">856K</div>
+                                <span className="text-sm text-gray-500">/ngày</span>
                             </div>
-                            <b className="w-[111px] relative flex text-gray-200 text-right items-center h-11 shrink-0">6 triệu</b>
-                        </div>
-                        <div className="w-[380px] relative h-[58px] flex flex-row items-cneter justify-center text-center text-white bg-primary rounded-lg">
-                            <div className="flex items-center justify-center">
-                                Thuê ngay
+
+                            {/* Thời gian */}
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Nhận xe</label>
+                                    <div className="p-2 border rounded-md text-center">
+                                        <span className="font-medium">30/11/2024</span>
+                                        <span className="block text-gray-500 text-sm">23:00</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-500 mb-1">Trả xe</label>
+                                    <div className="p-2 border rounded-md text-center">
+                                        <span className="font-medium">01/12/2024</span>
+                                        <span className="block text-gray-500 text-sm">20:00</span>
+                                    </div>
+                                </div>
                             </div>
+
+                            {/* Địa điểm giao xe */}
+                           
+
+                            {/* Bảng giá */}
+                            <div className="mb-4 text-sm">
+                                <div className="flex justify-between mb-2">
+                                    <span>Đơn giá thuê</span>
+                                    <span>975 800đ/ ngày</span>
+                                </div>
+                    
+                                <div className="flex justify-between font-semibold mb-2">
+                                    <span>Tổng cộng</span>
+                                    <span>975 800đ x 1 ngày</span>
+                                </div>
+                            </div>
+
+                            {/* Giảm giá */}
+                            <div className="mb-4 text-sm">
+                                <div className="flex justify-between mb-2">
+                                    <span className="flex items-center">
+                                        <span className="bg-orange-100 text-orange-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
+                                            Chương trình giảm giá
+                                        </span>
+                                        Giảm 120K trên đơn giá
+                                    </span>
+                                    <span>-120 000đ</span>
+                                </div>
+                                <div className="flex justify-between mb-2">
+                                    <span className="flex items-center">
+                                        <span className="bg-blue-100 text-blue-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
+                                            Mã khuyến mãi
+                                        </span>
+                                    </span>
+                                    <span>0đ</span>
+                                </div>
+                            </div>
+
+                            {/* Tổng thành tiền */}
+                            <div className="flex justify-between items-center font-bold text-xl mb-4">
+                                <span>Thành tiền</span>
+                                <span className="text-blue-500">943 350đ</span>
+                            </div>
+
+                            {/* Nút chọn thuê */}
+                            <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600">
+                                CHỌN THUÊ
+                            </button>
                         </div>
                     </div>
                 </div>

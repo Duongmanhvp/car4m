@@ -46,10 +46,10 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ title, options, selectedO
 };
 
 const Search: NextPage = () => {
-    const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
-    const [selectedSeats, setSelectedSeats] = useState<number | null>(null);
-    const [selectedFuel, setSelectedFuel] = useState<string | null>(null);
-    const [selectedTransmission, setSelectedTransmission] = useState<string | null>(null);
+    const [selectedBrand, setSelectedBrand] = useState<string | null>('Vinfast');
+    const [selectedSeats, setSelectedSeats] = useState<number | null>(5);
+    const [selectedFuel, setSelectedFuel] = useState<string | null>('ELECTRICITY');
+    const [selectedTransmission, setSelectedTransmission] = useState<string | null>('AT');
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
 
     const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
@@ -59,9 +59,9 @@ const Search: NextPage = () => {
     };
 
     return (
-        <section className="main flex flex-col justify-center items-center font-baloo-2">
+        <section className="main flex flex-col justify-center items-center font-baloo-2 bg-whitesmoke">
             <Header />
-            <div className="w-full relative flex flex-row items-center justify-center shadow-lg border-t border-smoke">
+            <div className="w-full relative flex flex-row items-center justify-center shadow-lg border-t border-smoke bg-whitesmoke">
                 {/* Selection Bar */}
                 <div className="w-[1120px] relative flex flex-row items-center justify-between text-center gap-4 py-4">
                     <div className="relative flex flex-row items-center justify-between gap-4">

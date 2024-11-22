@@ -7,11 +7,13 @@ import frame from '../assets/imgs/Frame.svg';
 import logo from '../assets/imgs/logo.png';
 import userIcon from '../assets/imgs/user-icon.svg';
 import { fetchUserInfo } from '../services/UserServices';
+import { useRouter } from 'next/navigation';
 
 const Header: NextPage = () => {
+    const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
-    
+
     const accesstoken = localStorage.getItem('access_token');
     const validateToken = async () => {
         if (!accesstoken) return false;
@@ -64,16 +66,26 @@ const Header: NextPage = () => {
     }
 
     const getUser = async () => {
-        let res = await fetchUserInfo()
-        if (res && res.data) {
-            setUser(res.data)
+        try {
+            let res = await fetchUserInfo()
+            if (res && res.data) {
+                setUser(res.data)
+            }
+        } catch (error) {
+            console.log('Chua co du lieu nguoi dung', error)
         }
     }
 
     useEffect(() => {
-        validateToken()
-        getUser()
+        if (accesstoken) { 
+            validateToken()
+            getUser()
+        }
     }, [])
+
+    const nextRegistry = () => {
+        router.push('/registrycar')
+    }
 
     return (
         <div className="w-full flex justify-center relative bg-primary-0 border-lightsteelblue h-[100px] overflow-hidden text-left text-base text-darkslategray font-baloo-2">
@@ -85,19 +97,19 @@ const Header: NextPage = () => {
                     </a>
                 </div>
                 <div className="flex flex-row items-center justify-center gap-10">
-                    <div className="relative leading-[150%] font-medium">Trở thành chủ xe</div>
+                    <div onClick={nextRegistry} className="relative leading-[150%] font-medium cursor-pointer">Trở thành chủ xe</div>
                     <div className="relative leading-[150%] font-medium">Thuê xe</div>
                     <div className="relative leading-[150%] font-medium">Về car4m</div>
                 </div>
                 <div className="flex flex-row items-center justify-start gap-6">
                     {isLoggedIn ? (
                         <a href='/profile' className="relative flex items-center gap-2 font-baloo-2 font-medium">
-                            
-                                <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={userIcon} />
-                                <span>{user?.username || 'Người dùng'}</span>
-                            
+
+                            <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={user?.image ? user?.image : userIcon} />
+                            <span>{user?.username || 'Người dùng'}</span>
+
                         </a>
-                    ):(
+                    ) : (
                         <>
                             <div className="relative leading-[150%] font-medium">
                                 <Link legacyBehavior href="/signin">

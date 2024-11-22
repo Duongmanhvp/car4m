@@ -14,24 +14,25 @@ import Resetpw from './resetpw';
 import { access } from 'fs';
 import UserInfo from './myinfo';
 import Footer from '../home/footer';
+import FrameCar from './mycar';
 
 
 const Profile: NextPage = () => {
-  const [activeSection, setActiveSection] = useState('myinfo'); // Quản lý trạng thái phần hiện tại
+  const [activeSection, setActiveSection] = useState('mycar'); // Quản lý trạng thái phần hiện tại
   const accessToken = localStorage.getItem('access_token')
   // Nội dung các frame khác nhau
   const renderSectionContent = () => {
     switch (activeSection) {
       case 'myinfo':
-        return <><UserInfo/></>
+        return <UserInfo/>
       case 'myfav':
         return <div>Danh sách xe yêu thích của bạn...</div>;
       case 'mycar':
-        return <div>Danh sách xe của bạn...</div>;
+        return <FrameCar/>
       case 'mytrip':
-        return <div>Chuyến đi của bạn...</div>;
+        return <></>
       case 'resetpw':
-        return <><Resetpw /></>
+        return <Resetpw />
       default:
         return null;
     }
