@@ -43,7 +43,8 @@ public class ImageServiceImpl implements ImageService {
 			
 			cleanDisk(fileUpload);
 			
-			return  cloudinary.url().generate(StringUtils.join(publicValue, ".", extension));
+			String url = cloudinary.url().generate(StringUtils.join(publicValue, ".", extension));
+			return StringUtils.join(publicValue, ".", extension);
 		} catch (Exception e) {
 			throw new UploadException("Upload image failed");
 		}
