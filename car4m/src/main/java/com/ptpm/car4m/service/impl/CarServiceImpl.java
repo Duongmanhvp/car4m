@@ -547,6 +547,7 @@ public class CarServiceImpl implements CarService {
 								.comforts(car.getCarDetail().getCarDetailComforts().stream()
 										.map(carDetailComfort -> carDetailComfort.getComfort().getName())
 										.collect(Collectors.toSet()))
+								.images(car.getCarDetail().getImages())
 								.build())
 						.build()
 		).toList();

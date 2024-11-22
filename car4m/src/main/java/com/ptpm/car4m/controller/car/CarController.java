@@ -152,14 +152,14 @@ public class CarController {
 	public ApiResponse<PageResponse<CarResponse>> getAllCarsByFilter(
 			@RequestParam int pageNo,
 			@RequestParam int pageSize,
-			@RequestParam String type,
-			@RequestParam String fuel,
-			@RequestParam long minPrice,
-			@RequestParam long maxPrice,
-			@RequestParam int seats,
-			@RequestParam String transmission,
-			@RequestParam String location,
-			@RequestParam double radius) {
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String fuel,
+			@RequestParam(required = false) long minPrice,
+			@RequestParam(required = false) long maxPrice,
+			@RequestParam(required = false) int seats,
+			@RequestParam(required = false) String transmission,
+			@RequestParam(required = false) String location,
+			@RequestParam(required = false) double radius) {
 		CarSearchFilterRequest request = CarSearchFilterRequest.builder()
 				.type(type)
 				.fuel(Fuel.valueOf(fuel))
