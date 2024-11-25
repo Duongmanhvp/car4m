@@ -1,5 +1,6 @@
 package com.ptpm.car4m.service;
 
+import com.ptpm.car4m.dto.request.car.CarAutoRefuseRequest;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
@@ -29,6 +30,9 @@ public interface CarService {
 	CarResponse deleteCar(Jwt principal, long carId);
 	
 	CarRentalResponse rentCar(Jwt principal, CarRentalRequest request);
+	
+	void autoRefuse(Jwt principal, CarAutoRefuseRequest request);
+	
 	
 	// PUBLIC API
 	List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate);

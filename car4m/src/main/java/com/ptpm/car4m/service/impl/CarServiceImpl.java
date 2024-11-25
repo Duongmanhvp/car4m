@@ -1,6 +1,7 @@
 package com.ptpm.car4m.service.impl;
 
 import com.ptpm.car4m.component.OpenCageGeocoding;
+import com.ptpm.car4m.dto.request.car.CarAutoRefuseRequest;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
@@ -330,6 +331,7 @@ public class CarServiceImpl implements CarService {
 				.rentalDate(LocalDateTime.now())
 				.receiveDate(request.getReceiveDate())
 				.returnDate(request.getReturnDate())
+				.totalFee(totalFee)
 				.build();
 		
 		rentalRepository.save(rental);
@@ -363,6 +365,31 @@ public class CarServiceImpl implements CarService {
 				.totalHours(totalHours)
 				.totalFee(totalFee)
 				.build();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#request.carId, principal)")
+	@Override
+	public void autoRefuse(Jwt principal, CarAutoRefuseRequest request) {
+		
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(request.getCarId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + request.getCarId()));
+		
+		Rental rental = Rental.builder()
+				.user(user)
+				.car(car)
+				.rentalDate(LocalDateTime.now())
+				.receiveDate(request.getStartTime())
+				.returnDate(request.getEndTime())
+				.totalFee(0L)
+				.build();
+		
+		rentalRepository.save(rental);
+		
 	}
 	
 	@Override
