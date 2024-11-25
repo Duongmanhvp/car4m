@@ -33,6 +33,13 @@ public interface CarService {
 	
 	void autoRefuse(Jwt principal, CarAutoRefuseRequest request);
 	
+	List<CarRentalResponse> getAllRentalByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalFinishedByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalProgressingByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId);
 	
 	// PUBLIC API
 	List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate);
@@ -56,6 +63,7 @@ public interface CarService {
 	CarResponse getCarById(long carId);
 	
 	// ADMIN API
+	PageResponse<CarResponse> getAllCarsNotAccepted(int pageNo, int pageSize);
 	
 	CarResponse acceptCar(long carId);
 	

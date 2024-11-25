@@ -392,6 +392,99 @@ public class CarServiceImpl implements CarService {
 		
 	}
 	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarId(carId);
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+		
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalFinishedByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReturnDateBefore(carId, LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalProgressingByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateBeforeAndReturnDateAfter(carId, LocalDateTime.now(), LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateAfter(carId, LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+	}
+	
 	@Override
 	public List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate) {
 		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateBetweenOrReturnDateBetween(
@@ -510,6 +603,15 @@ public class CarServiceImpl implements CarService {
 		}
 		
 		return getCarResponse(car);
+	}
+	
+	@Override
+	public PageResponse<CarResponse> getAllCarsNotAccepted(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		
+		Page<Car> carPage = carRepository.findByIsAccepted(false, pageable);
+		
+		return getCarResponsePageResponse(pageNo, pageSize, carPage.getTotalElements(), carPage.getContent());
 	}
 	
 	@Override

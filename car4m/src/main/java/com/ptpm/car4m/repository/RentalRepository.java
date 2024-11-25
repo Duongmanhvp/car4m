@@ -18,4 +18,12 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 	boolean existsByCarIdAndReceiveDateBetweenOrReturnDateBetween(long carId, LocalDateTime receiveDate, LocalDateTime returnDate, LocalDateTime receiveDate1, LocalDateTime returnDate1);
 	
 	List<Rental> findByCarIdAndReceiveDateBetweenOrReturnDateBetween(long carId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime startDate1, LocalDateTime endDate1);
+	
+	List<Rental> findByCarId(long carId);
+	
+	List<Rental> findByCarIdAndReturnDateBefore(long carId, LocalDateTime now);
+	
+	List<Rental> findByCarIdAndReceiveDateAfter(long carId, LocalDateTime now);
+	
+	List<Rental> findByCarIdAndReceiveDateBeforeAndReturnDateAfter(long carId, LocalDateTime now, LocalDateTime now1);
 }
