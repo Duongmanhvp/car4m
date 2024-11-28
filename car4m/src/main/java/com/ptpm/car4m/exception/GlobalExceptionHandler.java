@@ -94,5 +94,11 @@ public class GlobalExceptionHandler {
         log.error("AccessException: ", ex);
         return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
+    
+    @ExceptionHandler(IllegalStateException.class)
+      public ResponseEntity<ApiResponse<Void>> illegalStateException(IllegalStateException ex) {
+         log.error("IllegalStateException: ", ex);
+         return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+      }
    
 }
