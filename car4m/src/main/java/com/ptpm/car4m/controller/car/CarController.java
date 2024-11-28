@@ -38,14 +38,6 @@ public class CarController {
 		return ApiResponse.success(carService.addCar(principal,request));
 	}
 	
-	@GetMapping("/get-my-cars")
-	public ApiResponse<PageResponse<CarResponse>> getMyCars(
-			@RequestParam int pageNo,
-			@RequestParam int pageSize,
-			@AuthenticationPrincipal Jwt principal) {
-		return ApiResponse.success(carService.getMyCars(pageNo, pageSize, principal));
-	}
-	
 	@GetMapping("/get-my-liked")
 	public ApiResponse<PageResponse<CarResponse>> getMyLiked(
 			@RequestParam int pageNo,
@@ -118,6 +110,14 @@ public class CarController {
 			@AuthenticationPrincipal Jwt principal,
 			@RequestParam long carId) {
 		return ApiResponse.success(carService.getAllRentalComingByCarId(principal, carId));
+	}
+	
+	@GetMapping("/get-by-user")
+	public ApiResponse<PageResponse<CarResponse>> getCarsByUserId(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize,
+			@RequestParam long userId) {
+		return ApiResponse.success(carService.getCarsByUserId(pageNo, pageSize, userId));
 	}
 	
 	@GetMapping("/get-rental-between")

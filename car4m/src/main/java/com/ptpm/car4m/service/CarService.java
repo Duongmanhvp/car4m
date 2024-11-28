@@ -19,8 +19,6 @@ public interface CarService {
 	// OWNER API
 	CarResponse addCar(Jwt principal, CarCreationRequest request);
 	
-	PageResponse<CarResponse> getMyCars(int pageNo, int pageSize, Jwt principal);
-	
 	PageResponse<CarResponse> getMyLiked(int pageNo, int pageSize, Jwt principal);
 	
 	PageResponse<CarRentalResponse> getMyTrip(int pageNo, int pageSize, Jwt principal);
@@ -42,6 +40,8 @@ public interface CarService {
 	List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId);
 	
 	// PUBLIC API
+	PageResponse<CarResponse> getCarsByUserId(int pageNo, int pageSize, long userId);
+	
 	List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate);
 	
 	PageResponse<CarResponse> getAllCars(int pageNo, int pageSize);

@@ -140,20 +140,6 @@ public class CarServiceImpl implements CarService {
 	}
 	
 	@Override
-	public PageResponse<CarResponse> getMyCars(int pageNo, int pageSize, Jwt principal) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize);
-		Long userId = principal.getClaim("id");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
-		
-		Page<Car> carPage = carRepository.findByOwner(user, pageable);
-		
-		return getCarResponsePageResponse(pageNo, pageSize, carPage.getTotalElements(), carPage.getContent());
-		
-	}
-	
-	@Override
 	public PageResponse<CarResponse> getMyLiked(int pageNo, int pageSize, Jwt principal) {
 		
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -483,6 +469,19 @@ public class CarServiceImpl implements CarService {
 						.totalFee(rental.getTotalFee())
 						.build()
 		).toList();
+	}
+	
+	@Override
+	public PageResponse<CarResponse> getCarsByUserId(int pageNo, int pageSize, long userId) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Page<Car> carPage = carRepository.findByOwner(user, pageable);
+		
+		return getCarResponsePageResponse(pageNo, pageSize, carPage.getTotalElements(), carPage.getContent());
+		
 	}
 	
 	@Override
