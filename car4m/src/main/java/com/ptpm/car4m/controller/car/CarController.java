@@ -225,14 +225,14 @@ public class CarController {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/accept")
-	public ApiResponse<CarResponse> acceptCar(@RequestParam long carId) {
+	public ApiResponse<CarResponse> acceptCar(@RequestBody long carId) {
 		
 		return ApiResponse.success(carService.acceptCar(carId));
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/reject")
-	public ApiResponse<CarResponse> rejectCar(@RequestParam long carId) {
+	public ApiResponse<CarResponse> rejectCar(@RequestBody long carId) {
 		return ApiResponse.success(carService.rejectCar(carId));
 	}
 }

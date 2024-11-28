@@ -1,5 +1,6 @@
 package com.ptpm.car4m.dto.request.car;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ptpm.car4m.enums.Fuel;
@@ -22,8 +23,10 @@ public class CarRentalRequest {
 
 	Long carId;
 	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	LocalDateTime receiveDate;
 	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	LocalDateTime returnDate;
 	
 }
