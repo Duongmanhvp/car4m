@@ -1,6 +1,7 @@
 package com.ptpm.car4m.controller.car;
 
 
+import com.ptpm.car4m.dto.request.car.CarAutoRefuseRequest;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
@@ -81,6 +82,42 @@ public class CarController {
 			@AuthenticationPrincipal Jwt principal,
 			@Valid @RequestBody CarRentalRequest request) {
 		return ApiResponse.success(carService.rentCar(principal, request));
+	}
+	
+	@PostMapping("/auto-refuse")
+	public ApiResponse<String> autoRefuse(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestBody CarAutoRefuseRequest request) {
+		carService.autoRefuse(principal, request);
+		return ApiResponse.ok("Đã thêm lịch nghỉ cho xe");
+	}
+	
+	@GetMapping("/get-all-rental")
+	public ApiResponse<List<CarRentalResponse>> getAllRentalByCarId(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		return ApiResponse.success(carService.getAllRentalByCarId(principal, carId));
+	}
+	
+	@GetMapping("/get-all-rental-finished")
+	public ApiResponse<List<CarRentalResponse>> getAllRentalFinishedByCarId(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		return ApiResponse.success(carService.getAllRentalFinishedByCarId(principal, carId));
+	}
+	
+	@GetMapping("/get-all-rental-progressing")
+	public ApiResponse<List<CarRentalResponse>> getAllRentalProgressingByCarId(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		return ApiResponse.success(carService.getAllRentalProgressingByCarId(principal, carId));
+	}
+	
+	@GetMapping("/get-all-rental-coming")
+	public ApiResponse<List<CarRentalResponse>> getAllRentalComingByCarId(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long carId) {
+		return ApiResponse.success(carService.getAllRentalComingByCarId(principal, carId));
 	}
 	
 	@GetMapping("/get-rental-between")
@@ -173,16 +210,29 @@ public class CarController {
 		return ApiResponse.success(carService.searchFilteredCar(pageNo, pageSize,request));
 	}
 	
+	@GetMapping("/get")
+	public ApiResponse<CarResponse> getCarById(@RequestParam long id) {
+		return ApiResponse.success(carService.getCarById(id));
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/get-all-not-accepted")
+	public ApiResponse<PageResponse<CarResponse>> getAllCarsNotAccepted(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize) {
+		return ApiResponse.success(carService.getAllCarsNotAccepted(pageNo, pageSize));
+	}
+	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/accept")
-	public ApiResponse<CarResponse> acceptCar(@RequestParam long carId) {
+	public ApiResponse<CarResponse> acceptCar(@RequestBody long carId) {
 		
 		return ApiResponse.success(carService.acceptCar(carId));
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/reject")
-	public ApiResponse<CarResponse> rejectCar(@RequestParam long carId) {
+	public ApiResponse<CarResponse> rejectCar(@RequestBody long carId) {
 		return ApiResponse.success(carService.rejectCar(carId));
 	}
 }

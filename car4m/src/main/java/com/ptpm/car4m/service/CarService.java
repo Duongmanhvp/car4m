@@ -1,5 +1,6 @@
 package com.ptpm.car4m.service;
 
+import com.ptpm.car4m.dto.request.car.CarAutoRefuseRequest;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
@@ -30,6 +31,16 @@ public interface CarService {
 	
 	CarRentalResponse rentCar(Jwt principal, CarRentalRequest request);
 	
+	void autoRefuse(Jwt principal, CarAutoRefuseRequest request);
+	
+	List<CarRentalResponse> getAllRentalByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalFinishedByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalProgressingByCarId(Jwt principal, long carId);
+	
+	List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId);
+	
 	// PUBLIC API
 	List<CarRentalResponse> getRentalBetween(long carId, LocalDateTime startDate, LocalDateTime endDate);
 	
@@ -49,7 +60,10 @@ public interface CarService {
 	
 	PageResponse<CarResponse> searchFilteredCar(int pageNo, int pageSize, CarSearchFilterRequest request);
 	
+	CarResponse getCarById(long carId);
+	
 	// ADMIN API
+	PageResponse<CarResponse> getAllCarsNotAccepted(int pageNo, int pageSize);
 	
 	CarResponse acceptCar(long carId);
 	

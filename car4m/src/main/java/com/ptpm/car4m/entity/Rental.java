@@ -36,4 +36,7 @@ public class Rental {
 
     @Column(name = "return_date")
     LocalDateTime returnDate;
+    
+    @Column(name = "total_fee")
+    Long totalFee;
 }

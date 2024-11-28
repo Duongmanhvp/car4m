@@ -1,6 +1,7 @@
 package com.ptpm.car4m.service.impl;
 
 import com.ptpm.car4m.component.OpenCageGeocoding;
+import com.ptpm.car4m.dto.request.car.CarAutoRefuseRequest;
 import com.ptpm.car4m.dto.request.car.CarCreationRequest;
 import com.ptpm.car4m.dto.request.car.CarRentalRequest;
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -329,6 +331,7 @@ public class CarServiceImpl implements CarService {
 				.rentalDate(LocalDateTime.now())
 				.receiveDate(request.getReceiveDate())
 				.returnDate(request.getReturnDate())
+				.totalFee(totalFee)
 				.build();
 		
 		rentalRepository.save(rental);
@@ -362,6 +365,124 @@ public class CarServiceImpl implements CarService {
 				.totalHours(totalHours)
 				.totalFee(totalFee)
 				.build();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#request.carId, principal)")
+	@Override
+	public void autoRefuse(Jwt principal, CarAutoRefuseRequest request) {
+		
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(request.getCarId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + request.getCarId()));
+		
+		Rental rental = Rental.builder()
+				.user(user)
+				.car(car)
+				.rentalDate(LocalDateTime.now())
+				.receiveDate(request.getStartTime())
+				.returnDate(request.getEndTime())
+				.totalFee(0L)
+				.build();
+		
+		rentalRepository.save(rental);
+		
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarId(carId);
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+		
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalFinishedByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReturnDateBefore(carId, LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalProgressingByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateBeforeAndReturnDateAfter(carId, LocalDateTime.now(), LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
+	}
+	
+	@PreAuthorize("@carComponent.isCarOwner(#carId, principal)")
+	@Override
+	public List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId) {
+		Long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		List<Rental> rentals = rentalRepository.findByCarIdAndReceiveDateAfter(carId, LocalDateTime.now());
+		
+		return rentals.stream().map(
+				rental -> CarRentalResponse.builder()
+						.userId(rental.getUser().getId())
+						.receiveDate(rental.getReceiveDate())
+						.returnDate(rental.getReturnDate())
+						.totalFee(rental.getTotalFee())
+						.build()
+		).toList();
 	}
 	
 	@Override
@@ -472,6 +593,28 @@ public class CarServiceImpl implements CarService {
 	}
 	
 	@Override
+	public CarResponse getCarById(long carId) {
+		
+		Car car = carRepository.findById(carId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy xe với id: " + carId));
+		
+		if (!car.getIsAccepted()) {
+			throw new AccessDeniedException("Xe chưa được chấp nhận. Bạn không có quyền xem");
+		}
+		
+		return getCarResponse(car);
+	}
+	
+	@Override
+	public PageResponse<CarResponse> getAllCarsNotAccepted(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		
+		Page<Car> carPage = carRepository.findByIsAccepted(false, pageable);
+		
+		return getCarResponsePageResponse(pageNo, pageSize, carPage.getTotalElements(), carPage.getContent());
+	}
+	
+	@Override
 	public CarResponse acceptCar(long carId) {
 		
 		Car car = carRepository.findById(carId)
@@ -520,6 +663,7 @@ public class CarServiceImpl implements CarService {
 						.comforts(car.getCarDetail().getCarDetailComforts().stream()
 								.map(carDetailComfort -> carDetailComfort.getComfort().getName())
 								.collect(Collectors.toSet()))
+						.images(car.getCarDetail().getImages())
 						.build())
 				.build();
 	}

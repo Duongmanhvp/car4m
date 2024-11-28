@@ -1,6 +1,5 @@
 package com.ptpm.car4m.dto.request.car;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ptpm.car4m.enums.Fuel;
@@ -19,14 +18,11 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CarRentalRequest {
-
+public class CarAutoRefuseRequest {
+	
 	Long carId;
 	
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	LocalDateTime receiveDate;
+	LocalDateTime startTime;
 	
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	LocalDateTime returnDate;
-	
+	LocalDateTime endTime;
 }
