@@ -2,7 +2,7 @@
 
 import { NextPage } from "next";
 import { useState } from "react";
-import Card from "./card";
+import Card from "./listcard";
 import Header from "../home/header";
 import Image from "next/image";
 

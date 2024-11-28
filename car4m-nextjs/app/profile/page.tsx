@@ -15,10 +15,11 @@ import { access } from 'fs';
 import UserInfo from './myinfo';
 import Footer from '../home/footer';
 import FrameCar from './mycar';
+import MyLike from './myfav';
 
 
 const Profile: NextPage = () => {
-  const [activeSection, setActiveSection] = useState('mycar'); // Quản lý trạng thái phần hiện tại
+  const [activeSection, setActiveSection] = useState('myinfo'); // Quản lý trạng thái phần hiện tại
   const accessToken = localStorage.getItem('access_token')
   // Nội dung các frame khác nhau
   const renderSectionContent = () => {
@@ -26,7 +27,7 @@ const Profile: NextPage = () => {
       case 'myinfo':
         return <UserInfo/>
       case 'myfav':
-        return <div>Danh sách xe yêu thích của bạn...</div>;
+        return <MyLike></MyLike>
       case 'mycar':
         return <FrameCar/>
       case 'mytrip':
@@ -137,7 +138,7 @@ const Profile: NextPage = () => {
             <div className="self-stretch h-[46px] flex flex-row items-center justify-start gap-4 text-red cursor-pointer hover:bg-smoke transition-all">
               <Image className="w-8 relative h-8" alt="" src={out} />
               <div className="w-[319px] h-[37px] flex flex-col items-start justify-center">
-                <div onClick={handleLogout} className="w-[300px] relative leading-[150%] flex items-center h-[35px] shrink-0">
+                <div onClick={() => handleLogout()} className="w-[300px] relative leading-[150%] flex items-center h-[35px] shrink-0">
                   Đăng xuất
                 </div>
               </div>

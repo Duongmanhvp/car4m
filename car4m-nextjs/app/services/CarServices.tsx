@@ -30,9 +30,9 @@ const fetchCarByFilter = (type: string, fuel: string, minPrice: string, maxPrice
 }
 
 const fetchCarInfo = (id: number) => {
-    return axios.get('/api/v1/cars/info', {
+    return axios.get('/api/v1/cars/get', {
         params: {
-            ID: id
+            id: id
         }
     }) 
 }
@@ -71,4 +71,77 @@ const fetchMyCar = () => {
     })
 }
 
-export { fetchCarByLocation, fetchCarByFilter, fetchCarInfo, addCar , fetchAllCar, fetchMyCar}
+const fetchCarUser = (id: number) => {
+    return axios.get('/api/v1/cars/get-car-user', {
+        params: {
+            pageNo: 0,
+            pageSize: 6,
+            id: id
+        }
+    })
+}
+
+const fetchDate = (id: number, pickup: Date, dropoff: Date) => {
+    return axios.post('/api/v1/cars/get-rental-between', {
+        params: {
+            car_id: id,
+            receive_date: pickup,
+            return_date: dropoff
+        }
+    })
+}
+
+const fetchMyLike = () => {
+    return axios.get('/api/v1/cars/get-my-liked', {
+        params: {
+            pageNo: 0,
+            pageSize: 8
+        }
+    })
+}
+
+const deleteCar = (id: number) => {
+    return axios.post('/api/v1/cars/delete', {
+        params: {
+            car_id: id
+        }
+    })
+}
+
+const likeCar = (id: number) => {
+    return axios.post('/api/v1/cars/like', {
+        params: {
+            car_id: id
+        }
+    })
+}
+
+const fetchCarAccept = () => {
+    return axios.get('/api/v1/cars/get-all-not-accepted', {
+        params: {
+            pageNo: 0,
+            pageSize: 3
+        }
+    })
+}
+
+const acceptedCar = (id: number) => {
+    return axios.post('/api/v1/cars/accept', {
+        params: {
+            car_id: id
+        }
+    })
+}
+
+export { fetchCarByLocation, 
+         fetchCarByFilter, 
+         fetchCarInfo, 
+         addCar, 
+         fetchAllCar, 
+         fetchMyCar, 
+         deleteCar, 
+         likeCar, 
+         fetchCarAccept, 
+         acceptedCar, 
+         fetchMyLike,
+         fetchCarUser }

@@ -2,15 +2,17 @@
 
 import type { NextPage } from 'next';
 import React, { useState, useEffect } from 'react';
-import router, { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link';
 import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg"
 import eyeslash from "../assets/imgs/eye-slash.svg"
 import axios from "axios"
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 
 const  Frame: NextPage = () => {
+    const router = useRouter()
     const [isVisible, setIsVisible] = useState(true);
     const [name, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -36,16 +38,14 @@ const  Frame: NextPage = () => {
             .then((response) => {
                 if (response != null) {
                     const data = response.data;
-                    
                     localStorage.setItem('access_token', data.data.access_token);
                     localStorage.setItem('refresh_token', data.data.refresh_token);
-    
-                    
-                    console.log(data.data.access_token)
 
-                    let src = `/home?user=${data.id}`
-                    window.location.href = src
-                    //router.push('/home')
+                    const decode = jwt.decode(data.data.access_token) as JwtPayload
+                    if (decode.scope == 'ROLE_ADMIN')
+                        router.push('/admin')
+                    else 
+                        router.push('/home')
                     
                 }
             })

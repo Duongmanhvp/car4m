@@ -130,7 +130,7 @@ const Banner: NextPage = () => {
 					)}
 					<div className="cursor-pointer w-[159px] rounded-lg bg-primary h-12 flex flex-row items-center justify-center p-2 box-border text-white">
 						<div className="relative leading-[150%] font-medium">
-							<div className="relative leading-[150%] font-medium" onClick={handleSearch}>
+							<div className="relative leading-[150%] font-medium" onClick={() => handleSearch()}>
 								Tìm Kiếm
 							</div>
 						</div>

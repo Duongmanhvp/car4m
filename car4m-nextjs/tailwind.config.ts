@@ -23,7 +23,9 @@ const config: Config = {
         dimgray: "#666666",
         iconcolor: "#747474",
         lowblue: "#45A0FF",
-        whiteblue: "#C1E0FF"
+        whiteblue: "#C1E0FF",
+        line: "#e0e0e0",
+        semiblue: "#f7fbff"
       },
       "spacing": {},
       fontFamily: {
@@ -36,6 +38,8 @@ const config: Config = {
       sm: "14px",
       xxl: "36px",
       xx: "24px",
+      md: "20px",
+      xl: "18px",
       inherit: "inherit"
     }
   },

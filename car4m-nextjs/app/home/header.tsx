@@ -8,13 +8,15 @@ import logo from '../assets/imgs/logo.png';
 import userIcon from '../assets/imgs/user-icon.svg';
 import { fetchUserInfo } from '../services/UserServices';
 import { useRouter } from 'next/navigation';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const Header: NextPage = () => {
     const router = useRouter()
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const [admin, setAdmin] = useState(false)
+    const accesstoken = localStorage.getItem('access_token')
 
-    const accesstoken = localStorage.getItem('access_token');
     const validateToken = async () => {
         if (!accesstoken) return false;
         try {
@@ -34,13 +36,13 @@ const Header: NextPage = () => {
                 await refreshToken();
             }
         } catch (error) {
-            console.error('Validation error:', error);
+            console.error('Validation error:', error)
         }
     };
 
 
     const refreshToken = async () => {
-        const refreshToken = localStorage.getItem('refresh_token');
+        const refreshToken = localStorage.getItem('refresh_token')
         if (!refreshToken) return;
 
         try {
@@ -54,18 +56,47 @@ const Header: NextPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('accessToken', data.data);
+                localStorage.setItem('accessToken', data.data)
                 validateToken();
             } else {
                 setIsLoggedIn(false);
                 localStorage.clear;
             }
         } catch (error) {
-            console.error('Refresh error:', error);
+            console.error('Refresh error:', error)
+        }
+    }
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/auths/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: accesstoken }),
+            });
+
+
+            if (response.ok) {
+                localStorage.clear()
+                router.push('/home')
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || 'Đăng xuat thất bại');
+            }
+        } catch (error) {
+            console.error('Validation error:', error);
         }
     }
 
     const getUser = async () => {
+        if (accesstoken) {
+            const decode = jwt.decode(accesstoken) as JwtPayload
+            if (decode.scope == "ROLE_ADMIN") {
+                setAdmin(!admin)
+            }
+        }
         try {
             let res = await fetchUserInfo()
             if (res && res.data) {
@@ -77,14 +108,24 @@ const Header: NextPage = () => {
     }
 
     useEffect(() => {
-        if (accesstoken) { 
+        if (accesstoken) {
             validateToken()
             getUser()
         }
     }, [])
 
+
     const nextRegistry = () => {
         router.push('/registrycar')
+    }
+
+    const handleNext = (next: string) => {
+        if (next == 'logout') {
+            handleLogout()
+        }
+        else {
+            router.push('/profile')
+        }
     }
 
     return (
@@ -103,12 +144,10 @@ const Header: NextPage = () => {
                 </div>
                 <div className="flex flex-row items-center justify-start gap-6">
                     {isLoggedIn ? (
-                        <a href='/profile' className="relative flex items-center gap-2 font-baloo-2 font-medium">
-
-                            <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={user?.image ? user?.image : userIcon} />
+                        <div onClick={() => admin ? handleNext('logout') : handleNext('profile')} className="relative flex items-center gap-2 font-baloo-2 font-medium cursor-pointer">
+                            <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={userIcon} />
                             <span>{user?.username || 'Người dùng'}</span>
-
-                        </a>
+                        </div>
                     ) : (
                         <>
                             <div className="relative leading-[150%] font-medium">

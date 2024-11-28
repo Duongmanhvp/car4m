@@ -8,6 +8,8 @@ import bg from "../assets/imgs/bg.png"
 import iconLocation from "../assets/imgs/location.svg"
 import { useRouter } from 'next/navigation';
 
+const link = process.env.NEXT_PUBLIC_LINK
+
 const Page: NextPage = () => {
 
 	const [items, setItem] = useState<any[]>([])
@@ -16,9 +18,15 @@ const Page: NextPage = () => {
 		try {
 			const res = await fetchAllCar()
 			setItem(res.data.content)
+			//console.log(srtingToLink(res.data.content[7].car_detail.images))
 		} catch (error) {
 			console.log('Loi khi lay du lieu car', error)
 		}
+	}
+
+	const srtingToLink = (images: string) => {
+		let image: string[] = images.split(',')
+		return image[0]
 	}
 
 	useEffect(() => {
@@ -26,7 +34,7 @@ const Page: NextPage = () => {
 	}, [])
 
 	const router = useRouter()
-	const handleInfoCar = (id: number) => {
+	const handleInfoCar = (id: number, image: string) => {
 		router.push(`/car?carID=${id}`);
 	}
 
@@ -37,10 +45,11 @@ const Page: NextPage = () => {
 		</h1>
 		<div className="relative flex items-center justify-center w-[1120px] grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 bg-whitesmoke font-baloo-2">
 			{items.map((item) =>
-			(<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
+			(<div onClick={() => handleInfoCar(item.id, item.car_detail.images)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
 				<div className=" rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
 					<div className="w-full p-2 relative rounded-xl bg-smoke h-[155px]">
-						<Image src={item.car_detail.images ? item.car_detail.images : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
+						<Image src={srtingToLink(item.car_detail.images) ? srtingToLink(item.car_detail.images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
+						{/* item.car_detail.images ? item.car_detail.images :  */}
 					</div>
 
 					<div className="flex flex-col items-start justify-start pt-3 gap-4 w-full">

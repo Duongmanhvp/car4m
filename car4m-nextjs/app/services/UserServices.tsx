@@ -8,5 +8,20 @@ const fetchCCCD = () => {
     return axios.get('/api/v1')
 }
 
+const fetchOwner = (id: number) => {
+    return axios.get('/api/v1/users/info', {
+        params: {
+            id: id
+        }
+    })
+}
 
-export { fetchUserInfo }
+const fetchReviewUser = (id: number) => {
+    return axios.get('/api/v1/users/review', {
+        params: {
+            id: id
+        }
+    })
+}
+
+export { fetchUserInfo, fetchOwner, fetchReviewUser}

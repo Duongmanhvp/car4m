@@ -13,6 +13,7 @@ import { uploadToCloudinary } from "../services/ImageService"
 import { addCar } from "../services/CarServices"
 import { useRouter } from "next/navigation"
 
+const link = process.env.NEXT_PUBLIC_LINK
 
 const CarRegistry: NextPage = () => {
     const [licensePlate, setLicensePlate] = useState('')
@@ -31,7 +32,7 @@ const CarRegistry: NextPage = () => {
     })
    
     const [year, setYear] = useState(2024)
-    const [step, setStep] = useState<number>(1  )
+    const [step, setStep] = useState<number>(1)
     const [isLocationOpen, setIsLocationOpen] = useState(false)
     const [location, setLocation] = useState<string>('')
     const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 })
@@ -64,6 +65,7 @@ const CarRegistry: NextPage = () => {
                 ? prev.features.filter((f) => f !== feature)
                 : [...prev.features, feature],
         }))
+        //console.log(carInfo.features)
     }
 
     const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
@@ -112,10 +114,12 @@ const CarRegistry: NextPage = () => {
     const router = useRouter()
     const registryCar = async () => {
         await uploadListImages()
-        addCar(carInfo.model + year, Number(carInfo.rental), carInfo.brand, carInfo.location, carInfo.transmission, carInfo.fuelType,
-                 carInfo.seats, carInfo.fuelConsumption, licensePlate + '\n' + carInfo.description, carInfo.features, carInfo.images)
+        addCar(carInfo.model + ' ' + year, Number(carInfo.rental), carInfo.brand, carInfo.location, carInfo.transmission, carInfo.fuelType,
+                 carInfo.seats, carInfo.fuelConsumption, 'Biển số xe: ' + licensePlate + '\n' + carInfo.description, carInfo.features, carInfo.images)
         router.push('/home')
     }
+
+    //console.log(carInfo.features)
 
     const uploadListImages = async () => {
         try {
@@ -127,7 +131,7 @@ const CarRegistry: NextPage = () => {
             // Lọc ra các ảnh tải lên thành công.
             list
                 .map((image) => {
-                    carInfo.images.push(image)
+                    carInfo.images.push(String(link + image))
                     return image
                 })  
         } catch (error) {
