@@ -30,7 +30,7 @@ public class SecurityConfig {
 	
 	CustomJwtDecoder customJwtDecoder;
 	
-	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/**",
+	final String[] PUBLIC_GET_ENDPOINTS = {"v1/users/test", "v1/users/detail-user",
 			"v1/cars/get-all",
 			"v1/cars/get-by-type","v1/cars/get-by-fuel", "v1/cars/get-by-seats",
 			"v1/cars/get-by-transmission", "v1/cars/get-by-price", "v1/cars/get-by-location",

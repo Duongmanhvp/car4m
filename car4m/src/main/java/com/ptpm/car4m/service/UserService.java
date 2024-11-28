@@ -20,4 +20,6 @@ public interface UserService {
 	
 	UserInfoResponse updateMyInfo(Jwt principal, UpdateInfoRequest request);
 	
+	UserInfoResponse getAnotherUserInfo(Long id);
+	
 }

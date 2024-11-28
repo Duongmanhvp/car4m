@@ -202,5 +202,21 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 	
+	@Override
+	public UserInfoResponse getAnotherUserInfo(Long id) {
+		
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản"));
+		
+		return UserInfoResponse.builder()
+				.id(user.getId())
+				.username(user.getUsername())
+				.email(user.getEmail())
+				.phone(user.getPhone())
+				.address(user.getAddress())
+				.image(user.getImage())
+				.build();
+	}
+	
 	
 }

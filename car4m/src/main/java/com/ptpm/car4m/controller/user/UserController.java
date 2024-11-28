@@ -69,5 +69,9 @@ public class UserController {
 		return ApiResponse.success(userService.updateMyInfo(principal, request));
 	}
 
+	@GetMapping("/detail-user")
+	public ApiResponse<UserInfoResponse> getAnotherUserInfo(@RequestParam Long id) {
+		return ApiResponse.success(userService.getAnotherUserInfo(id));
+	}
 	
 }
