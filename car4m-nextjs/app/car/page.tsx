@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Image from "next/image"
 import Header from '../home/header'
 import { useEffect, useState } from 'react'
-import { fetchCarInfo, likeCar } from '../services/CarServices'
+import { fetchCarInfo, fetchReviewCar, likeCar } from '../services/CarServices'
 import { useSearchParams } from 'next/navigation'
 import DatePickerFrame from './datepicker'
 import axios from 'axios'
@@ -16,14 +16,32 @@ import consume from "../assets/imgs/consume.svg"
 import heart from "../assets/imgs/heart.svg"
 import redheart from "../assets/imgs/redheart.svg"
 import post from "../assets/imgs/location.svg"
+import iconU from '../assets/imgs/user-icon.svg'
+import iconLocation from '../assets/imgs/location.svg'
+
 import FrameFeature from './feature';
 import { format, set } from "date-fns";
 import { createOrder, getCarOrderTime } from '../services/OrderService';
 import { create } from 'domain';
+import { icon } from 'leaflet'
+import Footer from '../home/footer'
+import { fetchOwner } from '../services/UserServices'
 
 type Time = {
     receive: Date,
     return: Date
+}
+
+type UserReview = {
+    name: string
+    id: number
+    image: string
+}
+
+type Rewiew = {
+    descripsion: string
+    vote: number
+    user: UserReview
 }
 
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
@@ -32,6 +50,7 @@ const Car: NextPage = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const carId = Number(searchParams.get('carID'))
+    const [review, setReview] = useState<Rewiew[]>([])
     const [list, setList] = useState<Time[]>([])
     const [liked, setLiked] = useState(false)
     const [data, setData] = useState({
@@ -48,6 +67,14 @@ const Car: NextPage = () => {
         seats: null,
         transmission: '',
         location: '',
+        id: null,
+        user_id: null
+    })
+    const [owner, setOwner] = useState({
+        name: '',
+        image: '',
+        email: '',
+        phone: '',
         id: null
     })
     const [confirm, setConfirm] = useState(false)
@@ -61,7 +88,7 @@ const Car: NextPage = () => {
         dropOff: null,
     })
     const accesstoken = localStorage.getItem('access_token')
-    
+
     const toggleConfirm = () => setConfirm(!confirm)
 
     const updateData = (key: keyof typeof data, value: any) => {
@@ -153,8 +180,43 @@ const Car: NextPage = () => {
         //router.push('/home')
     }
 
+    const getReview = async () => {
+        try {
+            const respone = await fetchReviewCar(Number(data.id))
+            setReview(respone.data.content)
+        } catch (error) {
+            console.log('Loi khi lay du lieu review', error)
+        }
+    }
+
+    const getOwner = async (id: number) => {
+        try {
+            const response = await fetchOwner(id)
+            setOwner(response.data)
+            console.log(response.data)
+        } catch (error) {
+            console.log('Loi khi lay du lieu chu xe', error)
+        }
+    }
+
+    const calculateAverage = (list: any[]): number => {
+        const validScores = list.filter(
+            (item) => typeof item.vote === "number"
+        )
+        if (validScores.length === 0) return 0
+
+        const totalScore = validScores.reduce((sum, item) => sum + item.vote, 0)
+        return totalScore / validScores.length
+    }
+
+    const handleUser = (id: number) => {
+        router.push(`/owner?userId=${id}`);
+    }
+
     useEffect(() => {
         getCar(Number(searchParams.get('carID')))
+        getReview()
+        getOwner(Number(data.user_id))
         //getListTime()
     }, [])
 
@@ -166,9 +228,9 @@ const Car: NextPage = () => {
     return (
         <section className="main flex flex-col justify-center items-center font-baloo-2">
             <Header />
-
-            <div className="w-[1120px] relative flex flex-col items-center justify-center bg-white">
-                {/* <div className="relative w-full h-[518px] text-13xl text-white">
+            <div className='w-full flex items-center justify-center border-b border-line pb-[10px]'>
+                <div className="w-[1120px] relative flex flex-col items-center justify-center bg-white">
+                    {/* <div className="relative w-full h-[518px] text-13xl text-white">
                     <div className="relavtive h-full w-[54.89%]  right-[45.11%] bottom-[0%] left-[0%] rounded-3xs bg-dodgerblue overflow-hidden">
                         <img className="relative  left-[-114px] w-[802px] h-[518px]" width={802} height={518} alt="" src="BG.svg" />
                         <div className="relavtive top-[56px] left-[22px] flex flex-col items-start justify-start gap-4">
@@ -190,300 +252,309 @@ const Car: NextPage = () => {
                     <img className="relative h-[46.53%] w-[19.95%] top-[0.58%] right-[22.76%] bottom-[52.9%] left-[57.29%] rounded-lg max-w-full overflow-hidden max-h-full object-cover" width={266} height={241} alt="" src="View 3.png" />
                 </div> */}
 
-                <div className='w-full h-[500px]'>
+                    <div className='w-full h-[500px]'>
 
-                </div>
-
-                <div className="w-full relative flex flex-row justify-between gap-4">
-                    <div className="w-full flex flex-col items-center justify-center gap-4 relative text-left text-xl text-black pr-2">
-                        <div className="relative w-full border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-start py-4 text-[30px]">
-                            <div className="w-full flex flex-row items-center justify-start">
-                                <div className="w-full flex flex-col items-start justify-start gap-2">
-
-                                    <div className="flex flex-row w-full justify-between relative leading-[17px]">
-                                        <b className="relative leading-[18px] flex items-center shrink-0 py-1 text-xxl">
-                                            {String(data.type).toUpperCase()} {String(data.name).toUpperCase()}
-                                            {/* {String("Mazda CX-5 2024").toUpperCase()} */}
-                                        </b>
-                                        <div onClick={likedCar} className='rounded-full cursor-pointer h-full'>
-                                            <Image alt='' src={liked ? redheart : heart}></Image>
-                                        </div>
-                                    </div>
-                                    <div className="w-1/2 flex flex-row items-center justify-start gap-[9px] text-sm text-oil-11">
-                                        <Image className="w-4 relative rounded-[0.5px] h-4" width={16} height={16} alt="" src={post} />
-                                        <div className="truncate"> {data.location} </div>
-                                    </div>
-                                    <div className="flex flex-row items-center justify-between gap-2">
-                                        <span className="text-sm bg-blue-100 px-2 rounded-[100px]">{data.transmission == "MT" ? "Số sàn" : "Số tự động"}</span>
-                                        <span className="text-sm bg-green-100 px-2 rounded-[100px]">Thuê giờ</span>
-                                        <span className="text-sm bg-whiteblue px-2 rounded-[100px]">Miễn thế chấp</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="relative w-full flex flex-col items-start justify-start py-2 border-line border-b text-oil-11">
-                            <div className="self-stretch flex flex-col items-start justify-center gap-2">
-                                <b className="relative inline-block text-xx font-medium">Đặc điểm</b>
-                                <div className="self-stretch overflow-x-auto shrink-0 flex flex-row items-center justify-between gap-6">
-                                    <div className="relative shrink-0 ">
-                                        <div className="relative  flex flex-row items-center justify-center gap-3">
-                                            <Image className="w-8 relative h-8" alt="" src={trans} />
-                                            <div className='flex flex-col'>
-                                                <p className="text-xl text-iconcolor">Truyền động</p>
-                                                <b className="m-0 font-medium text-md">{data.transmission == "AT" ? "Số tự động" : "Số sàn"}</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="relative shrink-0">
-                                        <div className="relative  flex flex-row items-center justify-center gap-3">
-                                            <Image className="w-8 relative h-8" alt="" src={seat} />
-                                            <div className='flex flex-col'>
-                                                <p className="text-iconcolor">Số ghế</p>
-                                                <b className="m-0 font-medium text-md">{data.seats} chỗ</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="relative shrink-0 ">
-                                        <div className="relative  flex flex-row items-center justify-center gap-4">
-                                            <Image className="w-7 relative h-7" alt="" src={fuels} />
-                                            <div className='flex flex-col'>
-                                                <p className="text-iconcolor">Nhiên liệu</p>
-                                                <b className="m-0 font-medium text-md">{(data.fuel == "GASOLINE") ? "Xăng" : "Điện"}</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="relative shrink-0 ">
-                                        <div className="relative  flex flex-row items-center justify-center gap-3">
-                                            <Image className="w-8 relative h-8" alt="" src={consume} />
-                                            <div className='flex flex-col'>
-                                                <p className="text-iconcolor">Tiêu hao</p>
-                                                <b className="m-0 font-medium text-md"> {data.fuel_consumption}</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="w-full relative border-b-[1px] border-line box-border flex flex-col items-start justify-center py-2 gap-[15px]">
-                            <div className="flex flex-row items-start justify-start">
-                                <b className="relative inline-block text-xx font-medium"> Mô tả </b>
-                            </div>
-                            <div className="w-full relative leading-[15px] text-iconcolor flex items-center shrink-0 py-2 text-base">
-                                <span className="w-full">
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">{data.type} {data.name} </p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">{data.description}</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">Xe rộng rãi, an toàn, tiện nghi</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">Xe trang bị hệ thống {data.comforts?.[0]}, {data.comforts?.[1]}, {data.comforts?.[2]} cùng nhiều tiện nghi khác…</p>
-                                    <p className="m-0">Trân trọng cảm ơn, chúc quý khách hàng có những chuyến đi tuyệt vời !</p>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="w-full relative border-b-[1px] border-line box-border flex flex-col items-start justify-center py-2 pb-2 gap-[15px]">
-                            <div className="flex flex-row items-start justify-start">
-                                <b className="relative inline-block text-xx font-medium"> Các tiện nghi khác </b>
-                            </div>
-                            <FrameFeature features={["Bản đồ",
-                                "Bluetooth",
-                                "Camera hành trình",
-                                "Camera lùi",
-                                "Cảm biến lốp",
-                                "Cảm biến va chạm",
-                                "Định vị GPS",
-                                "ETC",]} />
-                        </div>
-
-                        <div className="relative border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-center py-2 gap-[15px]">
-                            <div className="flex flex-row items-start justify-start">
-                                <b className="relative inline-block text-xx font-medium">Điều khoản</b>
-                            </div>
-                            <div className="w-full relative leading-[15px] text-iconcolor flex items-center shrink-0 py-2 text-base">
-                                <span className="w-full">
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">Quy định khác:</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Sử dụng xe đúng mục đích.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không sử dụng xe thuê vào mục đích phi pháp, trái pháp luật.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không sử dụng xe thuê để cầm cố, thế chấp.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không hút thuốc, nhả kẹo cao su, xả rác trong xe.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không chở hàng quốc cấm dễ cháy nổ.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không chở hoa quả, thực phẩm nặng mùi trong xe.</p>
-                                    <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Khi trả xe, nếu xe bẩn hoặc có mùi trong xe, khách hàng vui lòng vệ sinh xe sạch sẽ hoặc gửi phụ thu phí vệ sinh xe.</p>
-                                    <p className="m-0">Trân trọng cảm ơn, chúc quý khách hàng có những chuyến đi tuyệt vời !</p>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="relative w-full border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-start py-2">
-                            <div className="self-stretch h-[69px] flex flex-row items-center justify-start">
-                                <div className="w-[676px] flex flex-col items-start justify-start gap-1">
-                                    <b className="relative inline-block text-xx font-medium">Vị trí xe</b>
-                                    <div className="self-stretch h-[17px] flex flex-row items-center justify-start text-oil-11">
-                                        <div className="w-[676px] relative inline-block shrink-0"> {data.location} </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="relative w-full border-silver border-b-[1px] border-solid box-border flex flex-col items-start justify-start py-2 gap-4">
-                            <div className=" top-[24px] left-[24px] flex flex-row items-start justify-start gap-3">
-                                <div className="w-20 relative tracking-[-0.02em] font-semibold flex items-center h-7 shrink-0">Đánh giá</div>
-                                <div className="w-11 rounded bg-dodgerblue h-7 flex flex-row items-center justify-center py-0 px-5 box-border text-center  text-primary-0">
-                                    <b className="w-5 relative flex items-center justify-center h-4 shrink-0">23</b>
-                                </div>
-                            </div>
-                            <div className="w-full h-[79px] flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
-                                <img className="rounded-full w-[50px] h-[50px] object-cover" width={44} height={46} alt="" src="Profill.png" />
-                                <div className='w-full flex flex-col gap-2'>
-                                    <div className="h-[23px] flex flex-col items-start justify-start ">
-                                        <b className="w-32 relative tracking-[-0.03em] leading-[150%] flex items-center h-7 shrink-0">ABC</b>
-                                    </div>
-                                    <div className="w-full flex flex-row items-center justify-between gap-2 text-right text-secondary-300">
-                                        <div className="overflow-hidden flex flex-row items-center justify-start gap-0.5">
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                        </div>
-                                        <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">21 July 2022</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="w-full h-[79px] flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
-                                <img className="rounded-full w-[50px] h-[50px] object-cover" width={44} height={46} alt="" src="Profill.png" />
-                                <div className='w-full flex flex-col gap-2'>
-                                    <div className="h-[23px] flex flex-col items-start justify-start ">
-                                        <b className="w-32 relative tracking-[-0.03em] leading-[150%] flex items-center h-7 shrink-0">XYZ</b>
-                                    </div>
-                                    <div className="w-full flex flex-row items-center justify-between gap-2 text-right text-secondary-300">
-                                        <div className="overflow-hidden flex flex-row items-center justify-start gap-0.5">
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                            <img className="w-5 relative h-5 overflow-hidden shrink-0" width={20} height={20} alt="" src="ic-actions-star.svg" />
-                                        </div>
-                                        <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">22 July 2022</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="rounded w-[132px] h-11 flex flex-row items-center justify-center box-border gap-2 text-center text-base text-secondary-300">
-                                <div className="w-20 relative tracking-[-0.02em] leading-[150%] font-semibold flex items-center justify-center h-6 shrink-0">Xem tất cả</div>
-                                <img className="w-4 relative h-4" width={16} height={16} alt="" src="vuesax/outline/arrow-down.svg" />
-                            </div>
-                        </div>
                     </div>
 
-                    <div className="relative flex flex-col pt-4">
-                        <div className="w-[370px] bg-semiblue border border-smoke rounded-lg p-5">
-                            {/* Giá thuê */}
-                            <div className="flex items-center justify-start mb-4">
-                                <div className="text-3xl font-bold text-blue-500">856K</div>
-                                <span className="text-sm text-gray-500">/ngày</span>
-                            </div>
+                    <div className="w-full relative flex flex-row justify-between gap-4">
+                        <div className="w-full flex flex-col items-center justify-center gap-4 relative text-left text-xl text-black pr-2">
+                            <div className="relative w-full border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-start py-4 text-[30px]">
+                                <div className="w-full flex flex-row items-center justify-start">
+                                    <div className="w-full flex flex-col items-start justify-start gap-2">
 
-                            {/* Thời gian */}
-                            <div onClick={isOpenDatePicker} className="cursor-pointer grid grid-cols-2 mb-4 border border-line rounded-lg bg-white ">
-                                <div className='flex flex-col gap-1 p-3 border-r border-line'>
-                                    <p className="text-base text-left">Nhận xe</p>
-                                    <div className="flex flex-row items-center justify-between gap-2 text-center">
-                                        <span className="font-medium text-xl">{dates.pickUp ? format(dates.pickUp, "dd/MM/yyyy") : "30/11/2024"}</span>
-                                        <span className="text-xl font-medium">{dates.pickUp ? format(dates.pickUp, "HH:mm") : "23:00"}</span>
+                                        <div className="flex flex-row w-full justify-between relative leading-[17px]">
+                                            <b className="relative leading-[18px] flex items-center shrink-0 py-1 text-xxl">
+                                                {String(data.type).toUpperCase()} {String(data.name).toUpperCase()}
+                                                {/* {String("Mazda CX-5 2024").toUpperCase()} */}
+                                            </b>
+                                            <div onClick={likedCar} className='rounded-full cursor-pointer h-full'>
+                                                <Image alt='' src={liked ? redheart : heart}></Image>
+                                            </div>
+                                        </div>
+                                        <div className="w-1/2 flex flex-row items-center justify-start gap-[9px] text-sm text-oil-11">
+                                            <Image className="w-4 relative rounded-[0.5px] h-4" width={16} height={16} alt="" src={post} />
+                                            <div className="truncate"> {data.location} </div>
+                                        </div>
+                                        <div className="flex flex-row items-center justify-between gap-2">
+                                            <span className="text-sm bg-blue-100 px-2 rounded-[100px]">{data.transmission == "MT" ? "Số sàn" : "Số tự động"}</span>
+                                            <span className="text-sm bg-green-100 px-2 rounded-[100px]">Thuê giờ</span>
+                                            <span className="text-sm bg-whiteblue px-2 rounded-[100px]">Miễn thế chấp</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='flex flex-col gap-1 p-3'>
-                                    <p className="text-base text-left">Trả xe</p>
-                                    <div className="flex flex-row items-center justify-between gap-2 text-center">
-                                        <span className="font-medium text-xl">{dates.dropOff ? format(dates.dropOff, "dd/MM/yyyy") : "01/12/2024"}</span>
-                                        <span className="text-xl font-medium">{dates.dropOff ? format(dates.dropOff, "HH:mm") : "20:00"}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {open && (
-                                <DatePickerFrame
-                                    pickUp={dates.pickUp}
-                                    dropOff={dates.dropOff}
-                                    onDateChange={handleDateChange}
-                                    isOpenDatePicker={isOpenDatePicker}
-                                />
-                            )}
-                            {/* Địa điểm giao xe */}
-
-
-                            {/* Bảng giá */}
-                            <div className="mb-4 text-base">
-
-                                <div className='flex flex-col border-t border-b border-line py-2 gap-2'>
-                                    <div className="flex justify-between">
-                                        <span>Đơn giá thuê</span>
-                                        <span>{Number(data.rental_fee).toLocaleString("vi-VN")} đ/ giờ</span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <span>Bảo hiểm thuê xe</span>
-                                        <span>50.000 đ/ ngày</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-between py-2">
-                                    <span>Tổng</span>
-                                    <span>{Number(data.rental_fee).toLocaleString("vi-VN")} x {calculateHours()} giờ + 50.000 x {calculateDays()} ngày</span>
                                 </div>
                             </div>
+                            <div className="relative w-full flex flex-col items-start justify-start py-2 border-line border-b text-oil-11">
+                                <div className="self-stretch flex flex-col items-start justify-center gap-2">
+                                    <b className="relative inline-block text-xx font-medium">Đặc điểm</b>
+                                    <div className="self-stretch overflow-x-auto shrink-0 flex flex-row items-center justify-between gap-6">
+                                        <div className="relative shrink-0 ">
+                                            <div className="relative  flex flex-row items-center justify-center gap-3">
+                                                <Image className="w-8 relative h-8" alt="" src={trans} />
+                                                <div className='flex flex-col'>
+                                                    <p className="text-xl text-iconcolor">Truyền động</p>
+                                                    <b className="m-0 font-medium text-md">{data.transmission == "AT" ? "Số tự động" : "Số sàn"}</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="relative shrink-0">
+                                            <div className="relative  flex flex-row items-center justify-center gap-3">
+                                                <Image className="w-8 relative h-8" alt="" src={seat} />
+                                                <div className='flex flex-col'>
+                                                    <p className="text-iconcolor">Số ghế</p>
+                                                    <b className="m-0 font-medium text-md">{data.seats} chỗ</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="relative shrink-0 ">
+                                            <div className="relative  flex flex-row items-center justify-center gap-4">
+                                                <Image className="w-7 relative h-7" alt="" src={fuels} />
+                                                <div className='flex flex-col'>
+                                                    <p className="text-iconcolor">Nhiên liệu</p>
+                                                    <b className="m-0 font-medium text-md">{(data.fuel == "GASOLINE") ? "Xăng" : "Điện"}</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="relative shrink-0 ">
+                                            <div className="relative  flex flex-row items-center justify-center gap-3">
+                                                <Image className="w-8 relative h-8" alt="" src={consume} />
+                                                <div className='flex flex-col'>
+                                                    <p className="text-iconcolor">Tiêu hao</p>
+                                                    <b className="m-0 font-medium text-md"> {data.fuel_consumption}</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            {/* Giảm giá */}
-                            <div className="mb-4 text-sm">
-                                <div className="flex justify-between mb-2">
-                                    <span className="flex items-center">
-                                        <span className="bg-orange-100 text-orange-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
-                                            Chương trình giảm giá
-                                        </span>
-
+                            <div className="w-full relative border-b-[1px] border-line box-border flex flex-col items-start justify-center py-2 gap-[15px]">
+                                <div className="flex flex-row items-start justify-start">
+                                    <b className="relative inline-block text-xx font-medium"> Mô tả </b>
+                                </div>
+                                <div className="w-full relative leading-[15px] text-iconcolor flex items-center shrink-0 py-2 text-base">
+                                    <span className="w-full">
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">{data.type} {data.name} </p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">{data.description}</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">Xe rộng rãi, an toàn, tiện nghi</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">Xe trang bị hệ thống {data.comforts?.[0]}, {data.comforts?.[1]}, {data.comforts?.[2]} cùng nhiều tiện nghi khác…</p>
+                                        <p className="m-0">Trân trọng cảm ơn, chúc quý khách hàng có những chuyến đi tuyệt vời !</p>
                                     </span>
-                                    <span>-0đ</span>
                                 </div>
-                                <div className="flex justify-between mb-2">
-                                    <span className="flex items-center">
-                                        <span className="bg-blue-100 text-blue-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
-                                            Mã khuyến mãi
-                                        </span>
+                            </div>
+
+                            <div className="w-full relative border-b-[1px] border-line box-border flex flex-col items-start justify-center py-2 pb-2 gap-[15px]">
+                                <div className="flex flex-row items-start justify-start">
+                                    <b className="relative inline-block text-xx font-medium"> Các tiện nghi khác </b>
+                                </div>
+                                <FrameFeature features={["Bản đồ",
+                                    "Bluetooth",
+                                    "Camera hành trình",
+                                    "Camera lùi",
+                                    "Cảm biến lốp",
+                                    "Cảm biến va chạm",
+                                    "Định vị GPS",
+                                    "ETC",]} />
+                            </div>
+
+                            <div className="relative border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-center py-2 gap-[15px]">
+                                <div className="flex flex-row items-start justify-start">
+                                    <b className="relative inline-block text-xx font-medium">Điều khoản</b>
+                                </div>
+                                <div className="w-full relative leading-[15px] text-iconcolor flex items-center shrink-0 py-2 text-base">
+                                    <span className="w-full">
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">Quy định khác:</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Sử dụng xe đúng mục đích.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không sử dụng xe thuê vào mục đích phi pháp, trái pháp luật.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không sử dụng xe thuê để cầm cố, thế chấp.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không hút thuốc, nhả kẹo cao su, xả rác trong xe.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không chở hàng quốc cấm dễ cháy nổ.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Không chở hoa quả, thực phẩm nặng mùi trong xe.</p>
+                                        <p className="[margin-block-start:0] [margin-block-end:7px]">◦ Khi trả xe, nếu xe bẩn hoặc có mùi trong xe, khách hàng vui lòng vệ sinh xe sạch sẽ hoặc gửi phụ thu phí vệ sinh xe.</p>
+                                        <p className="m-0">Trân trọng cảm ơn, chúc quý khách hàng có những chuyến đi tuyệt vời !</p>
                                     </span>
-                                    <span>0đ</span>
                                 </div>
                             </div>
 
-                            {/* Tổng thành tiền */}
-                            <div className="flex justify-between items-center font-bold text-xl py-2 border-t border-line">
-                                <span>Thành tiền</span>
-                                <span className="text-blue-500">{Number(data.rental_fee * calculateHours() + 50000 * calculateDays()).toLocaleString("vi-VN")} đ</span>
+                            <div className="relative w-full border-line border-b-[1px] border-solid box-border flex flex-col items-start justify-start py-2">
+                                <div className="self-stretch h-[69px] flex flex-row items-center justify-start">
+                                    <div className="w-[676px] flex flex-col items-start justify-start gap-1">
+                                        <b className="relative inline-block text-xx font-medium">Vị trí xe</b>
+                                        <div className="self-stretch h-[17px] flex flex-row items-center justify-start text-oil-11 py-4">
+                                            <Image src={iconLocation} alt={''} className='w-6 h-6 relative'></Image>
+                                            <div className="w-[676px] relative inline-block shrink-0"> {data.location} </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Nút chọn thuê */}
-                            <button onClick={toggleConfirm} className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600">
-                                CHỌN THUÊ
-                            </button>
-                            {confirm && (
-                                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10" >
-                                    <div className="bg-white rounded-lg p-6 w-[300px] shadow-lg relative z-20">
-                                        <h2 className="text-xx font-medium text-center mb-4">Xác nhận thuê xe</h2>
-                                        <div className='flex flex-row items-center justify-between gap-2'>
-                                            <button className="mt-4 w-full px-4 py-2 bg-smoke text-silver rounded-lg" onClick={toggleConfirm}>
-                                                Hủy
-                                            </button>
-                                            <button className="mt-4 w-full px-4 py-2 bg-primary text-white rounded-lg" onClick={() => handleRent()}>
-                                                Xác nhận
-                                            </button>
+                            <div className="relative w-full flex flex-col items-start justify-start py-2">
+                                <div className="self-stretch flex flex-row items-center justify-start">
+                                    <div className="w-full flex flex-col items-start justify-start gap-2">
+                                        <b className="relative inline-block text-xx font-medium">Chủ xe </b>
+                                        <div className="w-full flex flex-row items-start justify-between p-2">
+                                            <div className='flex flex-row items-center gap-4'>
+                                                <Image src={owner.image ? owner.image : iconU} alt={''} className='rounded-full w-[70px] h-[70px]' />
+                                                <p className='font-medium text-xx'> {owner.name} </p>
+                                            </div>
+
+                                            <div className='flex flex-row items-center justify-between gap-4'>
+                                                <div className='flex flex-col items-center justify-center gap-2'>
+                                                    <p className='text-silver text-xl'> Tỉ lệ phản hồi </p>
+                                                    <p className='font-medium text-xl'> 100% </p>
+                                                </div>
+                                                <div className='flex flex-col items-center justify-center gap-2'>
+                                                    <p className='text-silver text-xl'> Thời gian phản hồi </p>
+                                                    <p className='font-medium text-xl'> 20 phút </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="relative w-full flex flex-col items-start justify-start py-2 gap-4">
+                                <div className='flex flex-row items-center justify-start gap-1'>
+                                    {/* <Image src={star} alt={''} className='w-4 h-4 relative'></Image> */}
+                                    <span>⭐</span>
+                                    <p className='font-medium text-md'> {calculateAverage(review).toFixed(1)} - </p>
+                                    <p className='text-md'> {review.length} Đánh giá </p>
+                                </div>
+
+                                <div className='relative flex flex-col items-center justify-between gap-2'>
+                                    {review.map((item) =>
+                                    (<div className="w-full h-[79px] flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
+                                        <Image className="rounded-full w-[80px] h-[80px] object-cover" width={44} height={44} alt="" src={item.user.image ? item.user.image : iconU} />
+                                        <div className='w-full flex flex-col gap-2'>
+                                            <div onClick={() => handleUser(item.user.id)} className="h-[23px] flex flex-col items-start justify-start ">
+                                                <b className="w-32 relative tracking-[-0.03em] leading-[150%] flex items-center h-7 shrink-0"> {item.user.name} XYZ</b>
+                                            </div>
+                                            <div className="w-full flex flex-row items-center justify-between gap-2 text-right text-secondary-300">
+                                                <div className="overflow-hidden flex flex-row items-center justify-start gap-0.5">
+                                                    {Array.from({ length: Math.round(item.vote) }, (_, index) => (
+                                                        <span key={index}>⭐</span>
+                                                    ))}
+                                                </div>
+                                                {/* <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">22 July 2022</div> */}
+                                            </div>
+                                        </div>
+                                    </div>)
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative flex flex-col pt-4">
+                            <div className="w-[370px] bg-semiblue border border-smoke rounded-lg p-5">
+                                {/* Giá thuê */}
+                                <div className="flex items-center justify-start mb-4">
+                                    <div className="text-3xl font-bold text-blue-500">856K</div>
+                                    <span className="text-sm text-gray-500">/ngày</span>
+                                </div>
+
+                                {/* Thời gian */}
+                                <div onClick={isOpenDatePicker} className="cursor-pointer grid grid-cols-2 mb-4 border border-line rounded-lg bg-white ">
+                                    <div className='flex flex-col gap-1 p-3 border-r border-line'>
+                                        <p className="text-base text-left">Nhận xe</p>
+                                        <div className="flex flex-row items-center justify-between gap-2 text-center">
+                                            <span className="font-medium text-xl">{dates.pickUp ? format(dates.pickUp, "dd/MM/yyyy") : "30/11/2024"}</span>
+                                            <span className="text-xl font-medium">{dates.pickUp ? format(dates.pickUp, "HH:mm") : "23:00"}</span>
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col gap-1 p-3'>
+                                        <p className="text-base text-left">Trả xe</p>
+                                        <div className="flex flex-row items-center justify-between gap-2 text-center">
+                                            <span className="font-medium text-xl">{dates.dropOff ? format(dates.dropOff, "dd/MM/yyyy") : "01/12/2024"}</span>
+                                            <span className="text-xl font-medium">{dates.dropOff ? format(dates.dropOff, "HH:mm") : "20:00"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {open && (
+                                    <DatePickerFrame
+                                        pickUp={dates.pickUp}
+                                        dropOff={dates.dropOff}
+                                        onDateChange={handleDateChange}
+                                        isOpenDatePicker={isOpenDatePicker}
+                                    />
+                                )}
+                                {/* Địa điểm giao xe */}
+
+
+                                {/* Bảng giá */}
+                                <div className="mb-4 text-base">
+
+                                    <div className='flex flex-col border-t border-b border-line py-2 gap-2'>
+                                        <div className="flex justify-between">
+                                            <span>Đơn giá thuê</span>
+                                            <span>{Number(data.rental_fee).toLocaleString("vi-VN")} đ/ giờ</span>
                                         </div>
 
+                                        <div className="flex justify-between">
+                                            <span>Bảo hiểm thuê xe</span>
+                                            <span>50.000 đ/ ngày</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between py-2">
+                                        <span>Tổng</span>
+                                        <span>{Number(data.rental_fee).toLocaleString("vi-VN")} x {calculateHours()} giờ + 50.000 x {calculateDays()} ngày</span>
                                     </div>
                                 </div>
-                            )}
+
+                                {/* Giảm giá */}
+                                <div className="mb-4 text-sm">
+                                    <div className="flex justify-between mb-2">
+                                        <span className="flex items-center">
+                                            <span className="bg-orange-100 text-orange-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
+                                                Chương trình giảm giá
+                                            </span>
+
+                                        </span>
+                                        <span>-0đ</span>
+                                    </div>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="flex items-center">
+                                            <span className="bg-blue-100 text-blue-500 px-2 py-1 rounded-full text-xs font-semibold mr-2">
+                                                Mã khuyến mãi
+                                            </span>
+                                        </span>
+                                        <span>0đ</span>
+                                    </div>
+                                </div>
+
+                                {/* Tổng thành tiền */}
+                                <div className="flex justify-between items-center font-bold text-xl py-2 border-t border-line">
+                                    <span>Thành tiền</span>
+                                    <span className="text-blue-500">{Number(data.rental_fee * calculateHours() + 50000 * calculateDays()).toLocaleString("vi-VN")} đ</span>
+                                </div>
+
+                                {/* Nút chọn thuê */}
+                                <button onClick={toggleConfirm} className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600">
+                                    CHỌN THUÊ
+                                </button>
+                                {confirm && (
+                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10" >
+                                        <div className="bg-white rounded-lg p-6 w-[300px] shadow-lg relative z-20">
+                                            <h2 className="text-xx font-medium text-center mb-4">Xác nhận thuê xe</h2>
+                                            <div className='flex flex-row items-center justify-between gap-2'>
+                                                <button className="mt-4 w-full px-4 py-2 bg-smoke text-silver rounded-lg" onClick={toggleConfirm}>
+                                                    Hủy
+                                                </button>
+                                                <button className="mt-4 w-full px-4 py-2 bg-primary text-white rounded-lg" onClick={() => handleRent()}>
+                                                    Xác nhận
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+            <Footer />
         </section>
     )
 };

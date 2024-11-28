@@ -57,10 +57,6 @@ const Owner: NextPage = () => {
         return totalScore / validScores.length
     }
 
-    const updateOwner = (key: keyof typeof owner, value: any) => {
-        setOwner((prev) => ({ ...prev, [key]: value }))
-    }
-
     const getOwner = async (id: number) => {
         try {
             const response = await fetchOwner(id)

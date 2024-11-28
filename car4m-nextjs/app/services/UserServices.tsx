@@ -9,7 +9,7 @@ const fetchCCCD = () => {
 }
 
 const fetchOwner = (id: number) => {
-    return axios.get('/api/v1/users/info', {
+    return axios.get('/api/v1/users/detail-user', {
         params: {
             id: id
         }

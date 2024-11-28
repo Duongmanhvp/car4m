@@ -72,11 +72,11 @@ const fetchMyCar = () => {
 }
 
 const fetchCarUser = (id: number) => {
-    return axios.get('/api/v1/cars/get-car-user', {
+    return axios.get('/api/v1/cars/get-by-user', {
         params: {
             pageNo: 0,
-            pageSize: 6,
-            id: id
+            pageSize: 4,
+            userId: id
         }
     })
 }
@@ -133,6 +133,14 @@ const acceptedCar = (id: number) => {
     })
 }
 
+const fetchReviewCar = (id: number) => {
+    return axios.get('/api/v1/cars/review', {
+        params: {
+            id: id
+        }
+    })
+}
+
 export { fetchCarByLocation, 
          fetchCarByFilter, 
          fetchCarInfo, 
@@ -144,4 +152,5 @@ export { fetchCarByLocation,
          fetchCarAccept, 
          acceptedCar, 
          fetchMyLike,
-         fetchCarUser }
+         fetchCarUser,
+         fetchReviewCar }
