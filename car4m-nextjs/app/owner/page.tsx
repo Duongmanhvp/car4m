@@ -35,7 +35,7 @@ const Owner: NextPage = () => {
     const [items, setItems] = useState<any[]>([])
     const [review, setReview] = useState<Rewiew[]>([])
     const [owner, setOwner] = useState({
-        name: '',
+        username: '',
         image: '',
         email: '',
         phone: '',
@@ -69,7 +69,7 @@ const Owner: NextPage = () => {
 
     const getCar = async () => {
         try {
-            const response = await fetchCarUser(Number(owner.id))
+            const response = await fetchCarUser(Number(searchParams.get('userId')))
             setItems(response.data.content)
         } catch (error) {
             console.log('Loi khi lay du lieu xe', error)
@@ -78,7 +78,7 @@ const Owner: NextPage = () => {
 
     const getReview = async () => {
         try {
-            const respone = await fetchReviewUser(Number(owner.id))
+            const respone = await fetchReviewUser(Number(searchParams.get('userId')))
             setReview(respone.data.content)
         } catch (error) {
             console.log('Loi khi lay du lieu review', error)
@@ -112,7 +112,7 @@ const Owner: NextPage = () => {
                         <div className='flex flex-row items-center gap-8'>
                             <div className='w-1/3 flex flex-col items-center justify-center gap-2'>
                                 <Image src={icon} alt={''} className='w-[150px] h-[150px] relative rounded-full' />
-                                <p className='text-md'> Tran Ba Toan </p>
+                                <p className='text-md'> {owner.username} </p>
                             </div>
 
                             <div className='w-2/3 flex flex-col items-start justify-between rounded-lg bg-blue-100 gap-2 p-4'>
@@ -143,11 +143,15 @@ const Owner: NextPage = () => {
 
                         <div className="relative flex items-center justify-center w-full grid gap-6 grid-cols-1 sm:grid-cols-2">
                             {items.map((item) =>
-                            (<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
-                                <div className=" rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
-                                    <div className="w-full p-2 relative rounded-xl bg-smoke h-[155px]">
-                                        <Image src={srtingToLink(item.car_detail.images) ? srtingToLink(item.car_detail.images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
-                                        {/* item.car_detail.images ? item.car_detail.images :  */}
+                            (<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-line    '>
+                                <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
+                                    <div className="w-full aspect-video p-2 relative rounded-xl bg-smoke">
+                                        <Image src={srtingToLink(item.car_detail.images) ? srtingToLink(item.car_detail.images) : bg} 
+                                               alt="" 
+                                               layout="fill" 
+                                               objectFit="cover" 
+                                               className='rounded-xl w-full h-full' 
+                                        />
                                     </div>
 
                                     <div className="flex flex-col items-start justify-start pt-3 gap-4 w-full">
@@ -161,7 +165,7 @@ const Owner: NextPage = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-row items-center justify-between w-full text-sm text-dimgray border-t pt-4">
+                                        <div className="flex flex-row items-center justify-between w-full text-sm text-dimgray border-t border-line pt-4">
                                             <div className="relative leading-[17px]">Price</div>
                                             <div className="relative leading-[17px] text-base text-gray-200">
                                                 <span className="font-semibold">{item.rental_fee} VND</span><span className="text-sm text-darkgray-100">/day</span>

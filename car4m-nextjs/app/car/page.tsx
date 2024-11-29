@@ -71,7 +71,7 @@ const Car: NextPage = () => {
         user_id: null
     })
     const [owner, setOwner] = useState({
-        name: '',
+        username: '',
         image: '',
         email: '',
         phone: '',
@@ -156,6 +156,7 @@ const Car: NextPage = () => {
             updateData('transmission', response.data.car_detail.transmission)
             updateData('latitude', response.data.location.latitude)
             updateData('longitude', response.data.location.longitude)
+            updateData('user_id', response.data.user_id)
         } catch (error) {
 
         }
@@ -216,14 +217,19 @@ const Car: NextPage = () => {
     useEffect(() => {
         getCar(Number(searchParams.get('carID')))
         getReview()
-        getOwner(Number(data.user_id))
         //getListTime()
     }, [])
+
+    useEffect(() => {
+        getOwner(Number(data.user_id))   
+    }, [data.user_id])
 
     useEffect(() => {
         if (data.latitude && data.longitude)
             getLocation(data.latitude, data.longitude)
     }, [data.latitude, data.longitude])
+
+    //console.log(data)
 
     return (
         <section className="main flex flex-col justify-center items-center font-baloo-2">
@@ -392,9 +398,9 @@ const Car: NextPage = () => {
                                     <div className="w-full flex flex-col items-start justify-start gap-2">
                                         <b className="relative inline-block text-xx font-medium">Chủ xe </b>
                                         <div className="w-full flex flex-row items-start justify-between p-2">
-                                            <div className='flex flex-row items-center gap-4'>
+                                            <div onClick={() => handleUser(Number(owner.id))} className='cursor-pointer flex flex-row items-center gap-4'>
                                                 <Image src={owner.image ? owner.image : iconU} alt={''} className='rounded-full w-[70px] h-[70px]' />
-                                                <p className='font-medium text-xx'> {owner.name} </p>
+                                                <p className='font-medium text-xx'> {owner.username} </p>
                                             </div>
 
                                             <div className='flex flex-row items-center justify-between gap-4'>

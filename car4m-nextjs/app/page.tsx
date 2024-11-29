@@ -12,7 +12,7 @@ import Owner from "./owner/page";
 export default function Home() {
   return (  
     <>
-      <Car />
+      <Profile />
     </>
   );
 }

@@ -145,7 +145,7 @@ const FrameInfo: NextPage = () => {
         const target = event.target as HTMLInputElement;
         if (target.files && target.files[0]) {
             const file = target.files[0];
-            setImageSrc1(URL.createObjectURL(file)); 
+            setImageSrc1(URL.createObjectURL(file));
             const body = new FormData();
             body.append('file', file);
             try {
@@ -160,7 +160,7 @@ const FrameInfo: NextPage = () => {
         const target = event.target as HTMLInputElement;
         if (target.files && target.files[0]) {
             const file = target.files[0];
-            setImageSrc2(URL.createObjectURL(file)); 
+            setImageSrc2(URL.createObjectURL(file));
             const body = new FormData();
             body.append('file', file);
             try {
@@ -173,21 +173,26 @@ const FrameInfo: NextPage = () => {
     };
 
     const getUser = async () => {
-        let res = await fetchUserInfo()
-        if (res && res.data) {
-            //console.log(res)
-            setUserInfo(res.data)
-            if (res.data.identity_card)  
-                setCCCDInfo(res.data.identity_card)
-            if (res.data.driving_license)
-                setLicenseInfo(res.data.driving_license)
+        try {
+            const res = await fetchUserInfo()
+            if (res && res.data) {
+                //console.log(res)
+                setUserInfo(res.data)
+                if (res.data.identity_card)
+                    setCCCDInfo(res.data.identity_card)
+                if (res.data.driving_license)
+                    setLicenseInfo(res.data.driving_license)
+            }
+        } catch (error) {
+            console.log(error)
         }
+
     }
 
     useEffect(() => {
         getUser()
     }, [])
-    
+
 
     return (
         <div className="w-full relative h-[1060px] text-left text-xl text-darkslategray font-baloo-2">
@@ -235,7 +240,7 @@ const FrameInfo: NextPage = () => {
 
                                 </div>)
                             : (
-                             <Image width={339} height={211} className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.image ? userInfo.image : userIcon} /> 
+                                <Image width={339} height={211} className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.image ? userInfo.image : userIcon} />
                             )
                         }
 
@@ -336,7 +341,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                          !cccdInfo.imageUrl ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={cccdInfo.imageUrl} /> 
+                            !cccdInfo.imageUrl ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={cccdInfo.imageUrl} />
                         )
                     }
                 </div>
@@ -461,7 +466,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                         (!licenseInfo.imageUrl) ? <></> :  <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={licenseInfo.imageUrl} />  
+                            (!licenseInfo.imageUrl) ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={licenseInfo.imageUrl} />
                         )
                     }
                 </div>

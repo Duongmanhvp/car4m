@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      aspectRatio: {
+        '4/3': '4 / 3',
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
@@ -25,7 +28,8 @@ const config: Config = {
         lowblue: "#45A0FF",
         whiteblue: "#C1E0FF",
         line: "#e0e0e0",
-        semiblue: "#f7fbff"
+        semiblue: "#f7fbff",
+        lightred: "#ffcccc",
       },
       "spacing": {},
       fontFamily: {

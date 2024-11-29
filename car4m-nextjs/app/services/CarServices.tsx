@@ -134,9 +134,14 @@ const acceptedCar = (id: number) => {
 }
 
 const fetchReviewCar = (id: number) => {
-    return axios.get('/api/v1/cars/review', {
+    return axios.get(`/api.v1/reviews/car/${id}`)
+}
+
+const fetchCarOrder = () => {
+    return axios.get('/api/v1/cars/get-my-trip', {
         params: {
-            id: id
+            pageNo: 0,
+            pageSize: 6
         }
     })
 }
@@ -153,4 +158,5 @@ export { fetchCarByLocation,
          acceptedCar, 
          fetchMyLike,
          fetchCarUser,
-         fetchReviewCar }
+         fetchReviewCar,
+         fetchCarOrder }
