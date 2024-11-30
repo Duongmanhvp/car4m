@@ -177,36 +177,6 @@ const Owner: NextPage = () => {
                             )}
                         </div>
                     </div>
-
-                    <div className='w-[850px] flex flex-col bg-white rounded-xl p-[32px] gap-4'>
-                        <div className='flex flex-row items-center justify-start gap-1'>
-                            {/* <Image src={star} alt={''} className='w-4 h-4 relative'></Image> */}
-                            <span>⭐</span>
-                            <p className='font-medium text-md'> {calculateAverage(review).toFixed(1)} - </p>
-                            <p className='text-md'> {review.length} Đánh giá </p>
-                        </div>
-
-                        <div className='relative flex flex-col items-center justify-between gap-2'>
-                            {review.map((item) =>
-                            (<div className="w-full h-[79px] flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
-                                <Image className="rounded-full w-[80px] h-[80px] object-cover" width={44} height={44} alt="" src={item.user.image ? item.user.image : icon} />
-                                <div className='w-full flex flex-col gap-2'>
-                                    <div onClick={() => handleUser(item.user.id)} className="h-[23px] flex flex-col items-start justify-start ">
-                                        <b className="w-32 relative tracking-[-0.03em] leading-[150%] flex items-center h-7 shrink-0"> {item.user.name} XYZ</b>
-                                    </div>
-                                    <div className="w-full flex flex-row items-center justify-between gap-2 text-right text-secondary-300">
-                                        <div className="overflow-hidden flex flex-row items-center justify-start gap-0.5">
-                                            {Array.from({ length: Math.round(item.vote) }, (_, index) => (
-                                                <span key={index}>⭐</span>
-                                            ))}
-                                        </div>
-                                        {/* <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">22 July 2022</div> */}
-                                    </div>
-                                </div>
-                            </div>)
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
             <Footer />

@@ -9,10 +9,14 @@ import iconLocation from "../assets/imgs/location.svg"
 import { useRouter } from 'next/navigation';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { format } from 'date-fns'
+import ReivewFrame from './review';
 
 const MyTrip: NextPage = () => {
 	const [filter, setFilter] = useState("4")
 	const [items, setItem] = useState<any[]>([])
+	const [rate, setRate] = useState(0)
+
+	const toggleFrame = (id: number) => setRate(id)
 
 	const srtingToLink = (images: string) => {
 		let image: string[] = images.split(',')
@@ -67,9 +71,7 @@ const MyTrip: NextPage = () => {
 						let check: String = '0'
 						if (new Date(item.receive_date) > date) check = '1'
 						if (new Date(item.return_date) < date) check = '3'
-						if (new Date(item.receive_date) < date && date < item.return_date) check = '2'
-
-						console.log(check)
+						if (new Date(item.receive_date) <= date && date <= new Date(item.return_date)) check = '2'
 
 						if (filter == check || filter == '0')
 							return (<div className='cursor-pointer w-[720px] rounded-xl border border-smoke flex flex-col justify-between bg-white'>
@@ -135,15 +137,17 @@ const MyTrip: NextPage = () => {
 										<div className='border border-silver text-dimgray rounded-lg p-1 px-2'>
 											Hoàn thành
 										</div>
-										<div className='hover:bg-lightred hover:font-medium border border-red text-red rounded-lg p-1 px-2'>
+										<div onClick={() => toggleFrame(item.rental_id)} className='hover:bg-lightred hover:font-medium border border-red text-red rounded-lg p-1 px-2'>
 											Đánh giá
 										</div>
+
+										{rate == item.rental_id && (<ReivewFrame rental_id={item.rental_id} onToggleFrame={toggleFrame}/>)}
 									</div>)
 								}
-
 							</div>)
 					})}
 				</div>
+
 			</div>
 
 		</div>

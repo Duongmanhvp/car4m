@@ -66,13 +66,13 @@ const Profile: NextPage = () => {
         <>
             <Header />
             <div className="w-full flex flex-col relative bg-whitesmoke h-[1140px] text-left text-11xl text-darkslategray-100 font-baloo-2">
-                <div className="absolute top-[82px] left-[calc(50%_-_560px)] w-[367px] h-[681px] flex flex-col items-center justify-start gap-6">
-                    <div className="w-[367px] border-smoke border-b-[1px] border-solid box-border h-[81px] flex flex-col items-start justify-start text-[48px] text-darkslatesmoke">
+                <div className="relative top-[82px] left-[calc(50%_-_560px)] w-[367px] h-[681px] flex flex-col items-center justify-start gap-6">
+                    <div className="w-[367px] border-line border-b-[1px] border-solid box-border h-[81px] flex flex-col items-start justify-start text-[48px] text-darkslatesmoke">
                         <div className="self-stretch relative leading-[130%] font-medium flex items-center h-[47px] shrink-0">
                             Xin chào bạn!
                         </div>
                     </div>
-                    <div className="w-[367px] border-silver border-b-[1px] border-solid box-border h-[277px] flex flex-col items-start justify-start gap-6">
+                    <div className="w-[367px] border-line border-b-[1px] border-solid box-border h-[277px] flex flex-col items-start justify-start gap-6">
                         <div
                             className={`self-stretch h-[46px] flex flex-row items-center justify-start gap-4 cursor-pointer hover:bg-smoke transition-all ${activeSection === 'myinfo' ? 'font-medium border-l-4 border-blue-400 pl-4' : ''
                                 }`}

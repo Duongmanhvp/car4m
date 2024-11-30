@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Image from "next/image"
 import Header from '../home/header'
 import { useEffect, useState } from 'react'
-import { fetchCarInfo, fetchReviewCar, likeCar } from '../services/CarServices'
+import { fetchCarInfo, likeCar } from '../services/CarServices'
 import { useSearchParams } from 'next/navigation'
 import DatePickerFrame from './datepicker'
 import axios from 'axios'
@@ -18,10 +18,11 @@ import redheart from "../assets/imgs/redheart.svg"
 import post from "../assets/imgs/location.svg"
 import iconU from '../assets/imgs/user-icon.svg'
 import iconLocation from '../assets/imgs/location.svg'
+import avatar from '../assets/imgs/avatar.png'
 
 import FrameFeature from './feature';
 import { format, set } from "date-fns";
-import { createOrder, getCarOrderTime } from '../services/OrderService';
+import { createOrder, fetchCarReview, getCarOrderTime } from '../services/OrderService';
 import { create } from 'domain';
 import { icon } from 'leaflet'
 import Footer from '../home/footer'
@@ -39,9 +40,11 @@ type UserReview = {
 }
 
 type Rewiew = {
-    descripsion: string
+    description: string
     vote: number
-    user: UserReview
+    user_id: number
+    username: number
+    avatar: string
 }
 
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
@@ -183,8 +186,9 @@ const Car: NextPage = () => {
 
     const getReview = async () => {
         try {
-            const respone = await fetchReviewCar(Number(data.id))
-            setReview(respone.data.content)
+            const respone = await fetchCarReview(Number(searchParams.get('carID')))
+            setReview(respone.data)
+            console.log(respone.data)
         } catch (error) {
             console.log('Loi khi lay du lieu review', error)
         }
@@ -200,14 +204,10 @@ const Car: NextPage = () => {
         }
     }
 
-    const calculateAverage = (list: any[]): number => {
-        const validScores = list.filter(
-            (item) => typeof item.vote === "number"
-        )
-        if (validScores.length === 0) return 0
-
-        const totalScore = validScores.reduce((sum, item) => sum + item.vote, 0)
-        return totalScore / validScores.length
+    const calculateAverage = (list: Rewiew[]) => {
+        let total = 0
+        list.map((item) => total = total + Number(item.vote))
+        return total / list.length
     }
 
     const handleUser = (id: number) => {
@@ -221,7 +221,7 @@ const Car: NextPage = () => {
     }, [])
 
     useEffect(() => {
-        getOwner(Number(data.user_id))   
+        getOwner(Number(data.user_id))
     }, [data.user_id])
 
     useEffect(() => {
@@ -385,7 +385,7 @@ const Car: NextPage = () => {
                                 <div className="self-stretch h-[69px] flex flex-row items-center justify-start">
                                     <div className="w-[676px] flex flex-col items-start justify-start gap-1">
                                         <b className="relative inline-block text-xx font-medium">Vị trí xe</b>
-                                        <div className="self-stretch h-[17px] flex flex-row items-center justify-start text-oil-11 py-4">
+                                        <div className="self-stretch h-[17px] flex flex-row items-center justify-start text-oil-11 py-4 gap-2">
                                             <Image src={iconLocation} alt={''} className='w-6 h-6 relative'></Image>
                                             <div className="w-[676px] relative inline-block shrink-0"> {data.location} </div>
                                         </div>
@@ -426,22 +426,21 @@ const Car: NextPage = () => {
                                     <p className='text-md'> {review.length} Đánh giá </p>
                                 </div>
 
-                                <div className='relative flex flex-col items-center justify-between gap-2'>
+                                <div className='w-full relative flex flex-col items-center justify-between gap-2'>
                                     {review.map((item) =>
-                                    (<div className="w-full h-[79px] flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
-                                        <Image className="rounded-full w-[80px] h-[80px] object-cover" width={44} height={44} alt="" src={item.user.image ? item.user.image : iconU} />
-                                        <div className='w-full flex flex-col gap-2'>
-                                            <div onClick={() => handleUser(item.user.id)} className="h-[23px] flex flex-col items-start justify-start ">
-                                                <b className="w-32 relative tracking-[-0.03em] leading-[150%] flex items-center h-7 shrink-0"> {item.user.name} XYZ</b>
-                                            </div>
-                                            <div className="w-full flex flex-row items-center justify-between gap-2 text-right text-secondary-300">
+                                    (<div className="w-full flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
+                                        <Image onClick={() => handleUser(item.user_id)} className="rounded-full w-[70px] h-[70px] object-cover cursor-pointer" alt="" src={item.avatar ? item.avatar : avatar} />
+                                        <div className='w-full flex flex-col gap-1'>
+                                            <div onClick={() => handleUser(item.user_id)} className="flex flex-row items-center gap-3 cursor-pointer">
+                                                <b className="relative font-medium items-center"> {item.username}</b>
                                                 <div className="overflow-hidden flex flex-row items-center justify-start gap-0.5">
                                                     {Array.from({ length: Math.round(item.vote) }, (_, index) => (
                                                         <span key={index}>⭐</span>
                                                     ))}
                                                 </div>
-                                                {/* <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">22 July 2022</div> */}
                                             </div>
+                                            <span className='text-base text-dimgray'> {item.description} </span>
+                                            {/* <div className="relative tracking-[-0.02em] leading-[150%] font-medium flex flex-row items-center justify-end shrink-0">22 July 2022</div> */}
                                         </div>
                                     </div>)
                                     )}

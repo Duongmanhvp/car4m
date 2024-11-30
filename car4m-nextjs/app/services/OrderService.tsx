@@ -60,7 +60,7 @@ const postReview = (des: string, vote: number, id: number) => {
 }
 
 const fetchCarReview = (id: number) => {
-    return axios.get(`/api.v1/reviews/car/${id}`)
+    return axios.get(`/api/v1/reviews/car/${id}`)
 }
 
 
