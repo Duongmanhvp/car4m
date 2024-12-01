@@ -133,16 +133,6 @@ const Car: NextPage = () => {
             console.error("Lỗi khi lấy địa chỉ từ tọa độ:", error);
         }
     }
-    const getListTime = async () => {
-        const currentDate = new Date()
-        const nextDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 0)
-        try {
-            const response = await getCarOrderTime(carId, currentDate, nextDate)
-            setItems(response.data.content)
-        } catch (error) {
-            console.log('Loi khi lay order', error)
-        }
-    }
     const getCar = async (id: number) => {
         try {
             const response = await fetchCarInfo(id)
@@ -188,7 +178,6 @@ const Car: NextPage = () => {
         try {
             const respone = await fetchCarReview(Number(searchParams.get('carID')))
             setReview(respone.data)
-            console.log(respone.data)
         } catch (error) {
             console.log('Loi khi lay du lieu review', error)
         }
@@ -198,7 +187,6 @@ const Car: NextPage = () => {
         try {
             const response = await fetchOwner(id)
             setOwner(response.data)
-            console.log(response.data)
         } catch (error) {
             console.log('Loi khi lay du lieu chu xe', error)
         }
@@ -234,30 +222,9 @@ const Car: NextPage = () => {
     return (
         <section className="main flex flex-col justify-center items-center font-baloo-2">
             <Header />
+
             <div className='w-full flex items-center justify-center border-b border-line pb-[10px]'>
                 <div className="w-[1120px] relative flex flex-col items-center justify-center bg-white">
-                    {/* <div className="relative w-full h-[518px] text-13xl text-white">
-                    <div className="relavtive h-full w-[54.89%]  right-[45.11%] bottom-[0%] left-[0%] rounded-3xs bg-dodgerblue overflow-hidden">
-                        <img className="relative  left-[-114px] w-[802px] h-[518px]" width={802} height={518} alt="" src="BG.svg" />
-                        <div className="relavtive top-[56px] left-[22px] flex flex-col items-start justify-start gap-4">
-                            <div className="w-[383px] relative tracking-[-0.03em] leading-[150%] font-semibold flex items-center">Xe thể thao có thiết kế và khả năng tăng tốc tốt nhất</div>
-                            <div className="w-[284px] relative text-base tracking-[-0.02em] leading-[150%] font-medium flex items-center">
-                                <span className="w-full">
-                                    <p className="m-0">An toàn và thoải mái khi lái xe</p>
-                                    <p className="m-0">xe thể thao tương lai và thanh lịch</p>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="relavtive h-[43.2%] w-[42.71%] right-[0%] bottom-[0.89%] left-[57.29%]">
-                        <div className="relative h-full w-full top-[0%] right-[0%] bottom-[0%] left-[0%] rounded-lg bg-white overflow-hidden">
-                            <img className="relative top-[36.42px] left-[7.51px] w-[532px] h-[167px] object-contain" alt="" src="Car.png" />
-                        </div>
-                    </div>
-                    <img className="relative h-[46.53%] w-[20.25%] top-[0.58%] right-[0.56%] bottom-[52.9%] left-[79.19%] rounded-3xs max-w-full overflow-hidden max-h-full object-cover" width={270} height={241} alt="" src="View 2.png" />
-                    <img className="relative h-[46.53%] w-[19.95%] top-[0.58%] right-[22.76%] bottom-[52.9%] left-[57.29%] rounded-lg max-w-full overflow-hidden max-h-full object-cover" width={266} height={241} alt="" src="View 3.png" />
-                </div> */}
-
                     <div className='w-full h-[500px]'>
 
                     </div>
@@ -475,6 +442,7 @@ const Car: NextPage = () => {
                                 </div>
                                 {open && (
                                     <DatePickerFrame
+                                        carId={Number(data.id)}
                                         pickUp={dates.pickUp}
                                         dropOff={dates.dropOff}
                                         onDateChange={handleDateChange}
@@ -557,7 +525,6 @@ const Car: NextPage = () => {
                     </div>
                 </div>
             </div>
-
 
             <Footer />
         </section>
