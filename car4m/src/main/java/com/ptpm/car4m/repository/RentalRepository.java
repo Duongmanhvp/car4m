@@ -2,6 +2,7 @@ package com.ptpm.car4m.repository;
 
 import com.ptpm.car4m.entity.Car;
 import com.ptpm.car4m.entity.Rental;
+import com.ptpm.car4m.repository.query.RentalRepoQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface RentalRepository extends JpaRepository<Rental, Long> {
+public interface RentalRepository extends JpaRepository<Rental, Long>, RentalRepoQuery {
 	
 	Page<Rental> findByUserId(long userId, Pageable pageable);
 	

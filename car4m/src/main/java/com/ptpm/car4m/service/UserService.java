@@ -2,6 +2,7 @@ package com.ptpm.car4m.service;
 
 import com.ptpm.car4m.dto.request.location.AddressRequest;
 import com.ptpm.car4m.dto.request.user.*;
+import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
 import com.ptpm.car4m.dto.response.user.UserCreationResponse;
 import com.ptpm.car4m.dto.response.user.UserInfoResponse;
@@ -21,5 +22,13 @@ public interface UserService {
 	UserInfoResponse updateMyInfo(Jwt principal, UpdateInfoRequest request);
 	
 	UserInfoResponse getAnotherUserInfo(Long id);
+	
+	// ADMIN
+	
+	PageResponse<UserInfoResponse> getAllUserInfo(int pageNo, int pageSize);
+	
+//	UserInfoResponse deleteUser(Long id);
+	
+	
 	
 }

@@ -7,6 +7,7 @@ import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
+import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.entity.Car;
 import org.springframework.data.domain.Page;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -68,4 +69,14 @@ public interface CarService {
 	CarResponse acceptCar(long carId);
 	
 	CarResponse rejectCar(long carId);
+	
+	List<TopRentedResponse> getTopRentedCars(int limit);
+	
+	Long calculateTotalRevenueByWeek(int year, int week);
+	
+	Long calculateTotalRevenueByMonth( int year, int month);
+	
+	Long calculateCarRevenueByWeek(Long carId, int year, int week);
+	
+	Long calculateCarRevenueByMonth(Long carId, int year, int month);
 }

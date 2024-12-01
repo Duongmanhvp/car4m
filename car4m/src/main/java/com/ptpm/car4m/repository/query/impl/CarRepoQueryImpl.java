@@ -2,24 +2,23 @@ package com.ptpm.car4m.repository.query.impl;
 
 
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
+import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.entity.Car;
+import com.ptpm.car4m.entity.Rental;
+import com.ptpm.car4m.entity.User;
 import com.ptpm.car4m.repository.query.CarRepoQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -161,6 +160,87 @@ public class CarRepoQueryImpl implements CarRepoQuery {
 		
 	}
 	
+	@Override
+	public List<TopRentedResponse> getTopCarRented(int year, int week, int limit) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Tuple> query = cb.createTupleQuery();
+		Root<Rental> rental = query.from(Rental.class);
+		Join<Rental, Car> car = rental.join("car");
+		Join<Car, User> owner = car.join("owner");
+		
+		
+		Expression<Long> rentalCount = cb.count(rental.get("id"));
+		
+		query.multiselect(
+				car.get("id").alias("id"),
+				owner.get("id").alias("userId"),
+				car.get("name").alias("name"),
+				car.get("rentalFee").alias("rentalFee"),
+				rentalCount.alias("rentalCount")
+		);
+		
+		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, rental.get("receiveDate")), year);
+		Predicate weekPredicate = cb.equal(cb.function("WEEK", Integer.class, rental.get("receiveDate")), week);
+		
+		query.where(cb.and(yearPredicate, weekPredicate));
+		query.groupBy(car.get("id"), owner.get("id"), car.get("name"), car.get("rentalFee"));
+		query.orderBy(cb.desc(rentalCount));
+		
+		return entityManager.createQuery(query)
+				.setMaxResults(limit) // Lấy giới hạn số xe
+				.getResultList()
+				.stream()
+				.map(tuple -> new TopRentedResponse(
+						tuple.get("id", Long.class),
+						tuple.get("userId", Long.class),
+						tuple.get("name", String.class),
+						tuple.get("rentalFee", Long.class),
+						tuple.get("rentalCount", Long.class)
+				))
+				.collect(Collectors.toList());
+		
+		
+	}
+	
+	@Override
+	public Long calculateCarRevenueByWeek(Long carId, int year, int week) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = cb.createQuery(Long.class);
+		Root<Rental> rental = query.from(Rental.class);
+		
+		Expression<Long> totalFeeSum = cb.sum(rental.get("totalFee"));
+		
+		Predicate carPredicate = cb.equal(rental.get("car").get("id"), carId);
+		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, rental.get("receiveDate")), year);
+		Predicate weekPredicate = cb.equal(cb.function("WEEK", Integer.class, rental.get("receiveDate")), week);
+		
+		query.select(totalFeeSum)
+				.where(cb.and(carPredicate, yearPredicate, weekPredicate));
+		
+		return entityManager.createQuery(query).getSingleResult();
+	}
+	
+	@Override
+	public Long calculateCarRevenueByMonth(Long carId, int year, int month) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = cb.createQuery(Long.class);
+		Root<Rental> rental = query.from(Rental.class);
+		
+		// Tổng doanh thu
+		Expression<Long> totalFeeSum = cb.sum(rental.get("totalFee"));
+		
+		// Điều kiện lọc
+		Predicate carPredicate = cb.equal(rental.get("car").get("id"), carId);
+		Predicate yearPredicate = cb.equal(cb.function("YEAR", Integer.class, rental.get("receiveDate")), year);
+		Predicate monthPredicate = cb.equal(cb.function("MONTH", Integer.class, rental.get("receiveDate")), month);
+		
+		// Thiết lập query
+		query.select(totalFeeSum)
+				.where(cb.and(carPredicate, yearPredicate, monthPredicate));
+		
+		// Trả về kết quả
+		return entityManager.createQuery(query).getSingleResult();
+	}
 	
 	private List<Car> getCarFromDatabase(CarSearchFilterRequest request, Pageable pageable) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();

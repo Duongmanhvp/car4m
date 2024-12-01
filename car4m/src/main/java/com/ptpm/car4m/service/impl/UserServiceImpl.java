@@ -1,9 +1,8 @@
 package com.ptpm.car4m.service.impl;
 
 import com.ptpm.car4m.component.OpenCageGeocoding;
-import com.ptpm.car4m.dto.request.location.AddressRequest;
 import com.ptpm.car4m.dto.request.user.*;
-import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
+import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.user.UserCreationResponse;
 import com.ptpm.car4m.dto.response.user.UserInfoResponse;
 import com.ptpm.car4m.entity.DrivingLicense;
@@ -13,7 +12,6 @@ import com.ptpm.car4m.enums.Role;
 import com.ptpm.car4m.exception.AlreadyExistsException;
 import com.ptpm.car4m.exception.AuthenticatedException;
 import com.ptpm.car4m.exception.NotFoundException;
-import com.ptpm.car4m.exception.SQLIntegrityConstraintViolationException;
 import com.ptpm.car4m.repository.DrivingLicenseRepository;
 import com.ptpm.car4m.repository.IdentityCardRepository;
 import com.ptpm.car4m.repository.UserRepository;
@@ -21,9 +19,14 @@ import com.ptpm.car4m.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -217,6 +220,55 @@ public class UserServiceImpl implements UserService {
 				.image(user.getImage())
 				.build();
 	}
+	
+	@Override
+	public PageResponse<UserInfoResponse> getAllUserInfo(int pageNo, int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNo, pageSize);
+		
+		Page<User> users = userRepository.findAll(pageRequest);
+		
+		List<UserInfoResponse> content = users.stream()
+				.map(user -> UserInfoResponse.builder()
+						.id(user.getId())
+						.username(user.getUsername())
+						.email(user.getEmail())
+						.phone(user.getPhone())
+						.address(user.getAddress())
+						.role(user.getRole())
+						.image(user.getImage())
+						.drivingLicense(user.getDrivingLicense())
+						.identityCard(user.getIdentityCard())
+						.build()
+				).toList();
+		
+		return PageResponse.<UserInfoResponse>builder()
+				.pageNo(pageNo)
+				.pageSize(pageSize)
+				.totalElements(users.getTotalElements())
+				.totalPages(users.getTotalPages())
+				.last(users.isLast())
+				.content(content)
+				.build();
+	}
+	
+//	@Override
+//	public UserInfoResponse deleteUser(Long id) {
+//
+//		User user = userRepository.findById(id)
+//				.orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản"));
+//
+//		userRepository.deleteById(id);
+//
+//		return UserInfoResponse.builder()
+//				.id(user.getId())
+//				.username(user.getUsername())
+//				.email(user.getEmail())
+//				.phone(user.getPhone())
+//				.address(user.getAddress())
+//				.role(user.getRole())
+//				.image(user.getImage())
+//				.build();
+//	}
 	
 	
 }

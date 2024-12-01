@@ -4,6 +4,7 @@ package com.ptpm.car4m.controller.user;
 import com.ptpm.car4m.dto.request.location.AddressRequest;
 import com.ptpm.car4m.dto.request.user.*;
 import com.ptpm.car4m.dto.response.ApiResponse;
+import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
 import com.ptpm.car4m.dto.response.user.UserCreationResponse;
 import com.ptpm.car4m.dto.response.user.UserInfoResponse;
@@ -12,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -74,4 +76,17 @@ public class UserController {
 		return ApiResponse.success(userService.getAnotherUserInfo(id));
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/get-all-user")
+	public ApiResponse<PageResponse<UserInfoResponse>> getAllUserInfo(
+			@RequestParam int pageNo,
+			@RequestParam int pageSize) {
+		return ApiResponse.success(userService.getAllUserInfo(pageNo, pageSize));
+	}
+	
+//	@PreAuthorize("hasRole('ADMIN')")
+//	@DeleteMapping("/delete/{id}")
+//	public ApiResponse<UserInfoResponse> deleteUser(@PathVariable Long id) {
+//		return ApiResponse.success(userService.deleteUser(id));
+//	}
 }

@@ -1,6 +1,7 @@
 package com.ptpm.car4m.repository.query;
 
 import com.ptpm.car4m.dto.request.car.CarSearchFilterRequest;
+import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.entity.Car;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,11 @@ public interface CarRepoQuery {
 	List<Car> getAllByIsAcceptedAndLocation (Boolean isAccepted, double latitude, double longitude, double radius, Pageable pageable);
 
 	List<Car> searchCar(CarSearchFilterRequest request, Pageable pageable);
+	
+	List<TopRentedResponse> getTopCarRented(int year, int week, int limit);
+	
+	Long calculateCarRevenueByWeek(Long carId, int year, int week);
+	
+	Long calculateCarRevenueByMonth(Long carId, int year, int month);
+	
 }

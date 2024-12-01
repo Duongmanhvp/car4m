@@ -9,6 +9,7 @@ import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarDetailResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
+import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
 import com.ptpm.car4m.entity.*;
 import com.ptpm.car4m.enums.CarStatus;
@@ -641,6 +642,50 @@ public class CarServiceImpl implements CarService {
 		carRepository.delete(car);
 		
 		return getCarResponse(car);
+	}
+	
+	@Override
+	public List<TopRentedResponse> getTopRentedCars(int limit) {
+		int year = LocalDateTime.now().getYear();
+		int week = LocalDateTime.now().getDayOfYear() / 7;
+		
+		return carRepository.getTopCarRented(year, week, limit);
+		
+	}
+	
+	@Override
+	public Long calculateTotalRevenueByWeek(int year, int week) {
+		int yearNow = LocalDateTime.now().getYear();
+		int weekNow = LocalDateTime.now().getDayOfYear() / 7;
+		
+		return rentalRepository.calculateTotalRevenueByWeek(year, week);
+		
+		
+	}
+	
+	@Override
+	public Long calculateTotalRevenueByMonth(int year, int month) {
+		int yearNow = LocalDateTime.now().getYear();
+		int monthNow = LocalDateTime.now().getMonthValue();
+		
+		return rentalRepository.calculateTotalRevenueByMonth(year, month);
+	}
+	
+	@Override
+	public Long calculateCarRevenueByWeek(Long carId, int year, int week) {
+		int yearNow = LocalDateTime.now().getYear();
+		int weekNow = LocalDateTime.now().getDayOfYear() / 7;
+		
+		return rentalRepository.calculateCarRevenueByWeek(carId, year, week);
+		
+	}
+	
+	@Override
+	public Long calculateCarRevenueByMonth(Long carId, int year, int month) {
+		int yearNow = LocalDateTime.now().getYear();
+		int monthNow = LocalDateTime.now().getMonthValue();
+		
+		return rentalRepository.calculateCarRevenueByMonth(carId, year, month);
 	}
 	
 	private CarResponse getCarResponse(Car car) {

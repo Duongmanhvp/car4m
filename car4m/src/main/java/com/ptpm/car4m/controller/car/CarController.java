@@ -9,6 +9,7 @@ import com.ptpm.car4m.dto.response.ApiResponse;
 import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
+import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
 import com.ptpm.car4m.service.CarService;
@@ -234,5 +235,42 @@ public class CarController {
 	@PostMapping("/reject")
 	public ApiResponse<CarResponse> rejectCar(@RequestBody long carId) {
 		return ApiResponse.success(carService.rejectCar(carId));
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/get-top-rented")
+	public ApiResponse<List<TopRentedResponse>> getTopCars(
+			@RequestParam int limit) {
+		return ApiResponse.success(carService.getTopRentedCars(limit));
+	}
+	
+	@GetMapping("/revenue-by-week")
+	public ApiResponse<Long> calculateTotalRevenueByWeek(
+			@RequestParam int year,
+			@RequestParam int week) {
+		return ApiResponse.success(carService.calculateTotalRevenueByWeek(year, week));
+	}
+	
+	@GetMapping("/revenue-by-month")
+	public ApiResponse<Long> calculateTotalRevenueByMonth(
+			@RequestParam int year,
+			@RequestParam int month) {
+		return ApiResponse.success(carService.calculateTotalRevenueByMonth(year, month));
+	}
+	
+	@GetMapping("/revenue-by-car-week")
+	public ApiResponse<Long> calculateCarRevenueByWeek(
+			@RequestParam long carId,
+			@RequestParam int year,
+			@RequestParam int week) {
+		return ApiResponse.success(carService.calculateCarRevenueByWeek(carId, year, week));
+	}
+	
+	@GetMapping("/revenue-by-car-month")
+	public ApiResponse<Long> calculateCarRevenueByMonth(
+			@RequestParam long carId,
+			@RequestParam int year,
+			@RequestParam int month) {
+		return ApiResponse.success(carService.calculateCarRevenueByMonth(carId, year, month));
 	}
 }
