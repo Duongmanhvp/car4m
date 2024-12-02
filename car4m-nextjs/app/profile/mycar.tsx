@@ -15,6 +15,7 @@ import { fetchUserInfo } from '../services/UserServices';
 type UserProps = {
 	id: number
 }
+const linkImg = process.env.NEXT_PUBLIC_LINK
 
 const FrameCar: NextPage = () => {
 	const [edit, setEdit] = useState(false)
@@ -23,6 +24,11 @@ const FrameCar: NextPage = () => {
 	const [isOrder, setIsOrder] = useState<number>(0)
 	const [user, setUser] = useState<any>()
 	const accesstoken = localStorage.getItem('access_token')
+
+	const srtingToLink = (images: string) => {
+        let image: string[] = images.split(',')
+        return linkImg + image[0]
+    }
 
 	const getUser = async () => {
 		try {
@@ -92,7 +98,7 @@ const FrameCar: NextPage = () => {
 							(<div className='cursor-pointer w-[720px] rounded-xl border border-smoke flex flex-col justify-between gap-2 bg-white'>
 								<div onClick={() => handleInfoCar(item.id)} className="rounded-xl bg-white p-2 flex flex-row items-start justify-between text-left text-base text-gray gap-3">
 									<div className="w-1/2 p-2 relative rounded-xl bg-smoke h-[155px]">
-										<Image src={item.car_detail.images ? item.car_detail.images : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
+										<Image src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
 									</div>
 
 									<div className="flex flex-col pt-3 gap-4 w-full">

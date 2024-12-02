@@ -9,6 +9,8 @@ import iconLocation from "../assets/imgs/location.svg"
 import bg from "../assets/imgs/bg.jpeg"
 import { useRouter } from 'next/navigation'
 
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
 type CardProps = {
     type: string
     name: string
@@ -30,7 +32,7 @@ const FrameCard: React.FC<CardProps> = ({ type, name, rental_fee, images, locati
     }
     const srtingToLink = (images: string) => {
         let image: string[] = images.split(',')
-        return image[0]
+        return linkImg + image[0]
     }
 
     //console.log(list)
@@ -39,7 +41,7 @@ const FrameCard: React.FC<CardProps> = ({ type, name, rental_fee, images, locati
         <div className='cursor-pointer w-[720px] rounded-xl border border-smoke font-baloo-2'>
             <div className="rounded-xl bg-white p-2 flex flex-row items-start justify-between text-left text-base text-gray gap-3">
                 <div className="w-1/2 p-2 relative rounded-xl bg-smoke h-[155px]">
-                    <Image src={srtingToLink(images) ? srtingToLink(images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
+                    <Image src={images ? srtingToLink(images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
                     {/* item.car_detail.images ? item.car_detail.images :  */}
                 </div>
 

@@ -11,6 +11,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { format } from 'date-fns'
 import ReivewFrame from './review';
 
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
 const MyTrip: NextPage = () => {
 	const [filter, setFilter] = useState("4")
 	const [items, setItem] = useState<any[]>([])
@@ -20,7 +22,7 @@ const MyTrip: NextPage = () => {
 
 	const srtingToLink = (images: string) => {
 		let image: string[] = images.split(',')
-		return image[0]
+		return linkImg + image[0]
 	}
 
 	const getOrder = async () => {

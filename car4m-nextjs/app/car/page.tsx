@@ -48,6 +48,8 @@ type Rewiew = {
 }
 
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
 
 const Car: NextPage = () => {
     const router = useRouter()
@@ -366,7 +368,7 @@ const Car: NextPage = () => {
                                         <b className="relative inline-block text-xx font-medium">Chủ xe </b>
                                         <div className="w-full flex flex-row items-start justify-between p-2">
                                             <div onClick={() => handleUser(Number(owner.id))} className='cursor-pointer flex flex-row items-center gap-4'>
-                                                <Image src={owner.image ? owner.image : iconU} alt={''} className='rounded-full w-[70px] h-[70px]' />
+                                                <Image src={owner.image ? (linkImg + owner.image) : iconU} alt={''} className='rounded-full w-[70px] h-[70px]' />
                                                 <p className='font-medium text-xx'> {owner.username} </p>
                                             </div>
 
@@ -396,7 +398,7 @@ const Car: NextPage = () => {
                                 <div className='w-full relative flex flex-col items-center justify-between gap-2'>
                                     {review.map((item) =>
                                     (<div className="w-full flex flex-row items-center justify-center gap-4 border border-smoke rounded-lg p-4">
-                                        <Image onClick={() => handleUser(item.user_id)} className="rounded-full w-[70px] h-[70px] object-cover cursor-pointer" alt="" src={item.avatar ? item.avatar : avatar} />
+                                        <Image onClick={() => handleUser(item.user_id)} className="rounded-full w-[70px] h-[70px] object-cover cursor-pointer" alt="" src={item.avatar ? (linkImg + item.avatar) : avatar} />
                                         <div className='w-full flex flex-col gap-1'>
                                             <div onClick={() => handleUser(item.user_id)} className="flex flex-row items-center gap-3 cursor-pointer">
                                                 <b className="relative font-medium items-center"> {item.username}</b>

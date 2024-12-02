@@ -17,6 +17,9 @@ import bg from '../assets/imgs/bg.jpeg'
 import iconLocation from '../assets/imgs/location.svg'
 import star from '../assets/imgs/star.svg'
 
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
+
 type UserReview = {
     name: string
     id: number
@@ -44,7 +47,7 @@ const Owner: NextPage = () => {
 
     const srtingToLink = (images: string) => {
         let image: string[] = images.split(',')
-        return image[0]
+        return linkImg + image[0]
     }
 
     const calculateAverage = (list: any[]): number => {
@@ -146,7 +149,7 @@ const Owner: NextPage = () => {
                             (<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-line    '>
                                 <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
                                     <div className="w-full aspect-video p-2 relative rounded-xl bg-smoke">
-                                        <Image src={srtingToLink(item.car_detail.images) ? srtingToLink(item.car_detail.images) : bg} 
+                                        <Image src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg} 
                                                alt="" 
                                                layout="fill" 
                                                objectFit="cover" 

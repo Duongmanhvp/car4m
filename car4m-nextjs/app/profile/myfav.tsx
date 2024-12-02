@@ -7,9 +7,13 @@ import Image from 'next/image';
 import bg from "../assets/imgs/bg.png"
 import iconLocation from "../assets/imgs/location.svg"
 import { useRouter } from 'next/navigation';
+const linkImg = process.env.NEXT_PUBLIC_LINK
 
 const MyLike: NextPage = () => {
-
+	const srtingToLink = (images: string) => {
+        let image: string[] = images.split(',')
+        return linkImg + image[0]
+    }
 	const [items, setItem] = useState<any[]>([])
 
 	const getCar = async () => {
@@ -40,7 +44,7 @@ const MyLike: NextPage = () => {
 				(<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer w-[720px] rounded-xl border border-smoke'>
 					<div className="rounded-xl bg-white p-2 flex flex-row items-start justify-between text-left text-base text-gray gap-3">
 						<div className="w-1/2 p-2 relative rounded-xl bg-smoke h-[155px]">
-							<Image src={item.car_detail.images ? item.car_detail.images : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
+							<Image src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
 						</div>
 
 						<div className="flex flex-col pt-3 gap-4 w-full">

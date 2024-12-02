@@ -6,20 +6,6 @@ import { fetchCarAccept } from '@/app/services/CarServices';
 import { useEffect, useState } from 'react';
 
 export default async function Cars() {
-  const [items, setItem] = useState<any[]>([])
-
-  const getCar = async () => {
-    try {
-        const res = await fetchCarAccept()
-        setItem(res.data.content)
-    } catch (error) {
-        console.log('Loi khi lay du lieu car', error)
-    }
-  }
-
-  useEffect(() => {
-    getCar()
-}, [])
 
   return (
     <Tabs defaultValue="all">

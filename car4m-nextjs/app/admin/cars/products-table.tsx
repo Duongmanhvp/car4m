@@ -19,14 +19,16 @@ import { Product } from './product';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { fetchCarAccept } from '@/app/services/CarServices';
 
 type CarProps = {
   type: string
-  name: string 
+  name: string
   image: string
   status: number
   rental_fee: number
-  
+
 }
 
 export function ProductsTable() {
@@ -41,12 +43,27 @@ export function ProductsTable() {
     router.push(``);
   }
 
+  const [items, setItem] = useState<any[]>([])
+
+  const getCar = async () => {
+    try {
+      const res = await fetchCarAccept()
+      setItem(res.data.content)
+    } catch (error) {
+      console.log('Loi khi lay du lieu car', error)
+    }
+  }
+
+  useEffect(() => {
+    getCar()
+  }, [])
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Cars</CardTitle>
         <CardDescription>
-        Quản lý xe của bạn và hiệu suất hoạt động.
+          Quản lý xe của bạn và hiệu suất hoạt động.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -80,7 +97,7 @@ export function ProductsTable() {
           <div className="text-xs text-muted-foreground">
             Showing{' '}
             <strong>
-              
+
             </strong>{' '}
             of <strong></strong> products
           </div>
@@ -90,7 +107,7 @@ export function ProductsTable() {
               variant="ghost"
               size="sm"
               type="submit"
-              
+              disabled={false}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Prev
@@ -100,7 +117,7 @@ export function ProductsTable() {
               variant="ghost"
               size="sm"
               type="submit"
-             
+              disabled={false}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />

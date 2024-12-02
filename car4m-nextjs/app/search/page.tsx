@@ -46,11 +46,11 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ title, options, selectedO
 };
 
 const Search: NextPage = () => {
-    const [selectedBrand, setSelectedBrand] = useState<string | null>('Vinfast');
-    const [selectedSeats, setSelectedSeats] = useState<number | null>(5);
-    const [selectedFuel, setSelectedFuel] = useState<string | null>('ELECTRICITY');
-    const [selectedTransmission, setSelectedTransmission] = useState<string | null>('AT');
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+    const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+    const [selectedSeats, setSelectedSeats] = useState<number | null>(null);
+    const [selectedFuel, setSelectedFuel] = useState<string | null>(null);
+    const [selectedTransmission, setSelectedTransmission] = useState<string | null>(null);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
 
     const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
 
@@ -65,35 +65,40 @@ const Search: NextPage = () => {
                 {/* Selection Bar */}
                 <div className="w-[1120px] relative flex flex-row items-center justify-between text-center gap-4 py-4">
                     <div className="relative flex flex-row items-center justify-between gap-4">
-                        <div onClick={() => toggleOverlay("brand")} className="cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver">
+                        <div onClick={() => toggleOverlay("brand")} 
+                            className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${selectedBrand ? 'bg-whiteblue' : ''}`}>
                             <Image className="w-4 h-4 relative" alt="" src={iconGlobal} />
 
                             <p className="align-middle">
                                 Hãng xe
                             </p>
                         </div>
-                        <div onClick={() => toggleOverlay("seats")} className="cursor-pointer align-middle flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver">
+                        <div onClick={() => toggleOverlay("seats")} 
+                            className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${selectedSeats ? 'bg-whiteblue' : ''}`}>
                             <Image className="w-4 h-4 relative" alt="" src={iconCar} />
 
                             <p className="align-middle">
                                 Số chỗ
                             </p>
                         </div>
-                        <div onClick={() => toggleOverlay("fuel")} className="cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver">
+                        <div onClick={() => toggleOverlay("fuel")} 
+                            className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${selectedFuel ? 'bg-whiteblue' : ''}`}>
                             <Image className="w-4 h-4 relative" alt="" src={iconGas} />
 
                             <p className="align-middle">
                                 Nhiên liệu
                             </p>
                         </div>
-                        <div onClick={() => toggleOverlay("transmission")} className="cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver">
+                        <div onClick={() => toggleOverlay("transmission")} 
+                            className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${selectedTransmission ? 'bg-whiteblue' : ''}`}>
                             <Image className="w-4 h-4 relative" alt="" src={iconTrans} />
 
                             <p className="align-middle">
                                 Truyền Động
                             </p>
                         </div>
-                        <div onClick={() => toggleOverlay("price")} className="cursor-pointer flex flex-row text-center items-center justify-center px-2 gap-1 py-1 rounded-lg bg-white border border-silver">
+                        <div onClick={() => toggleOverlay("price")} 
+                            className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${priceRange[0] > 0 ? 'bg-whiteblue' : ''}`}>
                             <Image className="w-4 h-4 relative" alt="" src={iconPrice} />
 
                             <p className="align-middle">
@@ -112,7 +117,7 @@ const Search: NextPage = () => {
                 {activeOverlay === "brand" && (
                     <FilterOverlay
                         title="Chọn Hãng Xe"
-                        options={["Toyota", "Honda", "Ford", "BMW", "Vinfast", "Mazda", "Mecerdes", "Huyndai", "Chevrolet", "Suzuki", "Nissan", "Mitsubishi"]}
+                        options={["", "Toyota", "Honda", "Ford", "BMW", "Vinfast", "Mazda", "Mecerdes", "Huyndai", "Chevrolet", "Suzuki", "Nissan", "Mitsubishi"]}
                         selectedOption={selectedBrand}
                         onSelectOption={setSelectedBrand}
                         onClose={() => toggleOverlay("brand")}
@@ -125,6 +130,7 @@ const Search: NextPage = () => {
                             <h2 className="text-lg font-medium text-center mb-4 border-b border-smoke">Chọn Truyền Động</h2>
                             <ul className="space-y-2">
                                 {[
+                                    { value: null, label: "Tất cả" },
                                     { value: 4, label: "4 Chỗ" },
                                     { value: 5, label: "5 Chỗ" },
                                     { value: 7, label: "7 Chỗ" }
@@ -223,14 +229,14 @@ const Search: NextPage = () => {
                     </div>
                 )}
             </div>
-            <div className="w-full bg-whitesmoke flex items-center justify-center">
+            <div className="w-full flex items-center justify-center pt-8">
                 <Card
                     activeOverlay={activeOverlay}
                     selectedBrand={selectedBrand}
                     selectedSeats={selectedSeats}
                     selectedFuel={selectedFuel}
                     selectedTransmission={selectedTransmission}
-                    priceRange={[priceRange[0],priceRange[1]]}
+                    priceRange={priceRange ? [priceRange[0],priceRange[1]] : null}
                 />
             </div>
         </section>

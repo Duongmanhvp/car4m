@@ -9,7 +9,7 @@ import iconLocation from "../assets/imgs/location.svg"
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-const link = process.env.NEXT_PUBLIC_LINK
+const linkImg = process.env.NEXT_PUBLIC_LINK
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
 
 type Location = {
@@ -59,7 +59,7 @@ const Page: NextPage = () => {
 
 	const srtingToLink = (images: string) => {
 		let image: string[] = images.split(',')
-		return image[0]
+		return linkImg + image[0]
 	}
 
 	useEffect(() => {
@@ -93,7 +93,7 @@ const Page: NextPage = () => {
 								<div className="flex flex-row items-center justify-start gap-1.5 text-xs">
 									<Image className="w-4 h-4" width={16} height={16} alt="" src={iconLocation} />
 									<div className="relative leading-[17px]">
-										<span className="text-iconcolor truncate"> {listLocation[item.id]?.toString()}  </span>
+										<span className="text-iconcolor truncate inline-block w-full"> {listLocation[item.id]?.toString()}  </span>
 									</div>
 								</div>
 							</div>

@@ -81,16 +81,6 @@ const fetchCarUser = (id: number) => {
     })
 }
 
-const fetchDate = (id: number, pickup: Date, dropoff: Date) => {
-    return axios.post('/api/v1/cars/get-rental-between', {
-        params: {
-            car_id: id,
-            receive_date: pickup,
-            return_date: dropoff
-        }
-    })
-}
-
 const fetchMyLike = () => {
     return axios.get('/api/v1/cars/get-my-liked', {
         params: {
@@ -146,6 +136,57 @@ const fetchCarOrder = () => {
     })
 }
 
+const fetchCarByType = (type: string) => {
+    return axios.get('/api/v1/cars/get-by-type', {
+        params: {
+            pageNo: 0,
+            pageSize: 8,
+            type: type
+        }
+    })
+}
+
+const fetchCarByFuel = (type: string) => {
+    return axios.get('/api/v1/cars/get-by-fuel', {
+        params: {
+            pageNo: 0,
+            pageSize: 8,
+            fuel: type
+        }
+    })
+}
+
+const fetchCarBySeats = (type: number) => {
+    return axios.get('/api/v1/cars/get-by-seats', {
+        params: {
+            pageNo: 0,
+            pageSize: 8,
+            seats: type
+        }
+    })
+}
+
+const fetchCarByTransmission = (type: string) => {
+    return axios.get('/api/v1/cars/get-by-transmission', {
+        params: {
+            pageNo: 0,
+            pageSize: 8,
+            transmission: type
+        }
+    })
+}
+
+const fetchCarByPrice = (min: number, max: number) => {
+    return axios.get('/api/v1/cars/get-by-price', {
+        params: {
+            pageNo: 0,
+            pageSize: 8,
+            minPrice: min,
+            maxPrice: max
+        }
+    })
+}
+
 export { fetchCarByLocation, 
          fetchCarByFilter, 
          fetchCarInfo, 
@@ -159,4 +200,9 @@ export { fetchCarByLocation,
          fetchMyLike,
          fetchCarUser,
          fetchReviewCar,
-         fetchCarOrder }
+         fetchCarOrder,
+         fetchCarByFuel,
+         fetchCarByPrice,
+         fetchCarBySeats,
+         fetchCarByTransmission,
+         fetchCarByType, }

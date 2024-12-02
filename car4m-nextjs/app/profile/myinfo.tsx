@@ -9,6 +9,8 @@ import { fetchUserInfo } from '../services/UserServices';
 import { FaCamera } from 'react-icons/fa'
 import userIcon from "../assets/imgs/user-icon.svg"
 
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
 const FrameInfo: NextPage = () => {
     const [isEditingAccount, setIsEditingAccount] = useState(false);
     const [userInfo, setUserInfo] = useState({
@@ -229,7 +231,7 @@ const FrameInfo: NextPage = () => {
                                                 width={140}
                                                 height={140}
                                                 className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover hover:bg-smoke transition-all"
-                                                src={imageSrc}
+                                                src={linkImg + imageSrc}
                                                 alt="Uploaded preview"
                                             />
                                         </div>
@@ -240,7 +242,7 @@ const FrameInfo: NextPage = () => {
 
                                 </div>)
                             : (
-                                <Image width={339} height={211} className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.image ? userInfo.image : userIcon} />
+                                <Image width={339} height={211} className="absolute top-[0px] left-[0px] rounded-[90px] w-[140px] h-[140px] object-cover" alt="" src={userInfo.image ? linkImg + userInfo.image : userIcon} />
                             )
                         }
 
@@ -262,7 +264,7 @@ const FrameInfo: NextPage = () => {
                                 name="birthDate"
                                 value={userInfo.date_of_birth}
                                 onChange={handleAccountChange}
-                                className="relative text-xl text-black"
+                                className="relative text-xl text-black rounded-lg w-1/2"
                             />
                         ) : (
                             <div className="relative text-xl text-black">{userInfo.date_of_birth}</div>
@@ -276,7 +278,7 @@ const FrameInfo: NextPage = () => {
                                 name="gender"
                                 value={userInfo.sex}
                                 onChange={handleAccountChange}
-                                className="relative text-xl text-black"
+                                className="relative text-xl text-black rounded-lg w-1/2"
                             />
                         ) : (
                             <div className="relative text-xl text-black">{userInfo.sex}</div>
@@ -290,7 +292,7 @@ const FrameInfo: NextPage = () => {
                                 name="phone"
                                 value={userInfo.phone}
                                 onChange={handleAccountChange}
-                                className="relative text-xl text-black"
+                                className="relative text-xl text-black rounded-lg w-1/2"
                             />
                         ) : (
                             <div className="relative text-xl text-black">{userInfo.phone}</div>
@@ -304,7 +306,7 @@ const FrameInfo: NextPage = () => {
                                 name="email"
                                 value={userInfo.email}
                                 onChange={handleAccountChange}
-                                className="relative text-xl text-black"
+                                className="relative text-xl text-black rounded-lg w-1/2"
                             />
                         ) : (
                             <div className="relative text-xl text-black">{userInfo.email}</div>
@@ -333,7 +335,7 @@ const FrameInfo: NextPage = () => {
                                         <Image
                                             width={339} height={211}
                                             className="relative max-w-full overflow-hidden h-[181px] shrink-0 object-cover"
-                                            src={imageSrc1}
+                                            src={linkImg + imageSrc1}
                                             alt="Uploaded preview"
                                         />
                                     </div>
@@ -341,7 +343,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                            !cccdInfo.imageUrl ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={cccdInfo.imageUrl} />
+                            !cccdInfo.imageUrl ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={linkImg + cccdInfo.imageUrl} />
                         )
                     }
                 </div>
@@ -355,7 +357,7 @@ const FrameInfo: NextPage = () => {
                                     name="cccd"
                                     // value={cccdInfo.no}
                                     onChange={handleCCCDChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{cccdInfo.no}</div>
@@ -369,7 +371,7 @@ const FrameInfo: NextPage = () => {
                                     name="fullName"
                                     value={cccdInfo.fullName}
                                     onChange={handleCCCDChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{cccdInfo.fullName}</div>
@@ -383,7 +385,7 @@ const FrameInfo: NextPage = () => {
                                     name="gender"
                                     value={cccdInfo.sex}
                                     onChange={handleCCCDChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{cccdInfo.sex}</div>
@@ -397,7 +399,7 @@ const FrameInfo: NextPage = () => {
                                     name="birthDate"
                                     value={cccdInfo.dateOfBirth}
                                     onChange={handleCCCDChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{cccdInfo.dateOfBirth}</div>
@@ -411,7 +413,7 @@ const FrameInfo: NextPage = () => {
                                     name="nationality"
                                     value={cccdInfo.nationality}
                                     onChange={handleCCCDChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{cccdInfo.nationality}</div>
@@ -458,7 +460,7 @@ const FrameInfo: NextPage = () => {
                                             width={339}
                                             height={211}
                                             className="relative max-w-full overflow-hidden h-[181px] shrink-0 object-cover"
-                                            src={imageSrc2}
+                                            src={linkImg + imageSrc2}
                                             alt="Uploaded preview"
                                         />
                                     </div>
@@ -466,7 +468,7 @@ const FrameInfo: NextPage = () => {
                             </div>
                         )
                         : (
-                            (!licenseInfo.imageUrl) ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={licenseInfo.imageUrl} />
+                            (!licenseInfo.imageUrl) ? <></> : <Image width={339} height={211} className="rounded-lg relative w-full h-full overflow-hidden shrink-0 object-cover" alt="" src={linkImg + licenseInfo.imageUrl} />
                         )
                     }
                 </div>
@@ -480,7 +482,7 @@ const FrameInfo: NextPage = () => {
                                     name="licenseNumber"
                                     value={licenseInfo.no}
                                     onChange={handleLicenseChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{licenseInfo.no}</div>
@@ -494,7 +496,7 @@ const FrameInfo: NextPage = () => {
                                     name="licenseClass"
                                     value={licenseInfo.licenseClass}
                                     onChange={handleLicenseChange}
-                                    className="relative text-xl text-black"
+                                    className="relative text-xl text-black rounded-lg w-1/2"
                                 />
                             ) : (
                                 <div className="relative text-xl text-black">{licenseInfo.licenseClass}</div>

@@ -10,6 +10,9 @@ import { fetchUserInfo } from '../services/UserServices';
 import { useRouter } from 'next/navigation';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+const linkImg = process.env.NEXT_PUBLIC_LINK
+
+
 const Header: NextPage = () => {
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -145,7 +148,7 @@ const Header: NextPage = () => {
                 <div className="flex flex-row items-center justify-start gap-6">
                     {isLoggedIn ? (
                         <div onClick={() => admin ? handleNext('logout') : handleNext('profile')} className="relative flex items-center gap-2 font-baloo-2 font-medium cursor-pointer">
-                            <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={userIcon} />
+                            <Image className="w-10 h-10 object-cover rounded-full" alt="User Icon" src={user?.image ? (linkImg+ user.image) : userIcon} />
                             <span>{user?.username || 'Người dùng'}</span>
                         </div>
                     ) : (
