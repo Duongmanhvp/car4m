@@ -20,6 +20,15 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+type CarProps = {
+  type: string
+  name: string 
+  image: string
+  status: number
+  rental_fee: number
+  
+}
+
 export function ProductsTable() {
   let router = useRouter();
   let productsPerPage = 5;
@@ -47,11 +56,11 @@ export function ProductsTable() {
               <TableHead className="hidden w-[100px] sm:table-cell">
                 <span className="sr-only">Image</span>
               </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Price</TableHead>
+              <TableHead>Tên</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="hidden md:table-cell">Giá</TableHead>
               <TableHead className="hidden md:table-cell">
-                Total Sales
+                Lượt thuê
               </TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
               <TableHead>

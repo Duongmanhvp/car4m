@@ -40,14 +40,8 @@ export async function User() {
         <DropdownMenuSeparator />
         {!false ? (
           <DropdownMenuItem>
-            <form
-              action={async () => {
-                'use server';
-               
-              }}
-            >
+            
               <button type="submit">Sign Out</button>
-            </form>
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem>

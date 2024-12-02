@@ -63,5 +63,21 @@ const fetchCarReview = (id: number) => {
     return axios.get(`/api/v1/reviews/car/${id}`)
 }
 
+const fetchRevenueMonth = (year: number, month: number) => {
+    return axios.get('/api/v1/cars/revenue-by-month', {
+        params: {
+            year: year,
+            month: month
+        }
+    })
+}
 
-export { getCarOrderTime, createOrder, getComingOrder, getFinishOrder, getProgressOrder, getAllCarOrder, postReview, fetchCarReview }
+const fetchTopCar = () => {
+    return axios.get('/api/v1/cars/get-top-rented', {
+        params: {
+            limit: 5
+        }
+    })
+}
+
+export { getCarOrderTime, fetchTopCar, createOrder, getComingOrder, getFinishOrder, getProgressOrder, getAllCarOrder, postReview, fetchCarReview, fetchRevenueMonth }

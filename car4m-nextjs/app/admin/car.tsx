@@ -18,8 +18,6 @@ const AcceptCar: NextPage = () => {
         setList((prev) => 
             prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
         )
-
-        
     }
 
     const getCar = async () => {

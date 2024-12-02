@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export function NavItem({
   href,
@@ -18,7 +18,13 @@ export function NavItem({
   label: string;
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  let pathname = usePathname();
+  let params = useSearchParams().toString()
+  console.log(params, pathname , href) 
+
+  if (params && params != 'admin') {
+    pathname = `/admin?${params}`
+  }
 
   return (
     <Tooltip>

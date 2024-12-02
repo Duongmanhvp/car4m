@@ -24,4 +24,13 @@ const fetchReviewUser = (id: number) => {
     })
 }
 
-export { fetchUserInfo, fetchOwner, fetchReviewUser}
+const fetchAllUser = () => {
+    return axios.get('/api/v1/users/get-all-user', {
+        params: {
+            pageNo: 0,
+            pageSize: 8
+        }
+    })
+}
+
+export { fetchUserInfo, fetchOwner, fetchReviewUser, fetchAllUser}
