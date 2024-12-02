@@ -5,15 +5,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { CustomersTable } from './customers-table';
 
 export default function Customers() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Customers</CardTitle>
-        <CardDescription>View all customers and their orders.</CardDescription>
-      </CardHeader>
-      <CardContent></CardContent>
-    </Card>
+    
+      <CardContent>
+        <CustomersTable offset={0}/>
+      </CardContent>
+    
   );
 }

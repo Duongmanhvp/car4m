@@ -23,7 +23,7 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         white : "#fff",
-        whitesmoke: "#f8f8f8",
+        whitesmoke: "#f6f6f6",
         primary: "#1572d3",
         gray: "#242424",
         darkgray: "#acacac",

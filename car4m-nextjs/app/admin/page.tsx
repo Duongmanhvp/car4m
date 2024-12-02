@@ -29,12 +29,9 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip';
-import { User } from './cars/user';
-import { VercelLogo } from '@/components/icons';
-import Providers from './cars/providers';
-import { NavItem } from './cars/nav-item';
-import { SearchInput } from './cars/search';
-import ProductsPage from './cars/page';
+import { User } from './user';
+import Providers from './providers';
+import { NavItem } from './nav-item';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -84,7 +81,7 @@ function DesktopNav() {
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r border-line bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
-          href="/"
+          href="/admin"
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
           {/* <VercelLogo className="h-3 w-3 transition-all group-hover:scale-110" /> */}

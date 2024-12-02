@@ -115,7 +115,7 @@ const CarRegistry: NextPage = () => {
     const registryCar = async () => {
         await uploadListImages()
         addCar(carInfo.model + ' ' + year, Number(carInfo.rental), carInfo.brand, carInfo.location, carInfo.transmission, carInfo.fuelType,
-                 carInfo.seats, carInfo.fuelConsumption, 'Biển số xe: ' + licensePlate + '\n' + carInfo.description, carInfo.features, carInfo.images)
+                 carInfo.seats, carInfo.fuelConsumption + 'L/100km', 'Biển số xe: ' + licensePlate + '\n' + carInfo.description, carInfo.features, carInfo.images)
         router.push('/home')
     }
 
@@ -139,7 +139,7 @@ const CarRegistry: NextPage = () => {
         }
     }
 
-   // console.log(carInfo)
+    console.log(carInfo.fuelType)
 
     return (
         <section className="w-full flex flex-col items-center justify-center font-baloo-2">
@@ -276,7 +276,7 @@ const CarRegistry: NextPage = () => {
                         {/* Fuel Consumption */}
                         <div className="mb-4">
                             <label className="block font-medium mb-1 text-xx">Mức tiêu thụ nhiên liệu</label>
-                            <p className="text-silver mb-1 ">Số lít nhiên liệu cho quãng đường 100km.</p>
+                            <p className="text-silver mb-1 ">{carInfo.fuelType == 'ELECTRICITY' ? 'Quãng đường tối đa 1 lần sạc' : 'Số lít nhiên liệu trên quãng đường 100km'}</p>
                             <input
                                 type="number"
                                 value={carInfo.fuelConsumption}
@@ -319,7 +319,7 @@ const CarRegistry: NextPage = () => {
                                     { label: "Nắp thùng xe bán tải", value: 16 },
                                     { label: "ETC", value: 17 },
                                     { label: "Túi khí an toàn", value: 18 },
-                                    { label: "Mâm xe 18 inch", value: 19 },
+                                    { label: "Sac khong day", value: 19 },
                                 ].map((item) => (
                                     <button
                                         key={item.value}

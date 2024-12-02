@@ -24,11 +24,11 @@ const fetchReviewUser = (id: number) => {
     })
 }
 
-const fetchAllUser = () => {
+const fetchAllUser = (no: number) => {
     return axios.get('/api/v1/users/get-all-user', {
         params: {
-            pageNo: 0,
-            pageSize: 8
+            pageNo: no,
+            pageSize: 5
         }
     })
 }

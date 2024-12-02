@@ -17,11 +17,13 @@ import Footer from '../home/footer';
 import FrameCar from './mycar';
 import MyLike from './myfav';
 import MyTrip from './mytrip';
+import axios from '../services/api';
+import { useRouter } from 'next/navigation';
 
 const Profile: NextPage = () => {
-    const [activeSection, setActiveSection] = useState('mytrip'); // Quản lý trạng thái phần hiện tại
+    const [activeSection, setActiveSection] = useState('myinfo'); // Quản lý trạng thái phần hiện tại
     const accessToken = localStorage.getItem('access_token')
-
+    const router = useRouter()
     // Nội dung các frame khác nhau
     const renderSectionContent = () => {
         switch (activeSection) {
@@ -42,25 +44,18 @@ const Profile: NextPage = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/v1/auths/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token: accessToken }),
-            });
-
-            if (response.ok) {
-                localStorage.clear()
-                window.location.href = '/home'
-            } else {
-                const errorData = await response.json();
-                alert(errorData.message || 'Đăng xuất thất bại');
-            }
+          const response = await axios.post('/api/v1/auths/logout', {
+            token: accessToken
+          })
+    
+          if (response) {
+            localStorage.clear()
+            router.push('/home')
+          }
         } catch (error) {
-            console.error('Validation error:', error);
+          console.error('Validation error:', error);
         }
-    }
+      }
 
     return (
         <>

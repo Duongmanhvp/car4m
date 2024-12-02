@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import istarline from '../assets/imgs/star-line.svg'
 import istar from '../assets/imgs/star.svg'
-import { postReview } from '../services/OrderService';
+import { getMyReview, postReview } from '../services/OrderService';
 
 interface ReviewProps {
     rental_id: number
@@ -27,9 +27,23 @@ const ReivewFrame: React.FC<ReviewProps> = ({ rental_id, onToggleFrame }) => {
         }
     }
 
+    const getReview = async (id: number) => {
+        try {
+            const response = await getMyReview(id)
+            setRating(response.data.vote)
+            setText(response.data.description)
+        } catch (error) {
+            console.log("Loi khi lay review", error)
+        }
+    }
+
     const handleReview = () => {
         upReview()
     }
+
+    useEffect(() => {
+        getReview(rental_id)
+    }, [rental_id])
 
     return (
         <div className="fixed inset-0 left-0 flex items-center justify-center bg-black bg-opacity-50 z-10 font-baloo-2">
@@ -37,7 +51,7 @@ const ReivewFrame: React.FC<ReviewProps> = ({ rental_id, onToggleFrame }) => {
                 <button className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center border border-dimgray rounded-full" onClick={() => onToggleFrame(0)}>
                     <span className="items-center justify-center text-dimgray font-semibold">&#x2715;</span>
                 </button>
-                <h1 className="text-xxl font-medium text-center mb-4 border-b border-line">Đánh giá</h1>
+                <h1 className="text-xxl font-medium text-center mb-4 border-b border-line">{rating ? "Đánh giá của bạn" : "Đánh giá"}</h1>
                 
                 <div className='flex flex-col gap-2'>
                     <div className='flex flex-row gap-2 text-xl items-center'>

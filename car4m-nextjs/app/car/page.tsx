@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Image from "next/image"
 import Header from '../home/header'
 import { useEffect, useState } from 'react'
-import { fetchCarInfo, likeCar } from '../services/CarServices'
+import { fetchCarInfo, fetchMyLike, likeCar } from '../services/CarServices'
 import { useSearchParams } from 'next/navigation'
 import DatePickerFrame from './datepicker'
 import axios from 'axios'
@@ -27,6 +27,7 @@ import { create } from 'domain';
 import { icon } from 'leaflet'
 import Footer from '../home/footer'
 import { fetchOwner } from '../services/UserServices'
+import ImageGrid from './imagegrid'
 
 type Time = {
     receive: Date,
@@ -84,7 +85,7 @@ const Car: NextPage = () => {
     })
     const [confirm, setConfirm] = useState(false)
     const [open, setOpen] = useState(false)
-    const [items, setItems] = useState<any>()
+    const [items, setItems] = useState<any[]>([])
     const [dates, setDates] = useState<{
         pickUp: Date | null;
         dropOff: Date | null;
@@ -146,7 +147,7 @@ const Car: NextPage = () => {
             updateData('description', response.data.car_detail.description)
             updateData('fuel', response.data.car_detail.fuel)
             updateData('fuel_consumption', response.data.car_detail.fuel_consumption)
-            updateData('image', response.data.car_detail.image)
+            updateData('image', response.data.car_detail.images)
             updateData('seats', response.data.car_detail.seats)
             updateData('transmission', response.data.car_detail.transmission)
             updateData('latitude', response.data.location.latitude)
@@ -166,6 +167,18 @@ const Car: NextPage = () => {
         } catch (error) {
             console.log('Loi khi like car', error)
             setLiked(!liked)
+        }
+    }
+
+    const getMyLike = async () => {
+        try {
+            const respone = await fetchMyLike()
+            setItems(respone.data.content)
+            respone.data.content.map((item: { id: number }) => {
+                if (item.id == carId) setLiked(true)
+            })
+        } catch (error) {
+            console.log('Loi khi lay du lieu like car', error)
         }
     }
 
@@ -200,6 +213,11 @@ const Car: NextPage = () => {
         return total / list.length
     }
 
+    const toList = (images: string) => {
+        let image: string[] = images.split(',')
+        return image
+    }
+
     const handleUser = (id: number) => {
         router.push(`/owner?userId=${id}`);
     }
@@ -207,11 +225,13 @@ const Car: NextPage = () => {
     useEffect(() => {
         getCar(Number(searchParams.get('carID')))
         getReview()
+        getMyLike()
         //getListTime()
-    }, [])
+    }, [carId])
 
     useEffect(() => {
-        getOwner(Number(data.user_id))
+        if (data.user_id)
+            getOwner(Number(data.user_id))
     }, [data.user_id])
 
     useEffect(() => {
@@ -227,9 +247,10 @@ const Car: NextPage = () => {
 
             <div className='w-full flex items-center justify-center border-b border-line pb-[10px]'>
                 <div className="w-[1120px] relative flex flex-col items-center justify-center bg-white">
-                    <div className='w-full h-[500px]'>
-
+                    <div className='w-full flex'>
+                        <ImageGrid images={toList(data.image)}/>
                     </div>
+                    
 
                     <div className="w-full relative flex flex-row justify-between gap-4">
                         <div className="w-full flex flex-col items-center justify-center gap-4 relative text-left text-xl text-black pr-2">
@@ -421,8 +442,8 @@ const Car: NextPage = () => {
                             <div className="w-[370px] bg-semiblue border border-smoke rounded-lg p-5">
                                 {/* Giá thuê */}
                                 <div className="flex items-center justify-start mb-4">
-                                    <div className="text-3xl font-bold text-blue-500">856K</div>
-                                    <span className="text-sm text-gray-500">/ngày</span>
+                                    <div className="text-3xl font-bold text-blue-500">{data.rental_fee}đ</div>
+                                    <span className="text-sm text-gray-500">/giờ</span>
                                 </div>
 
                                 {/* Thời gian */}

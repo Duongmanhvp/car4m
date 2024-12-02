@@ -93,7 +93,7 @@ const Page: NextPage = () => {
 								<div className="flex flex-row items-center justify-start gap-1.5 text-xs">
 									<Image className="w-4 h-4" width={16} height={16} alt="" src={iconLocation} />
 									<div className="relative leading-[17px]">
-										<span className="text-iconcolor truncate inline-block w-full"> {listLocation[item.id]?.toString()}  </span>
+										<span className="text-iconcolor  inline-block w-full"> {listLocation[item.id]?.toString()}  </span>
 									</div>
 								</div>
 							</div>

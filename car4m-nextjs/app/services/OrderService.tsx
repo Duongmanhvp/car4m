@@ -80,4 +80,22 @@ const fetchTopCar = () => {
     })
 }
 
-export { getCarOrderTime, fetchTopCar, createOrder, getComingOrder, getFinishOrder, getProgressOrder, getAllCarOrder, postReview, fetchCarReview, fetchRevenueMonth }
+const getMyReview = (id: number) => {
+    return axios.get('/api/v1/cars/get-my-review', {
+        params: {
+            rentalId: id
+        }
+    })
+}
+
+export { getCarOrderTime,
+     fetchTopCar, 
+     createOrder,
+      getComingOrder, 
+      getFinishOrder, 
+      getProgressOrder, 
+      getAllCarOrder, 
+      postReview, 
+      fetchCarReview, 
+      fetchRevenueMonth,
+    getMyReview }

@@ -171,7 +171,7 @@ const Owner: NextPage = () => {
                                         <div className="flex flex-row items-center justify-between w-full text-sm text-dimgray border-t border-line pt-4">
                                             <div className="relative leading-[17px]">Price</div>
                                             <div className="relative leading-[17px] text-base text-gray-200">
-                                                <span className="font-semibold">{item.rental_fee} VND</span><span className="text-sm text-darkgray-100">/day</span>
+                                                <span className="font-semibold">{item.rental_fee} VND</span><span className="text-sm text-darkgray-100">/giờ</span>
                                             </div>
                                         </div>
                                     </div>

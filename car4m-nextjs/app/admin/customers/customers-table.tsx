@@ -15,12 +15,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Product } from './product';
+import { Customers } from './customers';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { acceptedCar, deleteCar, fetchAllCar, fetchAllCarAcp, fetchCarAccept } from '@/app/services/CarServices';
+import { fetchAllUser } from '@/app/services/UserServices';
 
 type CarProps = {
   type: string
@@ -31,11 +32,9 @@ type CarProps = {
 
 }
 
-export function ProductsTable({ type, offset }: { type: string, offset: number }) {
-  const [list, setList] = useState<number[]>([])
+export function CustomersTable({ offset }: { offset: number }) {
   const [total, setTotal] = useState(0)
-  const [countAcp, setCountAcp] = useState(0)
-  const [countNot, setCountNot] = useState(0)
+  const [items, setItem] = useState<any[]>([])
 
   let router = useRouter();
   let productsPerPage = 5;
@@ -43,50 +42,30 @@ export function ProductsTable({ type, offset }: { type: string, offset: number }
   function prevPage() {
     router.back();
   }
-
   function nextPage() {
-    router.push(`/admin/?admin=cars&offset=${offset + 5}`, { scroll: false })
+    router.push(`/admin/?admin=customers&offset=${offset + 5}`, { scroll: false })
   }
 
-  const [items, setItem] = useState<any[]>([])
-
-  const getCarNotAcp = async (no: number) => {
+  const getAllUser = async (no: number) => {
     try {
-      const res = await fetchCarAccept(no)
-      setItem(res.data.content)
-      setTotal(res.data.totalElements)
+      const respone = await fetchAllUser(no)
+      setItem(respone.data.content)
+      setTotal(respone.data.totalElements)
     } catch (error) {
-      console.log('Loi khi lay du lieu car', error)
-    }
-  }
-
-  const getCarAcp = async (no: number) => {
-    try {
-      const res = await fetchAllCarAcp(no)
-      setItem(res.data.content)
-      setTotal(res.data.totalElements)
-    } catch (error) {
-      console.log('Loi khi lay du lieu car', error)
+      console.log("Loi khi lay du lieu nguoi dung", error)
     }
   }
 
   useEffect(() => {
-    if (type == 'all') {
-      getCarAcp(offset / 5)
-    }
-    if (type == 'active') {
-      getCarNotAcp(offset / 5)
-    }
-  }, [type, offset])
-
-  console.log(offset, type)
+    getAllUser(offset/5)
+  }, [offset])
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cars</CardTitle>
+        <CardTitle>Customers</CardTitle>
         <CardDescription>
-          Quản lý xe của bạn và hiệu suất hoạt động.
+          Danh sách người dùng
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -97,18 +76,17 @@ export function ProductsTable({ type, offset }: { type: string, offset: number }
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Tên</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead className="hidden md:table-cell">Giá</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Lượt thuê
+              <TableHead>Email</TableHead>
+              <TableHead>Số điện thoại</TableHead>
+              <TableHead >
+              Số xe
               </TableHead>
-              <TableHead className="hidden md:table-cell">Quản lý</TableHead>
-              
+
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((product) => (
-              <Product product={product} />
+            {items.map((customer) => (
+              <Customers customer={customer} />
             ))}
           </TableBody>
         </Table>
@@ -120,7 +98,7 @@ export function ProductsTable({ type, offset }: { type: string, offset: number }
             <strong>
               {Math.max(0, Math.min(offset + 5 - productsPerPage, total) + 1)}-{Math.min(offset + 5, total)}
             </strong>{' '}
-            of <strong>{total}</strong> cars
+            of <strong>{total}</strong> users
           </div>
           <div className="flex">
             <Button

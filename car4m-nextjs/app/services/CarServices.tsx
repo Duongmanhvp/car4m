@@ -37,7 +37,7 @@ const fetchCarInfo = (id: number) => {
     }) 
 }
 
-const addCar = (name: string, rentalFee: number, type: string, location: string, transmission: string, fuel: string, seats: number, fuelConsumption: number, description: string, comfortIds: number[], images: string[]) => {
+const addCar = (name: string, rentalFee: number, type: string, location: string, transmission: string, fuel: string, seats: number, fuelConsumption: string, description: string, comfortIds: number[], images: string[]) => {
     return axios.post('/api/v1/cars/', {
         name: name,
         rental_fee: rentalFee,
@@ -58,6 +58,15 @@ const fetchAllCar = () => {
         params: {
             pageNo: 0,
             pageSize: 8
+        }
+    })
+}
+
+const fetchAllCarAcp = (no: number) => {
+    return axios.get('/api/v1/cars/get-all', {
+        params: {
+            pageNo: no,
+            pageSize: 5
         }
     })
 }
@@ -91,35 +100,30 @@ const fetchMyLike = () => {
 }
 
 const deleteCar = (id: number) => {
-    return axios.post('/api/v1/cars/delete', {
-        params: {
-            car_id: id
-        }
-    })
+    return axios.post(`/api/v1/cars/delete?carId=${id}`)
 }
 
 const likeCar = (id: number) => {
-    return axios.post('/api/v1/cars/like', {
-        params: {
-            car_id: id
-        }
-    })
+    return axios.post(`/api/v1/cars/like`, id)
 }
 
-const fetchCarAccept = () => {
+const fetchCarAccept = (no: number) => {
     return axios.get('/api/v1/cars/get-all-not-accepted', {
         params: {
-            pageNo: 0,
-            pageSize: 3
+            pageNo: no,
+            pageSize: 5
         }
     })
 }
 
+const rejectedCar = (id: number) => {
+    return axios.post('/api/v1/cars/reject',id)
+}
+
+
 const acceptedCar = (id: number) => {
-    return axios.post('/api/v1/cars/accept', {
-        params: {
-            car_id: id
-        }
+    return axios.post('/api/v1/cars/accept',{
+        carId: id
     })
 }
 
@@ -205,4 +209,6 @@ export { fetchCarByLocation,
          fetchCarByPrice,
          fetchCarBySeats,
          fetchCarByTransmission,
-         fetchCarByType, }
+         fetchCarByType, 
+         fetchAllCarAcp,
+         rejectedCar, }

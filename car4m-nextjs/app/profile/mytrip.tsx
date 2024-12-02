@@ -140,7 +140,7 @@ const MyTrip: NextPage = () => {
 											Hoàn thành
 										</div>
 										<div onClick={() => toggleFrame(item.rental_id)} className='hover:bg-lightred hover:font-medium border border-red text-red rounded-lg p-1 px-2'>
-											Đánh giá
+											Đánh giá 
 										</div>
 
 										{rate == item.rental_id && (<ReivewFrame rental_id={item.rental_id} onToggleFrame={toggleFrame}/>)}

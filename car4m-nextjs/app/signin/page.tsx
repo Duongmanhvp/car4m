@@ -51,7 +51,7 @@ const  Frame: NextPage = () => {
             })
             .catch((error) => {
                 console.log(error);
-                alert('Đã xảy ra lỗi khi đăng nhap');
+                alert(error.response.data.message);
               });
     };   
 

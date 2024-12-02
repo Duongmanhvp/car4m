@@ -44,6 +44,7 @@ const Banner: NextPage = () => {
 	const toggleDateFrame = () => setIsDateOpen(!isDateOpen);
 
 	const handleSearch = () => {
+		console.log('lau vl')
         router.push(`/search?location=${encodeURIComponent(location)}&radius=${selectedRadius}`);
     };
 
