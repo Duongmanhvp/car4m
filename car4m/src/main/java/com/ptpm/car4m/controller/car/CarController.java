@@ -59,7 +59,7 @@ public class CarController {
 	@PostMapping("/like")
 	public ApiResponse<String> like(
 			@AuthenticationPrincipal Jwt principal,
-			@RequestParam long carId) {
+			@RequestBody long carId) {
 		carService.like(principal, carId);
 		return ApiResponse.ok("Liked");
 	}
@@ -67,7 +67,7 @@ public class CarController {
 	@PostMapping("/delete")
 	public ApiResponse<CarResponse> deleteCar(
 			@AuthenticationPrincipal Jwt principal,
-			@RequestParam long carId) {
+			@RequestBody long carId) {
 		return ApiResponse.success(carService.deleteCar(principal, carId));
 	}
 	
