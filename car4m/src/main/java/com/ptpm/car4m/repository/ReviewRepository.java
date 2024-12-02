@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -25,4 +26,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 			FROM Review r
 			WHERE r.rental.car.id = :carId""")
 	List<ReviewResponse> findByCarId(@Param("carId") Long carId);
+	
+	Optional<Review> findByRentalId(long rentalId);
 }

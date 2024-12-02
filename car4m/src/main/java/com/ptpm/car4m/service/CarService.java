@@ -8,6 +8,7 @@ import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.dto.response.car.TopRentedResponse;
+import com.ptpm.car4m.dto.response.review.ReviewResponse;
 import com.ptpm.car4m.entity.Car;
 import org.springframework.data.domain.Page;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -39,6 +40,8 @@ public interface CarService {
 	List<CarRentalResponse> getAllRentalProgressingByCarId(Jwt principal, long carId);
 	
 	List<CarRentalResponse> getAllRentalComingByCarId(Jwt principal, long carId);
+	
+	ReviewResponse getMyReviewByRentalId(Jwt principal, long rentalId);
 	
 	// PUBLIC API
 	PageResponse<CarResponse> getCarsByUserId(int pageNo, int pageSize, long userId);

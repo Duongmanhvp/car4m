@@ -10,6 +10,7 @@ import com.ptpm.car4m.dto.response.PageResponse;
 import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.dto.response.car.TopRentedResponse;
+import com.ptpm.car4m.dto.response.review.ReviewResponse;
 import com.ptpm.car4m.enums.Fuel;
 import com.ptpm.car4m.enums.Transmission;
 import com.ptpm.car4m.service.CarService;
@@ -111,6 +112,13 @@ public class CarController {
 			@AuthenticationPrincipal Jwt principal,
 			@RequestParam long carId) {
 		return ApiResponse.success(carService.getAllRentalComingByCarId(principal, carId));
+	}
+	
+	@GetMapping("/get-my-review")
+	public ApiResponse<ReviewResponse> getMyReviewByRentalId(
+			@AuthenticationPrincipal Jwt principal,
+			@RequestParam long rentalId) {
+		return ApiResponse.success(carService.getMyReviewByRentalId(principal, rentalId));
 	}
 	
 	@GetMapping("/get-by-user")

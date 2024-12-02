@@ -11,6 +11,7 @@ import com.ptpm.car4m.dto.response.car.CarRentalResponse;
 import com.ptpm.car4m.dto.response.car.CarResponse;
 import com.ptpm.car4m.dto.response.car.TopRentedResponse;
 import com.ptpm.car4m.dto.response.location.GeoLocationResponse;
+import com.ptpm.car4m.dto.response.review.ReviewResponse;
 import com.ptpm.car4m.entity.*;
 import com.ptpm.car4m.enums.CarStatus;
 import com.ptpm.car4m.enums.Fuel;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
+	private final ReviewRepository reviewRepository;
 	
 	final UserRepository userRepository;
 	final CarRepository carRepository;
@@ -394,6 +396,7 @@ public class CarServiceImpl implements CarService {
 		
 		return rentals.stream().map(
 				rental -> CarRentalResponse.builder()
+						.rentalId(rental.getId())
 						.userId(rental.getUser().getId())
 						.receiveDate(rental.getReceiveDate())
 						.returnDate(rental.getReturnDate())
@@ -418,6 +421,7 @@ public class CarServiceImpl implements CarService {
 		
 		return rentals.stream().map(
 				rental -> CarRentalResponse.builder()
+						.rentalId(rental.getId())
 						.userId(rental.getUser().getId())
 						.receiveDate(rental.getReceiveDate())
 						.returnDate(rental.getReturnDate())
@@ -441,6 +445,7 @@ public class CarServiceImpl implements CarService {
 		
 		return rentals.stream().map(
 				rental -> CarRentalResponse.builder()
+						.rentalId(rental.getId())
 						.userId(rental.getUser().getId())
 						.receiveDate(rental.getReceiveDate())
 						.returnDate(rental.getReturnDate())
@@ -464,12 +469,37 @@ public class CarServiceImpl implements CarService {
 		
 		return rentals.stream().map(
 				rental -> CarRentalResponse.builder()
+						.rentalId(rental.getId())
 						.userId(rental.getUser().getId())
 						.receiveDate(rental.getReceiveDate())
 						.returnDate(rental.getReturnDate())
 						.totalFee(rental.getTotalFee())
 						.build()
 		).toList();
+	}
+	
+	@Override
+	public ReviewResponse getMyReviewByRentalId(Jwt principal, long rentalId) {
+		long userId = principal.getClaim("id");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+		
+		Rental rental = rentalRepository.findById(rentalId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy lịch thuê với id: " + rentalId));
+		
+		if (rental.getUser().getId() != userId) {
+			throw new AccessDeniedException("Bạn không có quyền xem đánh giá của người khác");
+		}
+		
+		Review review = reviewRepository.findByRentalId(rentalId)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá cho lịch thuê với id: " + rentalId));
+		
+		return ReviewResponse.builder()
+				.username(rental.getUser().getUsername())
+				.description(review.getDescription())
+				.vote(review.getVote())
+				.build();
 	}
 	
 	@Override
