@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -132,8 +133,8 @@ public class CarController {
 	@GetMapping("/get-rental-between")
 	public ApiResponse<List<CarRentalResponse>> getRentalBetween(
 			@RequestParam long carId,
-			@RequestParam LocalDateTime startDate,
-			@RequestParam LocalDateTime endDate) {
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
 		return ApiResponse.success(carService.getRentalBetween(carId, startDate, endDate));
 	}
 	
