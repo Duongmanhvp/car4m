@@ -131,7 +131,7 @@ const CarRegistry: NextPage = () => {
             // Lọc ra các ảnh tải lên thành công.
             list
                 .map((image) => {
-                    carInfo.images.push(String(link + image))
+                    carInfo.images.push(String(image))
                     return image
                 })  
         } catch (error) {

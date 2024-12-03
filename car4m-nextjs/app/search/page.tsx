@@ -5,12 +5,16 @@ import { useState } from "react";
 import Card from "./listcard";
 import Header from "../home/header";
 import Image from "next/image";
-
+import iconLocation from "../assets/imgs/location.svg"
+import iconCalendar from '../assets/imgs/calendar.svg'
 import iconCar from "../assets/imgs/car.svg"
 import iconGlobal from "../assets/imgs/global.svg"
 import iconGas from "../assets/imgs/gas-station.svg"
 import iconTrans from "../assets/imgs/transmission.png"
 import iconPrice from "../assets/imgs/dollar-circle.svg"
+import { useSearchParams } from "next/navigation";
+
+import { format } from "date-fns"
 
 // Sample FilterOverlay Component
 interface FilterOverlayProps {
@@ -46,6 +50,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ title, options, selectedO
 };
 
 const Search: NextPage = () => {
+    const params = useSearchParams()
     const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
     const [selectedSeats, setSelectedSeats] = useState<number | null>(null);
     const [selectedFuel, setSelectedFuel] = useState<string | null>(null);
@@ -61,9 +66,19 @@ const Search: NextPage = () => {
     return (
         <section className="main flex flex-col justify-center items-center font-baloo-2 bg-whitesmoke">
             <Header />
-            <div className="w-full relative flex flex-row items-center justify-center shadow-lg border-t border-smoke bg-whitesmoke">
+            <div className="w-full relative flex flex-row items-center justify-center shadow-lg border-t border-line bg-whitesmoke">
                 {/* Selection Bar */}
-                <div className="w-[1120px] relative flex flex-row items-center justify-between text-center gap-4 py-4">
+                <div className="w-[1120px] relative flex flex-col items-center justify-between text-center gap-4 py-4">
+                    <div className="w-full flex flex-row items-center justify-center text-xl">
+                        <div className="flex flex-row w-1/2 items-center gap-2">
+                            <Image src={iconLocation} alt={""}/>
+                            <span className="truncate"> {params.get('location')} </span>
+                        </div>
+                        <div className="flex flex-row items-center gap-2">
+                            <Image src={iconCalendar} alt={""}/>
+                            <span> {format(new Date(), "dd-MM-yyyy HH:mm")} </span>
+                        </div>
+                    </div>
                     <div className="relative flex flex-row items-center justify-between gap-4">
                         <div onClick={() => toggleOverlay("brand")} 
                             className={`cursor-pointer flex flex-row text-center items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white border border-silver ${selectedBrand ? 'bg-whiteblue' : ''}`}>
@@ -105,11 +120,6 @@ const Search: NextPage = () => {
                                 Khoảng giá
                             </p>
                         </div>
-                    </div>
-
-
-                    <div className="px-2 py-1 rounded-lg bg-white border border-silver font-medium">
-                        Bộ lọc
                     </div>
                 </div>
 
@@ -229,7 +239,7 @@ const Search: NextPage = () => {
                     </div>
                 )}
             </div>
-            <div className="w-full flex items-center justify-center pt-8">
+            <div className="w-full flex items-center justify-center pt-4">
                 <Card
                     activeOverlay={activeOverlay}
                     selectedBrand={selectedBrand}

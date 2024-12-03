@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation'
 import DatePickerFrame from './datepicker'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { Toaster } from "@/components/ui/toaster"
 
 import trans from "../assets/imgs/truyendong.svg"
 import seat from "../assets/imgs/seat.svg"
@@ -28,6 +29,7 @@ import { icon } from 'leaflet'
 import Footer from '../home/footer'
 import { fetchOwner } from '../services/UserServices'
 import ImageGrid from './imagegrid'
+import { useToast } from '@/hooks/use-toast'
 
 type Time = {
     receive: Date,
@@ -182,11 +184,19 @@ const Car: NextPage = () => {
         }
     }
 
+    const { toast } = useToast()
+
+
     const handleRent = () => {
         if (data.id && dates.pickUp && dates.dropOff)
-            createOrder(data.id, dates.pickUp, dates.dropOff)
+            createOrder(data.id, format(dates.pickUp, "yyyy-MM-dd HH:mm:ss"), format(dates.dropOff, "yyyy-MM-dd HH:mm:ss"))
         //console.log(data.id, dates.pickUp, dates.dropOff)
-        //router.push('/home')
+
+        toast({
+            title: "Bạn đã thuê thành công",
+            description: `${format(new Date(), "dd-MM-yyyy HH:mm:ss")}`,
+          })
+        window.location.reload()
     }
 
     const getReview = async () => {

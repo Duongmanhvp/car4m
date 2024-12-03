@@ -8,6 +8,7 @@ import bg from "../assets/imgs/bg.png"
 import iconLocation from "../assets/imgs/location.svg"
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { Product } from '../search/product';
 
 const linkImg = process.env.NEXT_PUBLIC_LINK
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY
@@ -81,10 +82,10 @@ const Page: NextPage = () => {
 			<div className="relative flex items-center justify-center w-[1120px] grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 bg-whitesmoke font-baloo-2">
 				{items.map((item) =>
 				(<div onClick={() => handleInfoCar(item.id, item.car_detail.images)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke    '>
-					<div className=" rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
+					{/* <div className=" rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
 						<div className="w-full p-2 relative rounded-xl bg-smoke h-[155px]">
 							<Image src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg} alt="" layout="fill" objectFit="cover" className='rounded-xl' />
-							{/* item.car_detail.images ? item.car_detail.images :  */}
+							
 						</div>
 
 						<div className="flex flex-col items-start justify-start pt-3 gap-4 w-full">
@@ -107,10 +108,12 @@ const Page: NextPage = () => {
 
 							<div className="rounded-lg bg-primary h-10 flex flex-row items-center justify-center p-2 gap-2 text-white mt-4">
 								<div className="relative leading-[17px] font-medium">Rent Now</div>
-								{/* <Image className="w-5 h-5" width={20} height={20} alt="" src="/vuesax/linear/arrow-right.svg" /> */}
+								
 							</div>
 						</div>
-					</div>
+					</div> */}
+					<Product item={item}/>
+					
 				</div>)
 				)}
 			</div>

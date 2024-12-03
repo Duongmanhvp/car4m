@@ -16,6 +16,7 @@ import icon from '../assets/imgs/user-icon.svg'
 import bg from '../assets/imgs/bg.jpeg'
 import iconLocation from '../assets/imgs/location.svg'
 import star from '../assets/imgs/star.svg'
+import { Product } from './product'
 
 const linkImg = process.env.NEXT_PUBLIC_LINK
 
@@ -147,7 +148,7 @@ const Owner: NextPage = () => {
                         <div className="relative flex items-center justify-center w-full grid gap-6 grid-cols-1 sm:grid-cols-2">
                             {items.map((item) =>
                             (<div onClick={() => handleInfoCar(item.id)} className='cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-line    '>
-                                <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
+                                {/* <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
                                     <div className="w-full aspect-video p-2 relative rounded-xl bg-smoke">
                                         <Image src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg} 
                                                alt="" 
@@ -175,7 +176,8 @@ const Owner: NextPage = () => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
+                                <Product item={item}/>
                             </div>)
                             )}
                         </div>

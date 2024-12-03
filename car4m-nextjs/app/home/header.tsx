@@ -142,7 +142,7 @@ const Header: NextPage = () => {
                 </div>
                 <div className="flex flex-row items-center justify-center gap-10">
                     <div onClick={nextRegistry} className="relative leading-[150%] font-medium cursor-pointer">Trở thành chủ xe</div>
-                    <div className="relative leading-[150%] font-medium">Thuê xe</div>
+                    <a href="/home" className="relative leading-[150%] font-medium">Thuê xe</a>
                     <div className="relative leading-[150%] font-medium">Về car4m</div>
                 </div>
                 <div className="flex flex-row items-center justify-start gap-6">

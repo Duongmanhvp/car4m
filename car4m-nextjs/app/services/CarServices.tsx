@@ -104,7 +104,11 @@ const deleteCar = (id: number) => {
 }
 
 const likeCar = (id: number) => {
-    return axios.post(`/api/v1/cars/like`, id)
+    return axios.post(`/api/v1/cars/like`, id, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
 }
 
 const fetchCarAccept = (no: number) => {
@@ -117,13 +121,19 @@ const fetchCarAccept = (no: number) => {
 }
 
 const rejectedCar = (id: number) => {
-    return axios.post('/api/v1/cars/reject',id)
+    return axios.post('/api/v1/cars/reject',id, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
 }
 
 
 const acceptedCar = (id: number) => {
-    return axios.post('/api/v1/cars/accept',{
-        carId: id
+    return axios.post('/api/v1/cars/accept',id, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
     })
 }
 

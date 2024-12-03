@@ -9,6 +9,7 @@ import eye from "../assets/imgs/eye.svg"
 import eyeslash from "../assets/imgs/eye-slash.svg"
 import axios from "axios"
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import imgLogin from '../assets/imgs/login.png'
 
 
 const  Frame: NextPage = () => {
@@ -64,7 +65,7 @@ const  Frame: NextPage = () => {
     return (
         <div className="w-full flex bg-white h-[1024px] overflow-hidden text-center text-[56px] text-white font-baloo-2">
             <div className="absolute top-[0px] w-full h-[1024px] overflow-hidden">
-                <img className="absolute top-[0px] left-[0px] w-[920px] h-[1024px] object-cover" alt="" src="bert-b-rhNff6hB41s-unsplash 1.png" />
+                <Image className="absolute top-[0px] left-[0px] w-[920px] h-[1024px] object-cover" alt="" src={imgLogin} />
                 <div className="absolute top-[182px] left-[72px] flex flex-col items-start justify-center gap-4">
                     <div className="relative leading-[64px] font-semibold">CAR4M</div>
                     <div className="w-[482px] relative text-[24px] text-left flex items-center">Trang web thuê xe nhanh chóng, tiện lợi và dễ dàng</div>

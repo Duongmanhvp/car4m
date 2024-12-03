@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { format } from "date-fns"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css'
-import { getAllCarOrder } from "../services/OrderService"
+import { getAllCarOrder, getBetweenCarOrder } from "../services/OrderService"
 
 type SelectedDate = {
     pickUp: Date | null // Ngày nhận xe
@@ -329,7 +329,7 @@ const DatePickerFrame: React.FC<DatePickerFrameProps> = ({
         getAllOrder()
     }, [])
 
-    //console.log(isDateDisabled(currentDate))
+    console.log(order)
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 font-baloo-2">

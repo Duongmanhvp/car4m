@@ -8,7 +8,7 @@ import Image from 'next/image';
 import eye from "../assets/imgs/eye.svg"
 import eyeslash from "../assets/imgs/eye-slash.svg"
 
-
+import logo from '../assets/imgs/signup.png'
 
 const Frame: NextPage = () => {
     const router = useRouter()
@@ -78,8 +78,8 @@ const Frame: NextPage = () => {
 
 
     return (
-        <div className="w-full relative h-[1024px] overflow-hidden text-left text-base text-dimgray-100 font-baloo-2">
-            <div className="absolute left-[150px] h-[854px] flex flex-col items-start justify-end gap-8">
+        <div className="w-full relative flex flex-row min-h-screen overflow-hidden text-left text-base text-dimgray-100 font-baloo-2 gap-8">
+            <div className="relative pl-[150px] flex flex-col items-start justify-center gap-8 ">
                 <div className="flex flex-col items-start justify-start text-[32px] text-darkslategray">
                     <div className="relative font-medium">Chào mừng đến với Car4m</div>
                 </div>
@@ -169,9 +169,10 @@ const Frame: NextPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="absolute top-[0px] left-[843px] bg-white w-[597px] h-[1024px] overflow-hidden">
-                <img className="absolute top-[0px] left-[0px] w-[597px] h-[1024px] object-cover hidden" alt="" src="Rectangle.png" />
-                <img className="absolute top-[-14px] left-[-65px] w-[690px] h-[1051px] object-cover" alt="" src="sebastian-svenson-d2w-_1LJioQ-unsplash 1.png" />
+            <div className="relative bg-white h-full overflow-hidden pl-5">
+                <Image src={logo} alt={''}/>
+                {/* <img className="absolute top-[0px] left-[0px] w-[597px] h-[1024px] object-cover hidden" alt="" src="Rectangle.png" />
+                <img className="absolute top-[-14px] left-[-65px] w-[690px] h-[1051px] object-cover" alt="" src="sebastian-svenson-d2w-_1LJioQ-unsplash 1.png" /> */}
             </div>
         </div>);
 };

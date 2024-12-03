@@ -17,6 +17,7 @@ import iconLocation from "../assets/imgs/location.svg";
 import bg from "../assets/imgs/bg.jpeg";
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { Product } from './product';
 
 const OPEN_CAGE_API_KEY = process.env.NEXT_PUBLIC_OPENCAGE_API_KEY;
 const linkImg = process.env.NEXT_PUBLIC_LINK;
@@ -128,7 +129,7 @@ const Card: NextPage<CardProps> = ({
                         onClick={() => handleInfoCar(item.id)}
                         className="cursor-pointer min-w-[255px] max-w-[500px] rounded-xl border border-smoke"
                     >
-                        <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
+                        {/* <div className="rounded-xl bg-white p-2 flex flex-col items-start justify-start text-left text-base text-gray">
                             <div className="w-full p-2 relative rounded-xl bg-smoke h-[155px]">
                                 <Image
                                     src={item.car_detail.images ? srtingToLink(item.car_detail.images) : bg}
@@ -172,7 +173,9 @@ const Card: NextPage<CardProps> = ({
                                     <div className="relative leading-[17px] font-medium">Rent Now</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
+
+                        <Product item={item}/>
                     </div>
                 ))}
             </div>

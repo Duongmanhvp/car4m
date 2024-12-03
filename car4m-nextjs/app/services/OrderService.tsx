@@ -10,7 +10,7 @@ const getCarOrderTime = (id: number, start: Date, end: Date) => {
     })
 }
 
-const createOrder = (id: number, start: Date, end: Date) => {
+const createOrder = (id: number, start: string, end: string) => {
     console.log(id, start, end)
     return axios.post('/api/v1/cars/rent', {
         car_id: id,
@@ -47,6 +47,16 @@ const getAllCarOrder = (id: number) => {
     return axios.get('/api/v1/cars/get-all-rental', {
         params: {
             carId: id
+        }
+    })
+}
+
+const getBetweenCarOrder = (id: number, start: string, end: string) => {
+    return axios.get('/api/v1/cars/get-rental-between', {
+        params: {
+            carId: id,
+            startDate: start,
+            endDate: end
         }
     })
 }
@@ -98,4 +108,4 @@ export { getCarOrderTime,
       postReview, 
       fetchCarReview, 
       fetchRevenueMonth,
-    getMyReview }
+    getMyReview, getBetweenCarOrder }

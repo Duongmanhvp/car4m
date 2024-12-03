@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import OverviewChart from "./overviewchart";
 import { fetchRevenueMonth, fetchTopCar } from "@/app/services/OrderService";
 import { fetchAllCar } from "@/app/services/CarServices";
-import { fetchAllUser } from "@/app/services/UserServices";
+import { fetchAllUser, fetchCountUser } from "@/app/services/UserServices";
 
 const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
@@ -17,6 +17,8 @@ type TopRent = {
   userId: number
   name: string
   rentalCount: number
+  rental_fee: number
+  rental_count: number
 }
 
 const Dashboard = () => {
@@ -67,7 +69,7 @@ const Dashboard = () => {
 
   const getAllUser = async () => {
     try {
-      const respone = await fetchAllUser()
+      const respone = await fetchCountUser()
       setCountUser(respone.data.totalElements)
     } catch (error) {
       console.log('Loi khi lay so luong user', error)
@@ -76,7 +78,7 @@ const Dashboard = () => {
 
   const getAllRent = async () => {
     try {
-      const respone = await fetchAllUser()
+      const respone = await fetchCountUser()
       setCountUser(respone.data.totalElements)
     } catch (error) {
       console.log('Loi khi lay so luong user', error)
@@ -86,6 +88,7 @@ const Dashboard = () => {
   const getTopRenevue = async () => {
     try {
       const respone = await fetchTopCar()
+      console.log(respone.data)
       setTop(respone.data)
     } catch (error) {
       console.log('Loi khi lay so luong user', error)
@@ -99,6 +102,8 @@ const Dashboard = () => {
     getTopRenevue()
   }, [])
 
+  //console.log(top)
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -108,12 +113,11 @@ const Dashboard = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {[
           { title: "Tổng doanh thu", value: total, change: "+20.1%" },
           { title: "Người dùng", value: countUser, change: "+180.1%" },
           { title: "Xe cho thuê", value: countCar, change: "+19%" },
-          { title: "Lượt thuê", value: countOrder, change: "+201" },
         ].map((stat, index) => (
           <div
             key={index}
@@ -134,7 +138,7 @@ const Dashboard = () => {
         </div>
 
         <div className="p-6 bg-white shadow rounded-lg">
-          <h2 className="text-xx font-medium mb-4">Top doanh thu</h2>
+          <h2 className="text-xx font-medium mb-4">Top được thuê</h2>
           <ul>
             {top.map((sale, index) => (
               <li
@@ -142,7 +146,7 @@ const Dashboard = () => {
                 className="flex justify-between items-center py-2 border-b border-line"
               >
                 <span>{sale.name}</span>
-                <span className="text-green-500">+{sale.rentalCount} VNĐ</span>
+                <span className="text-green-500">+{sale.rental_count} Lượt thuê</span>
               </li>
             ))}
           </ul>

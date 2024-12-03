@@ -24,7 +24,9 @@ export function Product({ product }: { product: any }) {
   const [count, setCount] = useState(0)
   const stringToLink = (images: string) => {
 		let image: string[] = images.split(',')
-		return linkImg + image[0]
+		
+    console.log(linkImg, image[0])
+    return linkImg + image[0]
 	}
 
   const rejectCar = async () => {
@@ -54,7 +56,8 @@ export function Product({ product }: { product: any }) {
   const getAllRent = async () => {
     try {
       const respone = await getAllCarOrder(product.id)
-      setCount(respone.data.totalElements)
+      const obj: any[] = respone.data
+      setCount(obj.length)
     } catch (error) {
       console.log('Loi khi lay count redntal')
     }
@@ -67,13 +70,16 @@ export function Product({ product }: { product: any }) {
   const handleAction = () => {
     if (product.is_accepted) {
       delCar()
+      window.location.reload()
     } else {
       rejectCar()
+      window.location.reload()
     }
   }
 
   const handleAcp = () => {
     acceptCar()
+    window.location.reload()
   }
   //console.log(product)
 

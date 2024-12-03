@@ -3,12 +3,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import logo from '../assets/imgs/Frame.svg'
-
+import bocongthuong from '../assets/imgs/bocongthuong.png'
+import zalo from '../assets/imgs/zalopay-logo.png'
+import vnpay from '../assets/imgs/vnpay-logo.png'
+import momo from '../assets/imgs/momo-logo.png'
+import visa from '../assets/imgs/visa-logo.png'
 
 const Footer = () => {
   return (
     <footer className="bg-gray-200  pt-10 pb-5 font-baloo-2">
-      <div className="container max-w-screen-xl mx-auto px-4">
+      <div className="container max-w-screen-xl mx-auto px-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Image src={logo} alt="Car4M Logo" width={50} height={50} />
@@ -77,13 +81,14 @@ const Footer = () => {
         </div>
 
         <div className="mt-4 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 md:justify-between">
-          <Image src="/images/bocongthuong.png" alt="Đã đăng ký Bộ Công Thương" width={200} height={40} />
+          <Image src={bocongthuong} alt="Đã đăng ký Bộ Công Thương" width={200} height={40} />
           <div className='flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4'>
             <p className="text-sm text-gray-600">Hỗ trợ thanh toán qua</p>
             <div className="flex flex-wrap justify-center gap-4">
-              {['momo', 'vnpay', 'zalopay', 'visa'].map((payment) => (
-                <Image key={payment} src={`/images/${payment}-logo.png`} alt={`${payment} logo`} width={40} height={40} />
-              ))}
+            <Image src={momo} alt={''} width={40} height={40} />
+            <Image src={visa} alt={''} width={40} height={40} />
+            <Image src={vnpay} alt={''} width={40} height={40} />
+            <Image src={zalo} alt={''} width={40} height={40} />
             </div>
           </div>
         </div>
